@@ -11,6 +11,8 @@
  *     definition resolved to another family (a keys part that became a kit).
  */
 import { checkArrangementConstraints } from "../../musicalConstraints";
+import { roleWindowForDefinition } from "../dimensions/register";
+import { plannedRolesFor, roleInSectionFor } from "../dimensions/shared";
 import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types";
 import {
   barAt, barSpan, buildReport, cellCoverage, clustersOf, confidenceFromEvidence, effectPast, longestUnbrokenRun,
@@ -26,8 +28,28 @@ export const INSTRUMENT_REALITY_KINDS = [
   "keyboard_cluster_voicing",
 ] as const;
 
-/** A string section written above this mean pitch for a whole section is a bed nobody asked for. */
-const STRING_BED_HIGH = 79;
+/**
+ * How high a string section may sit for a whole section is **not a constant**
+ * (B-26, the lead's F15 ruling).
+ *
+ * Until B-26 this rule compared a bed's mean pitch to a flat 79 while the
+ * `register` dimension asked `instrumentProfile.roleRegisterFor` — which gives
+ * a violin section 60-79 as a PAD and **67-91** as a CLIMAX_LAYER. The two
+ * disagreed, and the disagreement was visible: `orchestral-midi`'s
+ * `strings-climax_layer` averages MIDI 79.93 in the Chorus, which the profile
+ * allows for a climax layer and this rule refused, so `register` scored 100 on
+ * an arrangement the adversarial critic called too high. A climax layer is
+ * *supposed* to sit above a bed. Two sources of truth for one musical claim —
+ * the third recurrence of the program's standing bug — so the constant is gone
+ * and the rule asks the same function the dimension asks.
+ *
+ * What is *not* changed: the shape of the claim. The rule still reads the
+ * section's **mean** pitch, because a bed whose mean sits at its own role
+ * ceiling has half its notes above it for the whole section, which is what an
+ * arranger hears as "parked up there". For a PAD the profile's ceiling is 79,
+ * exactly the constant it replaces, so the owner's own `strings-pad` at mean
+ * 80.00 still fires — that one is the writer's problem, and F15 says so.
+ */
 const MIN_SECTION_BARS = 4;
 /** Share of the playable range at either extreme that counts as "the extreme". */
 const EXTREME_SHARE = 0.1;
@@ -143,13 +165,23 @@ export function critiqueInstrumentReality(input: CriticInput, options: { control
       const notes = bars.flatMap((b) => part.byBar.get(b)!);
       const meanPitch = mean(notes.map((n) => n.pitch));
       const seconds = barSpan(grid, bars[bars.length - 1]).end - barSpan(grid, bars[0]).start;
-      if (def.family === "strings" && !isBass && meanPitch >= STRING_BED_HIGH) {
+      // B-26 / F15: the ceiling is the one this part's own profile gives it in
+      // the role it holds *here*, read through the register dimension's own
+      // function. A PAD violin section still answers 79; a CLIMAX_LAYER
+      // answers 91 and is allowed to sit where a pad may not.
+      const roleHere = roleInSectionFor(plannedRolesFor(input.plan, part.track.instrument), section.name, part.track.role);
+      const ceiling = roleWindowForDefinition(def, roleHere, { min: def.comfortableRange.min, max: def.comfortableRange.max }).hi;
+      if (def.family === "strings" && !isBass && meanPitch >= ceiling) {
         obs({
           dimension: INSTRUMENT_REALITY_DIMENSION, kind: "string_bed_too_high", severity: "major",
           startBar: bars[0], endBar: bars[bars.length - 1], trackIds: [part.id],
-          evidence: { meanPitch, minPitch: Math.min(...notes.map((n) => n.pitch)), maxPitch: Math.max(...notes.map((n) => n.pitch)), bars: bars.length, seconds, threshold: STRING_BED_HIGH },
-          confidence: confidenceFromEvidence(bars.length, MIN_SECTION_BARS, effectPast(meanPitch, STRING_BED_HIGH - 1, STRING_BED_HIGH + 6)),
-          repair: { operation: "lower_string_bed", detail: `The string bed averages MIDI ${Math.round(meanPitch)} for ${bars.length} bars; a section pad belongs an octave lower (violas/celli on the bed, violins only for the top line).` },
+          evidence: {
+            meanPitch, minPitch: Math.min(...notes.map((n) => n.pitch)), maxPitch: Math.max(...notes.map((n) => n.pitch)),
+            bars: bars.length, seconds, threshold: ceiling, role: roleHere,
+            ceilingSource: roleWindowForDefinition(def, roleHere, { min: def.comfortableRange.min, max: def.comfortableRange.max }).source,
+          },
+          confidence: confidenceFromEvidence(bars.length, MIN_SECTION_BARS, effectPast(meanPitch, ceiling - 1, ceiling + 6)),
+          repair: { operation: "lower_string_bed", detail: `The string bed averages MIDI ${Math.round(meanPitch)} for ${bars.length} bars against a ${roleHere} ceiling of ${ceiling}; a section pad belongs an octave lower (violas/celli on the bed, violins only for the top line).` },
           attribution: { layer: "register", planExplains: 0 },
         });
         continue;

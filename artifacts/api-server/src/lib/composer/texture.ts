@@ -90,6 +90,24 @@ export type ChordalTexture = {
   archetype: ChordalArchetype;
   /** Which of the groove plan's comping cells the part reads its onsets from. */
   cell: "bed" | "rhythmic";
+  /**
+   * B-21: the groove cell whose onsets this part actually plays. It is the
+   * plan's cell for `cell` unless the arc's level asked a struck bed to
+   * re-articulate faster (an arrival is *heard*, not held). The cell
+   * vocabulary and its unit sets stay the groove plan's (`cellUnits`); only
+   * which of them this part reads is the texture's decision.
+   */
+  onsetCell: GrooveCompingCell;
+  /**
+   * B-21: an `arpeggio` sounds **one voice per onset** (a broken chord). Before
+   * this the archetype was named `arpeggio` and the writer struck the whole
+   * voicing on every onset of an `arpeggiated_8ths` cell, because its groups
+   * were shorter than two arpeggio steps and the arpeggio branch never ran:
+   * measured on the owner's Verse 1, 22 bars x 8 eighths x 3 voices = 501
+   * notes at 12.4 notes a second inside ten semitones, while the choruses held
+   * long chords. The archetype and the notes now agree.
+   */
+  brokenChord: boolean;
   /** Added to the solver's voice count for this part (clamped by the caller). */
   voiceDelta: number;
   /** Shift of the style's extension level: -1 triads-ward, +1 extended-ward. */
@@ -103,53 +121,93 @@ const SUSTAINING_FAMILIES = new Set(["strings", "pads", "synth", "brass", "winds
 const COLOUR_TASKS = new Set<PartGenerationRequest["task"]>(["PAD", "STRINGS", "BRASS", "WOODWINDS"]);
 
 const isFull = (level: ArcTextureLevel | null) => level === "full" || level === "tutti";
+const isThinLevel = (level: ArcTextureLevel | null) => level === "solo" || level === "duo";
+
+/** Arc level at or above which a struck bed re-articulates on the pulse instead of holding the chord. */
+export const BED_RESTRIKE_LEVEL = 0.5;
 
 /**
  * The texture of a chordal part: role, family and the arc's texture level
  * set the default; the strategy's intent moves it. Every choice states why.
+ *
+ * B-21 gives it the two readings it was missing. The arc's *numeric* level
+ * (not only the texture word) decides how often a struck bed re-articulates,
+ * and an `arpeggio` is a broken chord rather than a re-struck block. Before
+ * this the only reads of the arc here were `isFull(level)` and
+ * `level !== "tutti"` - neither of which can thin anything - so a `bed`-texture
+ * verse at level 0.44 comped exactly as densely as a `tutti` chorus would, and
+ * the density critics reported `arrival_thinner_than_setup`,
+ * `louder_section_thinner` and `climax_not_realised` on the owner's song.
  */
 export function chordalTextureFor(input: {
   task: PartGenerationRequest["task"];
   role: PartGenerationRequest["role"];
   family: string;
   level: ArcTextureLevel | null;
+  /** The arc's intended level 0..1 for this section (`arcIntent.level`, else the section's energy). */
+  arcLevel: number;
   intent: TextureIntent;
   plannedRhythmicCell: GrooveCompingCell;
+  plannedBedCell: GrooveCompingCell;
 }): ChordalTexture {
-  const { role, family, level, intent } = input;
+  const { role, family, level, arcLevel, intent } = input;
   const sustaining = SUSTAINING_FAMILIES.has(family);
   const comping = role === "RHYTHMIC_HARMONY" || role === "OSTINATO";
   const reasons: string[] = [];
   let cell: ChordalTexture["cell"] = comping ? "rhythmic" : "bed";
+  let onsetCell: GrooveCompingCell = comping ? input.plannedRhythmicCell : input.plannedBedCell;
   let archetype: ChordalArchetype;
+  let brokenChord = false;
   if (!comping) {
     // A bed: bowed / blown / synth families hold the chord (ties across bars); a
     // keyboard or guitar bed re-strikes on the plan's bed cell (per bar, or
     // in quarters under a lift), because a struck string decays.
     archetype = sustaining ? "sustained" : "block";
-    reasons.push(sustaining ? `${family} bed holds each chord` : `${family} bed re-strikes on the plan's bed cell`);
-    if (intent.density === "thin") { archetype = "sustained"; reasons.push("thin texture: held, not re-struck"); }
+    reasons.push(sustaining ? `${family} bed holds each chord` : `${family} bed re-strikes on the plan's bed cell (${input.plannedBedCell})`);
+    // B-21: how often a struck bed re-articulates is the arc's decision. At a
+    // `full` / `tutti` texture, or from level 0.5 up, it is re-struck on the
+    // meter's pulses - that is what makes an arrival arrive on a piano.
+    if (!sustaining && (isFull(level) || arcLevel >= BED_RESTRIKE_LEVEL) && onsetCell === "whole_note_bed") {
+      onsetCell = "quarter_pulses";
+      reasons.push(`${level ?? "no"} texture at level ${arcLevel.toFixed(2)}: the struck bed re-articulates on the pulse instead of holding the chord`);
+    }
+    if (intent.density === "thin" || isThinLevel(level)) {
+      archetype = "sustained";
+      onsetCell = input.plannedBedCell;
+      reasons.push(intent.density === "thin" ? "thin texture: held, not re-struck" : `${level} texture: held, not re-struck`);
+    }
     if (intent.density === "dense" && !sustaining) {
       archetype = input.plannedRhythmicCell === "arpeggiated_8ths" ? "arpeggio" : "block";
       cell = "rhythmic";
+      onsetCell = input.plannedRhythmicCell;
       reasons.push(`dense texture: the bed moves on the rhythmic cell (${input.plannedRhythmicCell})`);
     }
     if (intent.syncopation >= 0.5 && !sustaining && isFull(level)) {
       cell = "rhythmic";
       archetype = "block";
+      onsetCell = input.plannedRhythmicCell;
       reasons.push(`syncopation ${intent.syncopation}: the ${family} bed comps on the rhythmic cell in a ${level} texture`);
     }
-    if (intent.strategy === "melodic" && !sustaining && level !== "tutti" && intent.density !== "thin") {
+    if (intent.strategy === "melodic" && !sustaining && level !== "tutti" && intent.density !== "thin" && !isThinLevel(level)) {
+      // B-13's decision, kept: the bed stays on its own cell and the arpeggio
+      // is walked *inside* each held group (the group is long enough there).
       archetype = "arpeggio";
       reasons.push("melodic strategy: a broken-chord bed, a moving inner line");
     }
   } else {
     archetype = input.plannedRhythmicCell === "arpeggiated_8ths" ? "arpeggio" : "block";
     reasons.push(archetype === "arpeggio" ? "the plan's comping cell is arpeggiated" : `block chords on the plan's ${input.plannedRhythmicCell}`);
-    if (intent.density === "thin") { cell = "bed"; archetype = "sustained"; reasons.push("thin texture: the comp holds on the bed cell"); }
+    if (intent.density === "thin" || isThinLevel(level)) {
+      cell = "bed";
+      onsetCell = input.plannedBedCell;
+      archetype = "sustained";
+      reasons.push(intent.density === "thin" ? "thin texture: the comp holds on the bed cell" : `${level} texture: the comp holds on the bed cell`);
+    }
     if (intent.density === "dense" && archetype === "block") { archetype = "arpeggio"; reasons.push("dense texture: the voicing is arpeggiated through the cell's windows"); }
-    if (intent.strategy === "melodic" && intent.density !== "thin") { archetype = "arpeggio"; reasons.push("melodic strategy: arpeggiated comping"); }
+    if (intent.strategy === "melodic" && intent.density !== "thin" && archetype !== "sustained") { archetype = "arpeggio"; reasons.push("melodic strategy: arpeggiated comping"); }
   }
+  brokenChord = archetype === "arpeggio";
+  if (brokenChord) reasons.push("arpeggio: one voice per onset, the bottom voice held under the figure");
   let voiceDelta = intent.density === "thin" ? -1 : intent.density === "dense" ? 1 : 0;
   if (COLOUR_TASKS.has(input.task)) voiceDelta += intent.colourVoicesDelta;
   if (voiceDelta) reasons.push(`${voiceDelta > 0 ? "+" : ""}${voiceDelta} voice(s)`);
@@ -157,7 +215,7 @@ export function chordalTextureFor(input: {
   if (extensionsShift) reasons.push(extensionsShift > 0 ? "harmonic risk: one extension level up" : "harmonic risk: one extension level down");
   const closeVsOpenShift = Number(((intent.registerSpread - 0.5) * 0.6).toFixed(3));
   if (Math.abs(closeVsOpenShift) >= 0.05) reasons.push(closeVsOpenShift > 0 ? "register spread: more open spacing" : "register spread: closer spacing");
-  return { archetype, cell, voiceDelta, extensionsShift, closeVsOpenShift, reason: reasons.join("; ") };
+  return { archetype, cell, onsetCell, brokenChord, voiceDelta, extensionsShift, closeVsOpenShift, reason: reasons.join("; ") };
 }
 
 // ---------------------------------------------------------------------------

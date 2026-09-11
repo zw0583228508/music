@@ -109,7 +109,8 @@ test("the reference part composer produces byte-identical parts to the golden fi
   const current = currentGolden();
   if (process.env.B00_WRITE_GOLDEN === "1") {
     writeFileSync(FIXTURE, `${JSON.stringify({
-      recordedAt: "RE-PINNED at the B-24 merge: the performance engine's timing and velocity jitter are seeded from the music (family, role, onset, pitch) instead of from the note id, because ids are built as part-<sectionName>-<instrument>-<role> and a producer renaming a section moved every onset; and clampPolyphony now judges a held note against the real start of the earliest note in an onset group instead of that group's value rounded to whole milliseconds, which had let a 30.1 ms overlap pass a 30 ms tolerance. Note counts are unchanged for every case (921 / 938 / 1304 on pop-full); only the performed timing and velocity moved, so every digest moved with them. " +
+      recordedAt: "RE-PINNED at the Wave 3 integration (B-21 + B-25 + B-26 onto main with B-07, B-19, B-22, B-24): the writers changed under B-21 - the arc's opening figure and ending gesture realised in notes, the texture following the arc's per-section level, the arpeggio realised as a broken chord, the pedal bass on the plan's onsets, and the register taken from the instrument profile - so the composed material itself moved, not only its performance. Re-pinned once at the end of the rebase rather than at each stream, because B-19's selection, B-22's melody evidence and B-24's jitter reseed move the shipped notes too and a per-stream pin would have recorded a state that never existed on main. " +
+        "RE-PINNED at the B-24 merge: the performance engine's timing and velocity jitter are seeded from the music (family, role, onset, pitch) instead of from the note id, because ids are built as part-<sectionName>-<instrument>-<role> and a producer renaming a section moved every onset; and clampPolyphony now judges a held note against the real start of the earliest note in an onset group instead of that group's value rounded to whole milliseconds, which had let a 30.1 ms overlap pass a 30 ms tolerance. Note counts are unchanged for every case (921 / 938 / 1304 on pop-full); only the performed timing and velocity moved, so every digest moved with them. " +
         "composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split, " +
         "orchestration noteCount re-pinned after B-00 D1; RE-PINNED at the B-01 merge (planners v1.1: arc targets, sung-by-default, " +
         "mix/ensemble excluded, operators) - every part request changed, so every digest changed; the split itself was verified " +
@@ -186,7 +187,35 @@ test("the reference part composer produces byte-identical parts to the golden fi
         "most of it B-18's own groove reading for a jazz standard, which this writer now plays through. " +
         "ballad-piano-vocal and cinematic-midi are byte-identical - `brainB02Evidence` measures zero bass approaches on " +
         "both, so there was nothing here to move. The section plans, the kit, the comping and the counter-melody are " +
-        "untouched. A future digest change must again name its cause here.",
+        "untouched. " +
+        "RE-PINNED again at the B-21 merge (the writers write music, base 3b9ace3). All nine cases moved, composer and " +
+        "shipped digests together, for five named causes, every one of them a writer reading a decision that already " +
+        "existed. (1) REGISTER (`composer/registers.ts`): a part's register window is now the role register its own " +
+        "instrument profile gives it - `roleRegisterFor(profile, role)`, the same table `critics/dimensions/register` " +
+        "measures against - instead of the family comfortable range widened by the argmax of `section.registerDistribution`. " +
+        "That distribution is a *histogram of the section's active families* (sectionPhrasePlanner), so using it to shift " +
+        "each part raised the bass, the keys and the strings together whenever a section leaned high: on the owner's song " +
+        "the keys wrote to MIDI 89 against a HARMONIC_BED ceiling of 67 and the strings to 92, four " +
+        "`top_line_above_comfortable_ceiling` findings and one `climax_all_treble`. `raise_register` now lifts the floor " +
+        "inside the window instead of the ceiling above it. (2) THE ARPEGGIO IS A BROKEN CHORD (`composer/texture.ts` + " +
+        "`writeChordal`): an `arpeggio` archetype whose group is shorter than two arpeggio steps - which every onset of an " +
+        "`arpeggiated_8ths` cell is - fell through to the block-chord path and struck the whole voicing on every eighth. " +
+        "The archetype and the notes now agree: one voice per onset with the bottom voice held under it. This is most of " +
+        "the count change (the owner's Verse 1 keys 501 -> 187 notes; jazz-full 1365 -> 1013). (3) THE ARC'S LEVEL " +
+        "CHOOSES THE COMPING RATE: a struck bed at a `full` / `tutti` texture, or from level 0.5, re-articulates on the " +
+        "meter's pulses instead of holding the chord, so an arrival is heard (ballad-piano-vocal 292 -> 411, " +
+        "cinematic-midi 205 -> 298). Before this the only reads of the arc in `chordalTextureFor` were `isFull(level)` " +
+        "and `level !== \"tutti\"`, neither of which can move a rate. (4) ONE GRID FOR WHERE THE CHORD CHANGES " +
+        "(`visibleChords`): the comping and bass onsets were placed from the analysed chord times while the voicing solver " +
+        "worked from `chordEventsIn(..., { grid })`, whose onsets B-13 snapped to the beat; on the owner's Outro that " +
+        "230 ms disagreement made the piano voice the *previous* chord for a whole bar (`harmony:clash_share` 0.42-0.58, " +
+        "blocking). `visibleChords` now returns the same quantised chords. (5) THE PEDAL BASS KEEPS THE PLAN'S ONSETS " +
+        "(`bassRhythmFor`): the pedal branch discarded `groove.bassUnits` and rebuilt its onsets from chord starts, " +
+        "re-articulating only every second bar when a bar had none - 12 empty bars of 24 in the owner's Verse 3 " +
+        "(`density:foundation_gaps`, major, twice). Also in this re-pin: the phrase breath (a comping or bed part rests " +
+        "the last 1.5 beats of a phrase-final bar), the two-sound percussion cell, the arc's opening figure written over " +
+        "an intro the chord analysis left empty, and the arc's ending gesture read instead of the section's level. " +
+        "A future digest change must again name its cause here.",
       cases: current,
     }, null, 2)}\n`);
     return;

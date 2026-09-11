@@ -14,7 +14,8 @@
  * module owns the metrical accent table for every meter the composer and the
  * performance engine share.
  */
-import type { ChordHarmonyEvent, GrooveMeterFeel, MusicalNote } from "@workspace/db";
+import type { ChordHarmonyEvent, DecisionOriginLayer, GrooveMeterFeel, MusicalNote } from "@workspace/db";
+import type { DecisionRegistry } from "../decisionProvenance";
 import type { PartGenerationRequest } from "../partComposer";
 
 /** A meter read from "N/D": how many denominator units a bar has, and how they group. */
@@ -62,7 +63,46 @@ export type ComposeFrame = BarTiming & {
    * (`MusicalNote.motif`) so a melodic part can say which cell it states.
    */
   push: (start: number, duration: number, pitch: number, velocity: number, suffix: string, motif?: MusicalNote["motif"]) => void;
+  /**
+   * Brain B-21: the candidate's decision registry (B-11), when the caller
+   * passes one. A writer registers the choices it made — the register window
+   * it wrote in, the texture it realised, the arc figure it stated — so "why is
+   * this note here" is answerable from the shipped candidate. Absent, the
+   * writers behave identically and record nothing.
+   */
+  decisions?: DecisionRegistry;
 };
+
+/**
+ * Register one writer decision on the frame's registry (a no-op without one)
+ * and attribute this part's bars to it. Ids are deterministic, so the same
+ * decision taken for two chords of one part is one record (B-11's contract).
+ */
+export function recordWriterDecision(frame: ComposeFrame, input: {
+  layer?: DecisionOriginLayer;
+  kind: string;
+  source?: string;
+  reason: string;
+  startBar?: number;
+  endBar?: number;
+}): void {
+  const registry = frame.decisions;
+  if (!registry) return;
+  const { request } = frame;
+  const startBar = input.startBar ?? request.partWindow.startBar;
+  const endBar = input.endBar ?? request.partWindow.endBar;
+  const record = registry.register({
+    layer: input.layer ?? "compose",
+    kind: input.kind,
+    sectionName: request.section.sectionName,
+    instrument: request.instrument,
+    startBar, endBar,
+    ...(input.source ? { source: input.source } : {}),
+    reason: input.reason,
+    qualifiers: [request.section.sectionName, request.instrument, request.role],
+  });
+  registry.attach(request.instrument, startBar, endBar, [record.id]);
+}
 
 export type PartWriter = (frame: ComposeFrame) => void;
 

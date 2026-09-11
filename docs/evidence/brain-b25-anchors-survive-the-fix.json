@@ -1,0 +1,582 @@
+{
+  "version": "BRAIN_B25_ANCHORS_SURVIVE_v1",
+  "generatedAt": "2026-09-11T00:00:00.000Z",
+  "builtAgainst": "origin/ws-brain-b21 5169a1d (PR-B21's head; this stream merges after it)",
+  "question": "B-21 fixed the defects the owner's anchor carried. The anchor is recomposed from live code, so five assertions that pinned those defects went red. Assert the fix, keep every control, and demonstrate each control's sensitivity where the anchor can no longer carry it.",
+  "ownerAnchor": {
+    "id": "owner-rachem-na",
+    "trackIds": [
+      "bass-bass",
+      "drums-groove",
+      "keys-rhythmic_harmony",
+      "percussion-fill",
+      "strings-pad"
+    ],
+    "totalBars": 141,
+    "sections": [
+      "Intro",
+      "Verse 1",
+      "Verse 2",
+      "Chorus",
+      "Chorus 2",
+      "Verse 3",
+      "Bridge",
+      "Chorus 3",
+      "Outro"
+    ],
+    "firstNoteSeconds": 0,
+    "offGridToleranceSeconds": 0.03,
+    "dimensionScores": {
+      "harmony": 40,
+      "voiceLeading": 94.74,
+      "melodyAndCounterline": 94.18,
+      "motifRecurrenceAndDevelopment": 97.19,
+      "groove": 70.74,
+      "rhythmicInteraction": 100,
+      "orchestration": 100,
+      "idiomaticity": 100,
+      "register": 100,
+      "density": 91.22,
+      "transitions": 87.62,
+      "repetitionVsVariation": 100,
+      "sectionDevelopment": 94.18,
+      "playability": 100,
+      "performanceRealisation": 100,
+      "emotionalArcAndTension": 97.4
+    },
+    "nonInfoObservations": {
+      "bass_rarely_states_root:minor": 4,
+      "overhang_across_chord_change:blocking": 1,
+      "clash_share:minor": 1,
+      "voice_crossing_between_parts:minor": 1,
+      "no_common_tone_retention:minor": 1,
+      "line_static:minor": 2,
+      "recurrence_is_copy_only:minor": 1,
+      "subdivision_inconsistent:minor": 4,
+      "backbeat_missing:minor": 2,
+      "anticipation_mismatch:minor": 1,
+      "harmony_off_grid:major": 1,
+      "planned_fill_missing:minor": 1,
+      "comping_below_role_floor:minor": 2,
+      "foundation_gaps:minor": 1,
+      "planned_device_unrealised:minor": 5,
+      "repeat_without_identity:minor": 2,
+      "no_build_into_climax:minor": 1
+    },
+    "stillNotClean": {
+      "verdict": false,
+      "refusals": [
+        "overhang_across_chord_change (blocking_from_gated_dimension)"
+      ],
+      "why": "one blocking `harmony:overhang_across_chord_change` on `strings-pad` in Chorus 3 (bars 97-112) and one major `groove:harmony_off_grid` on the same part in the Bridge",
+      "blockingEvidence": [
+        {
+          "kind": "overhang_across_chord_change",
+          "bars": "97-112",
+          "tracks": [
+            "strings-pad"
+          ],
+          "evidence": {
+            "chordToneShare": 0.395,
+            "clashNotes": 5,
+            "clashShare": 0.5554,
+            "family": "strings",
+            "meanChordConfidence": 1,
+            "notesExamined": 10,
+            "overhangShare": 0.8662
+          }
+        }
+      ],
+      "isolatingControl": {
+        "what": "remove the `strings-pad` part the brief adds and re-evaluate; and, separately, build the arrangement with the brief's global planner hints withheld",
+        "withoutTheBedPart": {
+          "blocking": 0,
+          "harmonyOffGrid": 0
+        },
+        "withoutTheGlobalHints": {
+          "note": "measured separately with `orchestrateArrangement` and `briefPlannerHints({global}) `withheld: the plan has no strings part at all (0 notes against 281) and both findings disappear together",
+          "harmony": 88.77,
+          "groove": 86.34,
+          "blocking": 0,
+          "major": 0
+        },
+        "reading": "The cause is located to the bed the brief asks for (`intimate ballad; piano, soft strings, …`), not to the writers' grid and not to the performance stage. WHICH decision about that bed is wrong — the planner's, the voicing solver's or the release rule's — is UNKNOWN here and belongs to the streams that own them."
+      },
+      "decision": "the owner's song stays OUT of CLEAN_ANCHOR_IDS. It is not a control target either (141 bars x 22 part tasks), so the positive-control ledger's composition is unchanged by this decision: `controls.ts` runs the nine benchmark anchors only."
+    }
+  },
+  "controlLedger": {
+    "version": "B05C_CONTROLS_v3",
+    "regeneratedBy": "B05A_WRITE_LEDGER=1 node --test critics/controls.test.ts (the generator; not hand-edited)",
+    "entries": {
+      "density": {
+        "status": "gated",
+        "strongest": "strip_bed_to_top_voice",
+        "rate": 1,
+        "n": 9,
+        "gatingTransforms": [
+          "piano_one_note_per_bar",
+          "strip_bed_to_top_voice"
+        ]
+      },
+      "emotionalArcAndTension": {
+        "status": "informing",
+        "strongest": "swap_climax_with_quietest",
+        "rate": 1,
+        "n": 9,
+        "gatingTransforms": [
+          "swap_climax_with_quietest"
+        ]
+      },
+      "groove": {
+        "status": "gated",
+        "strongest": "unlock_bass_from_kick",
+        "rate": 1,
+        "n": 9,
+        "gatingTransforms": [
+          "onset_jitter@3",
+          "unlock_bass_from_kick"
+        ]
+      },
+      "harmony": {
+        "status": "gated",
+        "strongest": "chord_tone_to_non_chord_tone@3",
+        "rate": 1,
+        "n": 22,
+        "gatingTransforms": [
+          "chord_tone_to_non_chord_tone@3",
+          "cross_part_clash@3",
+          "parallel_perfect_motion",
+          "pitch_shift_out_of_key@3",
+          "random_pitch"
+        ]
+      },
+      "idiomaticity": {
+        "status": "informing",
+        "strongest": "piano_wide_voicing",
+        "rate": 1,
+        "n": 8,
+        "gatingTransforms": [
+          "piano_wide_voicing"
+        ]
+      },
+      "melodyAndCounterline": {
+        "status": "gated",
+        "strongest": "top_line_erratic",
+        "rate": 1,
+        "n": 9,
+        "gatingTransforms": [
+          "top_line_erratic",
+          "top_line_into_vocal_register"
+        ]
+      },
+      "motifRecurrenceAndDevelopment": {
+        "status": "informing",
+        "strongest": "random_pitch",
+        "rate": 0.5556,
+        "n": 9,
+        "gatingTransforms": []
+      },
+      "orchestration": {
+        "status": "gated",
+        "strongest": "drums_only",
+        "rate": 1,
+        "n": 9,
+        "gatingTransforms": [
+          "drums_only",
+          "silence_planned_family",
+          "tutti_everywhere"
+        ]
+      },
+      "performanceRealisation": {
+        "status": "gated",
+        "strongest": "strip_cc_and_quantise",
+        "rate": 1,
+        "n": 9,
+        "gatingTransforms": [
+          "strip_cc_and_quantise",
+          "velocity_flatten_all"
+        ]
+      },
+      "playability": {
+        "status": "gated",
+        "strongest": "bass_roots_only_leaps",
+        "rate": 1,
+        "n": 9,
+        "gatingTransforms": [
+          "bass_roots_only_leaps",
+          "piano_wide_voicing"
+        ]
+      },
+      "register": {
+        "status": "gated",
+        "strongest": "role_inversion@3",
+        "rate": 1,
+        "n": 10,
+        "gatingTransforms": [
+          "octave_displacement@3",
+          "role_inversion@3",
+          "strings_up_two_octaves"
+        ]
+      },
+      "repetitionVsVariation": {
+        "status": "informing",
+        "strongest": "bar_copy_repetition@3",
+        "rate": 0.5313,
+        "n": 32,
+        "gatingTransforms": []
+      },
+      "rhythmicInteraction": {
+        "status": "informing",
+        "strongest": "parallel_doubling@3",
+        "rate": 1,
+        "n": 22,
+        "gatingTransforms": [
+          "parallel_doubling@3"
+        ]
+      },
+      "sectionDevelopment": {
+        "status": "demoted",
+        "strongest": "section_swap@3",
+        "rate": 0.0435,
+        "n": 23,
+        "gatingTransforms": []
+      },
+      "transitions": {
+        "status": "informing",
+        "strongest": "erase_boundary_events+realise_boundaries",
+        "rate": 1,
+        "n": 9,
+        "gatingTransforms": []
+      },
+      "voiceLeading": {
+        "status": "informing",
+        "strongest": "bass_roots_only_leaps",
+        "rate": 1,
+        "n": 9,
+        "gatingTransforms": [
+          "bass_roots_only_leaps"
+        ]
+      }
+    },
+    "movedByB21": {
+      "melodyAndCounterline": "informing -> GATED: `top_line_into_vocal_register` now detects 9/9 (was under the bar), so it has two independent non-prepared transforms",
+      "voiceLeading": "gated -> INFORMING: `parallel_perfect_motion` falls to 8/9. Cause isolated: on `acoustic-demo` the guitar bed now repeats the same bottom note in 65 of 72 consecutive cluster pairs, so the transform's re-voicing over that bottom note moves no voice and produces a 6.5 % parallel share (14/216 voice-pair transitions) against the dimension's 20 % minor threshold. Compare ballad-piano-vocal, 74/291 = 25.4 %, detected. The harness stops producing the damage on that anchor; the dimension is right. NOT fixed here — see Honest limits.",
+      "emotionalArcAndTension": "informing (0 of 2) -> informing (1 of 2): `swap_climax_with_quietest` now detects 9/9",
+      "register": "gated, 2 -> 3 transforms (gains `octave_displacement@3`), n 9 -> 10",
+      "playability": "gated, 4 -> 2 transforms (loses `octave_displacement@3` and `strings_up_two_octaves`)",
+      "motifRecurrenceAndDevelopment": "informing, 0.5 (n=8) -> 0.5556 (n=9)",
+      "sectionDevelopment": "demoted, 0.087 -> 0.0435 (n=23)",
+      "groove": "gated, same two transforms; the strongest control is now `unlock_bass_from_kick`"
+    },
+    "cleanAnchorBlockingRate": {
+      "density": 0,
+      "emotionalArcAndTension": 0,
+      "groove": 0,
+      "harmony": 0,
+      "idiomaticity": 0,
+      "melodyAndCounterline": 0,
+      "motifRecurrenceAndDevelopment": 0,
+      "orchestration": 0,
+      "performanceRealisation": 0,
+      "playability": 0,
+      "register": 0,
+      "repetitionVsVariation": 0,
+      "rhythmicInteraction": 0,
+      "sectionDevelopment": 0,
+      "transitions": 0,
+      "voiceLeading": 0
+    },
+    "nullControlAnchors": [
+      "pop-full",
+      "ballad-piano-vocal",
+      "rock-full",
+      "dance-full",
+      "acoustic-demo",
+      "orchestral-midi",
+      "jazz-full",
+      "cinematic-midi",
+      "ethnic-vocal"
+    ],
+    "nullControlStillHolds": true
+  },
+  "controls": [
+    {
+      "control": "A — remove the performance timing (`ownerComposedAnchor`)",
+      "onTheOwnersSongBefore": "B-05c: composed 0 / shipped 0, off-grid shares 0.55-0.73 per part. B-13: composed 45.55 / shipped 8.85, 3-4 off_grid observations per harmonic part.",
+      "onTheOwnersSongNow": {
+        "composedScore": 83,
+        "shippedScore": 70.74,
+        "offGridComposed": 0,
+        "offGridShipped": 0,
+        "medianDeviationMsPerPart": {
+          "bass-bass": 4.8011,
+          "drums-groove": 3.3011,
+          "keys-rhythmic_harmony": 5.9301,
+          "percussion-fill": 3.3222,
+          "strings-pad": 12.4049
+        }
+      },
+      "sensitivityDemonstratedOn": {
+        "case": "`displaceHarmonyOffGrid(shipped, 0.18)` applied to the shipped notes alone (a performance stage) and to both layers (a composer); the two cases differ only in what the composed layer carries",
+        "displacedAfterComposition": {
+          "total": 22,
+          "compose": 5,
+          "perform": 17,
+          "composedRecordedOnGrid": 17
+        },
+        "displacedInTheWriting": {
+          "total": 22,
+          "compose": 18,
+          "perform": 4,
+          "composedRecordedOffGrid": 14
+        },
+        "doesNotFireOnTheCleanCase": {
+          "total": 0,
+          "compose": 0,
+          "perform": 0
+        }
+      },
+      "reproducedBy": "critics/dimensions/ownerAnchor.test.ts — \"control A — remove the performance timing…\""
+    },
+    {
+      "control": "B — quantise to the composer's grid (`quantiseFamiliesToGrid`)",
+      "onTheOwnersSongBefore": "B-05c/B-13: >= 3 `off_grid` on the bass, removed by snapping the bass onsets to the sixteenth grid; sixteenths 56.49 vs eighths 83.46 over all the harmony.",
+      "onTheOwnersSongNow": {
+        "bassOffGridBefore": 0,
+        "theControlIsANoOp": true
+      },
+      "sensitivityDemonstratedOn": {
+        "case": "the constructed off-grid arrangement",
+        "floorBefore": 0,
+        "bassOnly": {
+          "bassBefore": 5,
+          "bassAfter": 0,
+          "keysBefore": 9,
+          "keysAfter": 9,
+          "stringsBefore": 8,
+          "stringsAfter": 8
+        },
+        "allHarmony": [
+          {
+            "grid": "sixteenths",
+            "score": 53.53,
+            "offGrid": 0,
+            "harmonyOffGrid": 1
+          },
+          {
+            "grid": "the kit's eighths",
+            "score": 69.34,
+            "offGrid": 0,
+            "harmonyOffGrid": 0
+          }
+        ]
+      },
+      "reproducedBy": "critics/dimensions/ownerAnchor.test.ts — \"control B — quantise to the composer's grid…\""
+    },
+    {
+      "control": "`strip_bed_to_top_voice` (density: `single_voice_bed`)",
+      "onTheOwnersSongBefore": "R-1b P0-1 / B-05c: >= 5 blocking `single_voice_bed` on `strings-pad`, shipped mean voices 1.00 against a composed 3.0-4.0. Closed by B-13.",
+      "onTheOwnersSongNow": {
+        "singleVoiceBed": 0
+      },
+      "sensitivityDemonstratedOn": {
+        "case": "`strip_bed_to_top_voice` on the owner's own beds",
+        "targets": [
+          "keys-rhythmic_harmony",
+          "strings-pad"
+        ],
+        "found": 11,
+        "withTheComposedNotesInView": 7,
+        "attributedToPerformAndBlocking": 7,
+        "attributedToComposeAndMajor": 4
+      },
+      "reproducedBy": "critics/dimensions/ownerAnchor.test.ts — \"the string bed the brief asked for no longer ships as one voice…\""
+    },
+    {
+      "control": "`displaceHarmonyOffGrid` (groove floor)",
+      "onTheOwnersSongBefore": "R-1a P1-1: groove = 0.",
+      "onTheOwnersSongNow": {
+        "groove": 70.74
+      },
+      "sensitivityDemonstratedOn": {
+        "case": "`displaceHarmonyOffGrid(shipped, 0.18)`",
+        "score": 0,
+        "offGrid": 22,
+        "onTheBass": 5,
+        "dropWorth": 70.74
+      },
+      "reproducedBy": "critics/dimensions/ownerAnchor.test.ts — \"the off-grid control still has sensitivity on this anchor…\""
+    },
+    {
+      "control": "`strings_up_two_octaves` (register: `top_line_above_comfortable_ceiling`)",
+      "onTheOwnersSongBefore": "R-1b / wave-3 brief: 5 refusals under `major_on_a_bed` (strings bars 25-40, strings 57-72, keys 113-128) plus one `climax_all_treble`; the bed reached MIDI 92. Closed by B-21 D4.",
+      "onTheOwnersSongNow": {
+        "register": 100,
+        "nonInfoObservations": 0
+      },
+      "sensitivityDemonstratedOn": {
+        "case": "`strings_up_two_octaves` on the owner's bed",
+        "score": 0,
+        "topLineAboveComfortableCeiling": 8,
+        "allOnTheBedAndMajor": true
+      },
+      "reproducedBy": "critics/dimensions/ownerAnchor.test.ts — \"the register defect closed too (B-21 D4)…\""
+    },
+    {
+      "control": "`silenceOpeningBars` (orchestration: `planned_family_silent`) — NEW in B-25",
+      "onTheOwnersSongBefore": "R-1b P0-5 / P1-7: the two-bar intro was silent, the first note at 3.795 s, and `planned_family_silent` led the judge's ordering at priority 2404. Closed by B-21 D1.",
+      "onTheOwnersSongNow": {
+        "firstNoteSeconds": 0,
+        "plannedFamilySilent": 0
+      },
+      "sensitivityDemonstratedOn": {
+        "case": "`counterline_into_bed_register` + `strip_bed_to_top_voice` + `silenceOpeningBars(2)` + `displaceHarmonyOffGrid` — one transform per closed defect",
+        "detail": "bars 1-2 emptied on bass-bass,keys-rhythmic_harmony,strings-pad: the song starts at 3.680 s",
+        "releasable": false,
+        "refusalKinds": [
+          "planned_family_silent",
+          "single_voice_bed",
+          "harmony_off_grid",
+          "off_grid",
+          "overhang_across_chord_change",
+          "top_line_above_comfortable_ceiling",
+          "climax_all_treble"
+        ],
+        "positions": {
+          "offGridHarmony": 1,
+          "stringBed": 5,
+          "emptyIntro": 33
+        },
+        "p0_5": "R-1b P0-5 holds: the off-grid harmony and the string bed both outrank the empty intro, which sits at the salience floor because no music sounds in bars 1-2.",
+        "topProblems": [
+          "off_grid (blocking)",
+          "harmony_off_grid (blocking)",
+          "single_voice_bed (blocking)"
+        ]
+      },
+      "reproducedBy": "critics/rank.test.ts — \"on the owner's song, constructed with R-1b's four defects…\""
+    }
+  ],
+  "foundNotFixed": {
+    "redAtTheB21BaseOutsideThisStreamsFiles": {
+      "note": "measured by stashing this stream's changes and re-running: identical failures, so B-21 leaves them and B-25 does not cause them",
+      "critics/dimensions/density.test.ts": 2,
+      "critics/dimensions/groove.test.ts": 1,
+      "critics/dimensions/harmony.test.ts": 1,
+      "critics/dimensions/motifRecurrenceAndDevelopment.test.ts": 1,
+      "critics/dimensions/playability.test.ts": 1,
+      "critics/dimensions/register.test.ts": 2,
+      "critics/dimensions/repetitionVsVariation.test.ts": 2,
+      "critics/dimensions/sectionDevelopment.test.ts": 2,
+      "critics/dimensions/transitions.test.ts": 1,
+      "critics/adversarial/adversarial.test.ts": 1,
+      "critics/adversarial/evidence.test.ts": 1,
+      "total": "15 tests in 11 suites, every one an anchor pin the improved composer moved — the same class this stream closes in its own four suites"
+    },
+    "stringBedTooHigh": {
+      "what": "`adversarial.instrumentReality:string_bed_too_high` is raised again after B-21, on two anchors",
+      "measured": [
+        {
+          "anchor": "orchestral-midi",
+          "track": "strings-climax_layer",
+          "section": "Chorus",
+          "bars": "19-30",
+          "evidence": {
+            "meanPitch": 79.9302,
+            "minPitch": 73,
+            "maxPitch": 86,
+            "bars": 7,
+            "seconds": 28.4211,
+            "threshold": 79
+          }
+        },
+        {
+          "anchor": "owner-rachem-na",
+          "track": "strings-pad",
+          "section": "Bridge",
+          "bars": "97-110",
+          "evidence": {
+            "meanPitch": 80,
+            "minPitch": 75,
+            "maxPitch": 84,
+            "bars": 8,
+            "seconds": 25.7609,
+            "threshold": 79
+          }
+        }
+      ],
+      "reading": "B-13 had closed this (orchestral-midi averaged MIDI 74.84). Two sources of truth for how high a string bed may sit: the adversarial rule uses a fixed 79, while B-21 D4 gives the writers `instrumentProfile.roleRegisterFor`, which allows a violin section CLIMAX_LAYER 67-91. `register` therefore scores 100 on the owner's song while the adversarial critic calls its Bridge bed too high at a mean of 80.0. Charter rule 6. Belongs to B-21 and the adversarial stream; not touched here."
+    },
+    "adversarialDisagreementNull": {
+      "what": "`critics/adversarial/evidence.test.ts` asserts \"at least one anchor produces a recorded disagreement\" and no anchor produces one any more",
+      "measured": [
+        {
+          "anchor": "pop-full",
+          "disagreements": 0,
+          "agreements": 12
+        },
+        {
+          "anchor": "ballad-piano-vocal",
+          "disagreements": 0,
+          "agreements": 10
+        },
+        {
+          "anchor": "rock-full",
+          "disagreements": 0,
+          "agreements": 13
+        },
+        {
+          "anchor": "dance-full",
+          "disagreements": 0,
+          "agreements": 10
+        },
+        {
+          "anchor": "acoustic-demo",
+          "disagreements": 0,
+          "agreements": 9
+        },
+        {
+          "anchor": "orchestral-midi",
+          "disagreements": 0,
+          "agreements": 15
+        },
+        {
+          "anchor": "ethnic-vocal",
+          "disagreements": 0,
+          "agreements": 6
+        },
+        {
+          "anchor": "jazz-full",
+          "disagreements": 0,
+          "agreements": 7
+        },
+        {
+          "anchor": "cinematic-midi",
+          "disagreements": 0,
+          "agreements": 14
+        },
+        {
+          "anchor": "owner-rachem-na",
+          "disagreements": 0,
+          "agreements": 20
+        }
+      ],
+      "reading": "The judge's disagreement machinery has no demonstrated sensitivity on the anchor set. Same class as this stream's job — the fix is a constructed case, not a deleted assertion. Not this stream's file."
+    },
+    "b21HeadlineDiscrepancy": {
+      "what": "PR-B21's tracker reports `releasable: true, 0 blocking, 0 major` on the owner's song; the critics' anchor path reports 1 blocking + 1 major on every candidate",
+      "measured": "orchestrateArrangement({ songModel: rachemNaSongModel(), plannerHints: briefPlannerHints(compileProductionBrief(OWNER_BRIEF…)), composeParts: composeReferencePart, candidateCount: 1 | 3 | 5 }) — every candidate: harmony 40, groove 70.74, blocking [overhang_across_chord_change@97-112 strings-pad], major [harmony_off_grid@Bridge]. Injecting composeParts or letting the orchestrator default makes no difference (both report composer REFERENCE_PART_COMPOSER_V1). Withholding the brief's global planner hints does: harmony 88.77, groove 86.34, 0 blocking, 0 major, and no strings part at all.",
+      "reading": "Not resolved here. Either B-21 measured through a different gate, or the two runs differ in a variable this stream did not find. The lead should reconcile it against B-21's own probe before merging, because the finding sits on the string bed the owner's brief asks for."
+    }
+  },
+  "honestLimits": [
+    "Nothing was generated or rendered. This is symbolic evidence: the anchors are recomposed from live code by `orchestrateArrangement` with `composeReferencePart`, and every number above comes from the unmodified critic dimensions.",
+    "No dimension, threshold, tolerance or release rule was touched. `off_grid`'s tolerance is still max(30 ms, 5 % of a beat); `harmony_off_grid`'s is still 50 ms against the kit's own grid.",
+    "The owner's song is still not a clean anchor and is still not a control target. Its remaining blocking finding is located to the bed the brief adds; WHICH decision about that bed is wrong is UNKNOWN and was not isolated further.",
+    "`voiceLeading` loses its gate in the regenerated ledger (gated -> informing). The cause is isolated and reported, but the transform is not re-pointed: making `parallel_perfect_motion` skip parts whose bottom voice does not move would restore the gate, and this stream declined to make a harness change whose effect is to restore a gate. That decision belongs to a reviewer, not to the stream that benefits from it.",
+    "15 tests in 11 suites outside this stream's file set are red at the B-21 base for the same reason this stream exists. They are measured and listed, not fixed.",
+    "The B-05a and B-05c evidence JSONs are regenerated by their own generators. THIS file is a snapshot built by a scratchpad script; every number in it is re-asserted by a committed test, named per row in `reproducedBy`, but there is no committed builder for this file itself.",
+    "The `silenceOpeningBars` control is new and is exercised on the owner's anchor only. It is not in `PURPOSE_BUILT`, so it does not enter the positive-control ledger and gates nothing."
+  ]
+}

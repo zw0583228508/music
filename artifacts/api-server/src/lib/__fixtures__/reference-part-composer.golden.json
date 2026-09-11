@@ -1,46 +1,46 @@
 {
-  "recordedAt": "RE-PINNED at the B-24 merge: the performance engine's timing and velocity jitter are seeded from the music (family, role, onset, pitch) instead of from the note id, because ids are built as part-<sectionName>-<instrument>-<role> and a producer renaming a section moved every onset; and clampPolyphony now judges a held note against the real start of the earliest note in an onset group instead of that group's value rounded to whole milliseconds, which had let a 30.1 ms overlap pass a 30 ms tolerance. Note counts are unchanged for every case (921 / 938 / 1304 on pop-full); only the performed timing and velocity moved, so every digest moved with them. composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split, orchestration noteCount re-pinned after B-00 D1; RE-PINNED at the B-01 merge (planners v1.1: arc targets, sung-by-default, mix/ensemble excluded, operators) - every part request changed, so every digest changed; the split itself was verified byte-identical at 39aad30 -> B-00. RE-PINNED again at the B-03 merge: instrument definitions now come from sourced profiles (ranges, polyphony and leap limits from the GM table, e.g. strings leap 10 -> 24; keys never a kit), which changes the constraints every part is composed under. A future digest change must again name its cause here. RE-PINNED again at the B-02 merge (rebased over B-03 and B-10) (harmony realisation, base a751796): the four chordal writers (bass line planned first, keys / strings / brass voicings solved per role against it) replaced the root-position stacks and the root-nearest-40 bass; the composer honours partWindow (sustained and rhythmic parts stop at their exit bar); chord tones are read through chordSymbols.ts (identical for this corpus's maj / min / 7 / m7 symbols) - so every case's composer digest changed and every shipped-note digest with it; the rhythm, transition and counter-melody writers are untouched. A future digest change must again name its cause here. RE-PINNED again at the B-04 merge (rebased over B-02, B-03, B-10) (groove + transitions): the composer's bar is now numerator x one denominator unit (the 7/8 case's parts fall inside their sections, so every 7/8 digest changed), the drum kit / percussion / ostinato read the GroovePlan (meter templates, tempo-capped hats, shared anticipations, fills from the vocabulary, the ending), and the performance engine accents per meter, pedals on chord onsets, ghosts on weak positions and broadens cadences - so every shipped-note digest changed; the harmony writers (B-02) are untouched, so a 4/4 case's bass / keys / strings composer digests changed only where the whole-part digest includes the kit. A future digest change must again name its cause here. RE-PINNED again at the B-18 merge (the brief read like a musician). Five of the nine cases moved, for two named causes. (1) Approach tones (R-1b P1-6): the bass now takes them from the mode's own scale (harmonyPlan/styleParams.approachToneChoice) instead of the union of every pitch class any chord of the song uses. That union is what admitted an Ab under Dm and a B natural under Bb in an F major ballad; the old test was `chromaticApproach || scale.has(pc) || Math.abs(p - target) === 2`, with a fallback to any non-chord tone. This moved ballad-piano-vocal, ethnic-vocal and cinematic-midi (all `intimate` -> mode-restricted) and acoustic-demo's shipped notes only - the note count is identical in all four, because the same approaches are written from admissible notes. The chromatic styles (pop / band / electronic / jazz aesthetics) state no offset preference and no mode restriction, so pop-full, rock-full, dance-full and orchestral-midi are byte-identical. (2) Groove without a brief (R-1b P1-3): jazz-full is the only case whose *plan* changed. Its 24 chords are a ii-V vocabulary with sevenths, which `inferStyleFromSong` reads as a jazz standard, and a jazz standard forbids `four_on_floor`; the map's tempo band (132 BPM, no measured syncopation) used to answer `four_on_floor`. The measured rhythm is not swung either, so the plan writes `steady_pulse` and records why in `styleDecisions.grooveReason` - 16 fewer composed notes (988 -> 972), all of them kit. That new bass line then wrote two approach notes that are the major third of the minor chord they sound over (an E natural over Cm7, which B-05c's harmony critic grades `major`); `approachToneChoice` now refuses that note in every style, chromatic idioms included, which is the second thing that moved jazz-full's digest and takes its harmony score from 78.4 back to 89.2. Note count unchanged (972). RE-PINNED again inside B-18, one cause: a chromatic style now reads the mode as a *preference*. `approachToneChoice` computed the mode's approach set only for a `modeOnly` vocabulary, so the chromatic vocabulary (pop / band / electronic / jazz aesthetics) consulted no mode at all and took the first admissible pitch - a half step from the target - even where the mode already offered a step into it. It now looks inside the mode first and falls back to any non-chord tone only when the mode offers nothing, which is what `allowOutOfMode` was always documented to mean. Measured on jazz-full: the bass approached G through F sharp twice per section with F natural admissible; the harmony dimension grades an out-of-chord-mode approach `minor` in any style, and jazz-full goes 89.2 -> 96.4 with both `approach_tone_wrong_mode` findings gone and `outOfKeyShare` 0. pop-full, rock-full, dance-full and jazz-full moved, note counts identical in all four (the same approaches are written from admissible notes); the mode-restricted cases (ballad-piano-vocal, acoustic-demo, orchestral-midi, ethnic-vocal, cinematic-midi) are byte-identical, and so is every case's section plan - the per-family role rule that went in with this re-pin only fires where a brief named a family's level, which no corpus case does. A future digest change must again name its cause here. RE-PINNED again at the B-13 merge (one playability truth, one groove for every part, base 30041f5): every harmony writer now takes its onsets from the shared GroovePlan instead of subdividing the analysed chord span - the bass from bassRhythmFor (kick/bass relation, shared anticipations, approach tones, pedal, held ending), keys / guitar / strings / pads from compingRhythmFor on the texture the candidate strategy asks for (sustained bed, block chords, arpeggio) - and the analysed chord onsets are read as the beat or the 8th they state (chordEventsIn's grid), so every composer digest changed on every case. The shipped-note digests changed with them and for three more reasons: the strategy no longer thins a part by an evenly spaced stride (texture instead of deletion), the performance engine performs each section with its own role and dynamic shape instead of the first section's, and the playability repair reads a rolled or staggered chord as one gesture so a bed keeps its voices. A future digest change must again name its cause here. RE-PINNED again at the second reconciliation of B-13 with B-18, one cause in `composer/harmonyParts.writeBassLine`: the bass's approach tone is written where the bass *planner* writes its own - on the last beat of the chord it is leaving (`realiseBassLine`: `e - beatSeconds`) - instead of on whichever groove onset happened to be the last before the change, and its pitch now comes from B-18's `approachToneChoice` instead of the copy of the pre-B-18 rule (`chromaticApproach || scale.has(pc) || a whole tone`) that lived in this writer. The two were one defect: with B-18 reading a jazz standard's own convention instead of the tempo map, jazz-full's bass plays beats 1 and 3, so the promoted onset sat a beat and a half from the arrival and sounded a third of the chord - and, chosen by the old rule, it could be the major third of the minor chord it sounded over (B natural under Gm7, E natural under Cm7). B-05c's harmony dimension graded jazz-full's bass at chord-tone share 0.878 with a major `clash_share`; it is 0.952 with no major finding, and the owner's song keeps all eight of its approaches into the chord the bass states (`brainB02Harmony`), now led into from a beat away instead of from the middle of the chord. Seven of the nine cases moved, composer and shipped digests together: pop-full 906 -> 907, rock-full 781 -> 783, dance-full 788 -> 789, orchestral-midi 413 -> 414 and ethnic-vocal 227 -> 228 gain the approach notes the groove had no onset for; acoustic-demo's count is unchanged at 380 and only its digest moved; jazz-full goes 1202 -> 1365, most of it B-18's own groove reading for a jazz standard, which this writer now plays through. ballad-piano-vocal and cinematic-midi are byte-identical - `brainB02Evidence` measures zero bass approaches on both, so there was nothing here to move. The section plans, the kit, the comping and the counter-melody are untouched. A future digest change must again name its cause here.",
+  "recordedAt": "RE-PINNED at the Wave 3 integration (B-21 + B-25 + B-26 onto main with B-07, B-19, B-22, B-24): the writers changed under B-21 - the arc's opening figure and ending gesture realised in notes, the texture following the arc's per-section level, the arpeggio realised as a broken chord, the pedal bass on the plan's onsets, and the register taken from the instrument profile - so the composed material itself moved, not only its performance. Re-pinned once at the end of the rebase rather than at each stream, because B-19's selection, B-22's melody evidence and B-24's jitter reseed move the shipped notes too and a per-stream pin would have recorded a state that never existed on main. RE-PINNED at the B-24 merge: the performance engine's timing and velocity jitter are seeded from the music (family, role, onset, pitch) instead of from the note id, because ids are built as part-<sectionName>-<instrument>-<role> and a producer renaming a section moved every onset; and clampPolyphony now judges a held note against the real start of the earliest note in an onset group instead of that group's value rounded to whole milliseconds, which had let a 30.1 ms overlap pass a 30 ms tolerance. Note counts are unchanged for every case (921 / 938 / 1304 on pop-full); only the performed timing and velocity moved, so every digest moved with them. composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split, orchestration noteCount re-pinned after B-00 D1; RE-PINNED at the B-01 merge (planners v1.1: arc targets, sung-by-default, mix/ensemble excluded, operators) - every part request changed, so every digest changed; the split itself was verified byte-identical at 39aad30 -> B-00. RE-PINNED again at the B-03 merge: instrument definitions now come from sourced profiles (ranges, polyphony and leap limits from the GM table, e.g. strings leap 10 -> 24; keys never a kit), which changes the constraints every part is composed under. A future digest change must again name its cause here. RE-PINNED again at the B-02 merge (rebased over B-03 and B-10) (harmony realisation, base a751796): the four chordal writers (bass line planned first, keys / strings / brass voicings solved per role against it) replaced the root-position stacks and the root-nearest-40 bass; the composer honours partWindow (sustained and rhythmic parts stop at their exit bar); chord tones are read through chordSymbols.ts (identical for this corpus's maj / min / 7 / m7 symbols) - so every case's composer digest changed and every shipped-note digest with it; the rhythm, transition and counter-melody writers are untouched. A future digest change must again name its cause here. RE-PINNED again at the B-04 merge (rebased over B-02, B-03, B-10) (groove + transitions): the composer's bar is now numerator x one denominator unit (the 7/8 case's parts fall inside their sections, so every 7/8 digest changed), the drum kit / percussion / ostinato read the GroovePlan (meter templates, tempo-capped hats, shared anticipations, fills from the vocabulary, the ending), and the performance engine accents per meter, pedals on chord onsets, ghosts on weak positions and broadens cadences - so every shipped-note digest changed; the harmony writers (B-02) are untouched, so a 4/4 case's bass / keys / strings composer digests changed only where the whole-part digest includes the kit. A future digest change must again name its cause here. RE-PINNED again at the B-18 merge (the brief read like a musician). Five of the nine cases moved, for two named causes. (1) Approach tones (R-1b P1-6): the bass now takes them from the mode's own scale (harmonyPlan/styleParams.approachToneChoice) instead of the union of every pitch class any chord of the song uses. That union is what admitted an Ab under Dm and a B natural under Bb in an F major ballad; the old test was `chromaticApproach || scale.has(pc) || Math.abs(p - target) === 2`, with a fallback to any non-chord tone. This moved ballad-piano-vocal, ethnic-vocal and cinematic-midi (all `intimate` -> mode-restricted) and acoustic-demo's shipped notes only - the note count is identical in all four, because the same approaches are written from admissible notes. The chromatic styles (pop / band / electronic / jazz aesthetics) state no offset preference and no mode restriction, so pop-full, rock-full, dance-full and orchestral-midi are byte-identical. (2) Groove without a brief (R-1b P1-3): jazz-full is the only case whose *plan* changed. Its 24 chords are a ii-V vocabulary with sevenths, which `inferStyleFromSong` reads as a jazz standard, and a jazz standard forbids `four_on_floor`; the map's tempo band (132 BPM, no measured syncopation) used to answer `four_on_floor`. The measured rhythm is not swung either, so the plan writes `steady_pulse` and records why in `styleDecisions.grooveReason` - 16 fewer composed notes (988 -> 972), all of them kit. That new bass line then wrote two approach notes that are the major third of the minor chord they sound over (an E natural over Cm7, which B-05c's harmony critic grades `major`); `approachToneChoice` now refuses that note in every style, chromatic idioms included, which is the second thing that moved jazz-full's digest and takes its harmony score from 78.4 back to 89.2. Note count unchanged (972). RE-PINNED again inside B-18, one cause: a chromatic style now reads the mode as a *preference*. `approachToneChoice` computed the mode's approach set only for a `modeOnly` vocabulary, so the chromatic vocabulary (pop / band / electronic / jazz aesthetics) consulted no mode at all and took the first admissible pitch - a half step from the target - even where the mode already offered a step into it. It now looks inside the mode first and falls back to any non-chord tone only when the mode offers nothing, which is what `allowOutOfMode` was always documented to mean. Measured on jazz-full: the bass approached G through F sharp twice per section with F natural admissible; the harmony dimension grades an out-of-chord-mode approach `minor` in any style, and jazz-full goes 89.2 -> 96.4 with both `approach_tone_wrong_mode` findings gone and `outOfKeyShare` 0. pop-full, rock-full, dance-full and jazz-full moved, note counts identical in all four (the same approaches are written from admissible notes); the mode-restricted cases (ballad-piano-vocal, acoustic-demo, orchestral-midi, ethnic-vocal, cinematic-midi) are byte-identical, and so is every case's section plan - the per-family role rule that went in with this re-pin only fires where a brief named a family's level, which no corpus case does. A future digest change must again name its cause here. RE-PINNED again at the B-13 merge (one playability truth, one groove for every part, base 30041f5): every harmony writer now takes its onsets from the shared GroovePlan instead of subdividing the analysed chord span - the bass from bassRhythmFor (kick/bass relation, shared anticipations, approach tones, pedal, held ending), keys / guitar / strings / pads from compingRhythmFor on the texture the candidate strategy asks for (sustained bed, block chords, arpeggio) - and the analysed chord onsets are read as the beat or the 8th they state (chordEventsIn's grid), so every composer digest changed on every case. The shipped-note digests changed with them and for three more reasons: the strategy no longer thins a part by an evenly spaced stride (texture instead of deletion), the performance engine performs each section with its own role and dynamic shape instead of the first section's, and the playability repair reads a rolled or staggered chord as one gesture so a bed keeps its voices. A future digest change must again name its cause here. RE-PINNED again at the second reconciliation of B-13 with B-18, one cause in `composer/harmonyParts.writeBassLine`: the bass's approach tone is written where the bass *planner* writes its own - on the last beat of the chord it is leaving (`realiseBassLine`: `e - beatSeconds`) - instead of on whichever groove onset happened to be the last before the change, and its pitch now comes from B-18's `approachToneChoice` instead of the copy of the pre-B-18 rule (`chromaticApproach || scale.has(pc) || a whole tone`) that lived in this writer. The two were one defect: with B-18 reading a jazz standard's own convention instead of the tempo map, jazz-full's bass plays beats 1 and 3, so the promoted onset sat a beat and a half from the arrival and sounded a third of the chord - and, chosen by the old rule, it could be the major third of the minor chord it sounded over (B natural under Gm7, E natural under Cm7). B-05c's harmony dimension graded jazz-full's bass at chord-tone share 0.878 with a major `clash_share`; it is 0.952 with no major finding, and the owner's song keeps all eight of its approaches into the chord the bass states (`brainB02Harmony`), now led into from a beat away instead of from the middle of the chord. Seven of the nine cases moved, composer and shipped digests together: pop-full 906 -> 907, rock-full 781 -> 783, dance-full 788 -> 789, orchestral-midi 413 -> 414 and ethnic-vocal 227 -> 228 gain the approach notes the groove had no onset for; acoustic-demo's count is unchanged at 380 and only its digest moved; jazz-full goes 1202 -> 1365, most of it B-18's own groove reading for a jazz standard, which this writer now plays through. ballad-piano-vocal and cinematic-midi are byte-identical - `brainB02Evidence` measures zero bass approaches on both, so there was nothing here to move. The section plans, the kit, the comping and the counter-melody are untouched. RE-PINNED again at the B-21 merge (the writers write music, base 3b9ace3). All nine cases moved, composer and shipped digests together, for five named causes, every one of them a writer reading a decision that already existed. (1) REGISTER (`composer/registers.ts`): a part's register window is now the role register its own instrument profile gives it - `roleRegisterFor(profile, role)`, the same table `critics/dimensions/register` measures against - instead of the family comfortable range widened by the argmax of `section.registerDistribution`. That distribution is a *histogram of the section's active families* (sectionPhrasePlanner), so using it to shift each part raised the bass, the keys and the strings together whenever a section leaned high: on the owner's song the keys wrote to MIDI 89 against a HARMONIC_BED ceiling of 67 and the strings to 92, four `top_line_above_comfortable_ceiling` findings and one `climax_all_treble`. `raise_register` now lifts the floor inside the window instead of the ceiling above it. (2) THE ARPEGGIO IS A BROKEN CHORD (`composer/texture.ts` + `writeChordal`): an `arpeggio` archetype whose group is shorter than two arpeggio steps - which every onset of an `arpeggiated_8ths` cell is - fell through to the block-chord path and struck the whole voicing on every eighth. The archetype and the notes now agree: one voice per onset with the bottom voice held under it. This is most of the count change (the owner's Verse 1 keys 501 -> 187 notes; jazz-full 1365 -> 1013). (3) THE ARC'S LEVEL CHOOSES THE COMPING RATE: a struck bed at a `full` / `tutti` texture, or from level 0.5, re-articulates on the meter's pulses instead of holding the chord, so an arrival is heard (ballad-piano-vocal 292 -> 411, cinematic-midi 205 -> 298). Before this the only reads of the arc in `chordalTextureFor` were `isFull(level)` and `level !== \"tutti\"`, neither of which can move a rate. (4) ONE GRID FOR WHERE THE CHORD CHANGES (`visibleChords`): the comping and bass onsets were placed from the analysed chord times while the voicing solver worked from `chordEventsIn(..., { grid })`, whose onsets B-13 snapped to the beat; on the owner's Outro that 230 ms disagreement made the piano voice the *previous* chord for a whole bar (`harmony:clash_share` 0.42-0.58, blocking). `visibleChords` now returns the same quantised chords. (5) THE PEDAL BASS KEEPS THE PLAN'S ONSETS (`bassRhythmFor`): the pedal branch discarded `groove.bassUnits` and rebuilt its onsets from chord starts, re-articulating only every second bar when a bar had none - 12 empty bars of 24 in the owner's Verse 3 (`density:foundation_gaps`, major, twice). Also in this re-pin: the phrase breath (a comping or bed part rests the last 1.5 beats of a phrase-final bar), the two-sound percussion cell, the arc's opening figure written over an intro the chord analysis left empty, and the arc's ending gesture read instead of the section's level. A future digest change must again name its cause here.",
   "cases": [
     {
       "id": "pop-full",
       "composer": {
         "tasks": 15,
-        "notes": 907,
-        "digest": "7c59a86b79fdbaa8f5a8dc4744dd9e645514a3e746b58e40b48d00438510ada0"
+        "notes": 818,
+        "digest": "a8cc993a2ec9854d58eb9aebe0deea74852f27556fed85d5a31f5c26b3b369d5"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 921,
+          "noteCount": 816,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "2e3dc233ab08d397a644849043681304e4495ebc5c14883d1425b328567f5fa1"
+          "digest": "2448eb27545467b02c3548f0a2987de43c3736b7af320623f0080708d8867fc5"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 938,
+          "noteCount": 721,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "32324940c19b045b6ce2a24273c9d0fd8e038b816af16b462f0b7f6c05ab18dd"
+          "digest": "8e34446aa90845eac10762add89906630266bb9490c332d14616cbe4da0c22b9"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 1304,
+          "noteCount": 782,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "1ac77505c8faa5958b0fcc0f11dd6814234ee77ebd8701beb303254866e25f73"
+          "digest": "c3dd9f2b85c24093fc82a58a86f927b7b08b12dca409de64f50942d4a9cf6240"
         }
       ]
     },
@@ -48,42 +48,42 @@
       "id": "ballad-piano-vocal",
       "composer": {
         "tasks": 10,
-        "notes": 292,
-        "digest": "6bd219a7728d9b1edaa4cfb3bb43e137e3ac981a8f79109b87174af84b51b157"
+        "notes": 411,
+        "digest": "1d2820f8031b18e2fbd30d00be2da262d5ffd9ab6abdc0c0a214d762d49dbf86"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 280,
+          "noteCount": 360,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "f992a99d3cfe4b08803f0c5e861f64cdf8263776b7b7f54496d772ec5efeb3f6"
+          "digest": "fb10a3319d243f118ae5b34177c536624c42d8da0405f1850c934b5de7b710d2"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 318,
+          "noteCount": 301,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "4a33f3a8f0e59c2e228e70170c46da4d7e12ac75f2d5652bc8fdbd78ec84c10a"
+          "digest": "2ddb5730c10a93961eb6188a54aa92b35749871750daba188dca06236956e8bd"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 698,
+          "noteCount": 297,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "c09c4c707eb91880410eb6d9ea764f271a367fe73ae29152b6d221eed8089360"
+          "digest": "f5cedfbb9763397ba932c574932b44d8d378889b0708f5777325c917914ac2a9"
         }
       ]
     },
@@ -91,45 +91,45 @@
       "id": "rock-full",
       "composer": {
         "tasks": 13,
-        "notes": 783,
-        "digest": "c61aa6dc680f5df8e9dd0ead38fdd98289da575ad4715cd315dde619caf2b1d8"
+        "notes": 858,
+        "digest": "8ea1b753cb07dd45617b794ac4de3d1c184cf1ba73d227c6fd40db9560a951ac"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 794,
+          "noteCount": 806,
           "tracks": [
             "drums",
             "bass",
             "keys",
             "guitar"
           ],
-          "digest": "c8ec55b5480ccb400ad32b05602f508c2cab3f9842dbedf8990061a23c12287d"
+          "digest": "118d5cf07736046af62cd40880d92416fb6006f742054c60dcdfdaa66de5ae71"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 809,
+          "noteCount": 583,
           "tracks": [
             "drums",
             "bass",
             "keys",
             "guitar"
           ],
-          "digest": "aeea6c86ad4c8a396ca9d2ad23dc46b2ae01fae2797b7a7f00567881abecea02"
+          "digest": "2bb8263a2ade47f56e19110925a2988665e045d8d7dfbd716e5cc2d1c5afae1b"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 1073,
+          "noteCount": 786,
           "tracks": [
             "drums",
             "bass",
             "keys",
             "guitar"
           ],
-          "digest": "2a93ac1328fc1ecf4d7713091c0b9e79dce4b8202b9276de4d75cc93838f5c40"
+          "digest": "5bf4237efec962e4c4625755f01101614ce1227a882d92bb835fd7b7b0500af2"
         }
       ]
     },
@@ -137,45 +137,45 @@
       "id": "dance-full",
       "composer": {
         "tasks": 14,
-        "notes": 789,
-        "digest": "fe74685687262dc0197bd675fd3629842e7032cfd9c4ec49bb88ad2a9b3f7d6f"
+        "notes": 930,
+        "digest": "745f80f6ef3508ee50238a70cbffbf8d4fd054074914f04adc2f76bc7096ca97"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 800,
+          "noteCount": 911,
           "tracks": [
             "drums",
             "bass",
             "keys",
             "synth"
           ],
-          "digest": "fce1143e59194f2dd5b980ba3a1e5a71b8ee8921ccc1df93b401b290335c5d28"
+          "digest": "951ebb08fe268df2121ef8601505760b1f72fd2bad94ee79ee36f70b352ac7be"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 806,
+          "noteCount": 933,
           "tracks": [
             "drums",
             "bass",
             "keys",
             "synth"
           ],
-          "digest": "e30dae4816ef010878f5f7dca0c61d0f52e917aded061c93f4cefff6f27b46e5"
+          "digest": "a03f452770395f0e813c9d3d61ca1cefc17d35e0f9f51721ed0f9c4822142174"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 1019,
+          "noteCount": 941,
           "tracks": [
             "drums",
             "bass",
             "keys",
             "synth"
           ],
-          "digest": "a2b932a7ba50e985541645c058e8addd62f4d65da2ba5e253694e8a7cb163e04"
+          "digest": "898b3b6adbe7e110658eaeb0f735ac301c3c89ba6b955fb4aeb7ea02ebfa0a85"
         }
       ]
     },
@@ -183,42 +183,42 @@
       "id": "acoustic-demo",
       "composer": {
         "tasks": 10,
-        "notes": 380,
-        "digest": "f21420c4e1dcca25a76ff70e550a8266db93a4d4d0e197614d58e69d62d09232"
+        "notes": 547,
+        "digest": "fcb07e8ce28821ce4bdd5b26c381f6902b3e15dd5cc986d166d60132869b698c"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 378,
+          "noteCount": 532,
           "tracks": [
             "drums",
             "bass",
             "guitar"
           ],
-          "digest": "33b9f19377d3ba728b4fc109306083bd474cfd5fb8d3f1ee3b2a588c61a7f39a"
+          "digest": "24b5fa395d3a63d8279cfdf13ae9202bb3f891415c7ef76543294c217be21816"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 416,
+          "noteCount": 355,
           "tracks": [
             "drums",
             "bass",
             "guitar"
           ],
-          "digest": "17c24b6c0c4fb4428cde61874af5f3a91b3d6b92852ac2c251c4d6d53c320024"
+          "digest": "0d8cdb359eafbafcaefb867868d63c901973fb024c0a37fc3c7e5ff35c277a90"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 853,
+          "noteCount": 471,
           "tracks": [
             "drums",
             "bass",
             "guitar"
           ],
-          "digest": "e5c4c3354a9d2027321c5cd01169a70ed7f44e30738391430f56df0b675ce1e3"
+          "digest": "a78f14e667a46c0f5d4e2ec26f220aebeab40b9171432148349176257c32334f"
         }
       ]
     },
@@ -226,14 +226,14 @@
       "id": "orchestral-midi",
       "composer": {
         "tasks": 12,
-        "notes": 414,
-        "digest": "139a09f681655edbb6a23b0e4bfb01524e02e09cdeb298738ae14e2e2c424959"
+        "notes": 410,
+        "digest": "1add0d755bad050b5cbb0b9e164a11e5c71f5859a7d155c8c0137f5948ec719c"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 425,
+          "noteCount": 419,
           "tracks": [
             "drums",
             "bass",
@@ -241,12 +241,12 @@
             "brass",
             "strings"
           ],
-          "digest": "3d0eb79577a247ac8defe42bc3a2cd5ff11e4622f7b6919c21fbad3d8f1acb69"
+          "digest": "dda0ddc7e1bcaf35e332076642fbe814bfa73ce0991c6a51f2dbae5ddec80ebe"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 427,
+          "noteCount": 420,
           "tracks": [
             "drums",
             "bass",
@@ -254,12 +254,12 @@
             "brass",
             "strings"
           ],
-          "digest": "2d033ee20218333c8d1bd6e8026c9756f2881dbf965ab60186c7ed94ac895514"
+          "digest": "523a4148db5df053229c6b2eea7b635f1325e98cebd9b503ec8e0cd12ca52dfe"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 447,
+          "noteCount": 448,
           "tracks": [
             "drums",
             "bass",
@@ -267,7 +267,7 @@
             "brass",
             "strings"
           ],
-          "digest": "7f3cbf14a4d5476dcb6150f42fa462ad6549fbcca919e55c39adfb0fa0db80a7"
+          "digest": "ae2cedb9421c7526228cba08ffb27e66fc2a7a30b4a2ed9aaf9e0e8f05a093e3"
         }
       ]
     },
@@ -275,42 +275,42 @@
       "id": "ethnic-vocal",
       "composer": {
         "tasks": 8,
-        "notes": 228,
-        "digest": "bce4af9e854123be134177c89cb6ff8b94fdfb6337bf928473f17c0b392b2e55"
+        "notes": 276,
+        "digest": "a841a336075e5d0ac854920ec5fdf69034b70579b4134d86f9392b799649431a"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 222,
+          "noteCount": 253,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "996eae3e47a74724dcbe4971881ed7e265abb44035746a74df4cc7f33fb474f7"
+          "digest": "b53b8cc622c9bb27a1ae79f479eba332a9d9a840282823dba7ff76abb9859932"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 234,
+          "noteCount": 248,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "fa3ccf5b5ebe69b3dd629a6a11805594a8381a7d9d0786b220b947b77aa6ed47"
+          "digest": "8dbcee064228f3a8ebcdee5afe7847be6553d3aab254b2cfbf1427c52198ecfb"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 393,
+          "noteCount": 241,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "567f71e171401789ca01387e1e84fef91784da4c92208be462136a2022d973b5"
+          "digest": "6307218c6aff7e6d8345d93601e32d7334564ca52c4db4436e2e08e0e3158e0d"
         }
       ]
     },
@@ -318,42 +318,42 @@
       "id": "jazz-full",
       "composer": {
         "tasks": 8,
-        "notes": 1365,
-        "digest": "aa1f8f2f26c0fb3594fb430ebea5be4225007d869232acb3067617a675db21da"
+        "notes": 1013,
+        "digest": "f58da5288707600702b5cb5a6e848641555eba536729e8f21d0f91c6d52b2161"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 1330,
+          "noteCount": 885,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "96487bc10923cc5a15a16e9aea0b49d8b9bb6303fd25bf5dc3e2a9a89cb306ad"
+          "digest": "48e82b672327acbcea0fe64aa2def0c2cac965ab7d5f7d6124ab6155f97bc558"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 1387,
+          "noteCount": 1067,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "2155bb76b5dab4228cc143a2562983c5ffc5509cf0afbe43bd7d14ebffa5faa4"
+          "digest": "75b92d87b94899d9e53e3639ffd858da54ce93f47b7c49250fc94200f3e29586"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 1828,
+          "noteCount": 959,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "b3a86a7e97fb01307c919d1b52b5534228a71a36b47345f23b791e85d43ad12c"
+          "digest": "943d49750116248044019ac9bb4cf84ab9cc8eb0fcb4ed1115634f953c05be1f"
         }
       ]
     },
@@ -361,14 +361,14 @@
       "id": "cinematic-midi",
       "composer": {
         "tasks": 14,
-        "notes": 205,
-        "digest": "2be8b683902d6027703fcf16354844d518951864b2f80862a69a48f398d5c53e"
+        "notes": 298,
+        "digest": "d5fcddb2aa300e4a73d55a349a393e1bb1376b07059bdf20f4b7a13704e22ab6"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 202,
+          "noteCount": 294,
           "tracks": [
             "drums",
             "bass",
@@ -377,12 +377,12 @@
             "brass",
             "strings"
           ],
-          "digest": "71777e595a97e689e66c43337afbdb5e3cfcbbac4be33d3870471b08e0e54cb0"
+          "digest": "d185fea9153a4ec9a263bf37d2b51fdde9d9920dad4199aa13a5133205a069b2"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 202,
+          "noteCount": 294,
           "tracks": [
             "drums",
             "bass",
@@ -391,12 +391,12 @@
             "brass",
             "strings"
           ],
-          "digest": "31114f5e3ae740b5193d13dc7094c74cfaf9aa0da0df5e1aeb472fc40d24d3da"
+          "digest": "d04c4f709419d49686223cf984c2001e0dea7086dd331ea49f07333f4edd52ea"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 404,
+          "noteCount": 249,
           "tracks": [
             "drums",
             "bass",
@@ -405,7 +405,7 @@
             "brass",
             "strings"
           ],
-          "digest": "a13dfd996984b35a1e7a528a0ba0d96be317d776fdb0fe5b177da2500018c1f0"
+          "digest": "950cce6ecb3a512a1d41dbd6ccd762dc3ca613f2b9ffa43d8a84fcea4a3c8b0a"
         }
       ]
     }

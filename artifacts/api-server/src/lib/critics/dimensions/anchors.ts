@@ -350,6 +350,45 @@ export function displaceHarmonyOffGrid(input: CriticInput, seconds = 0.18): Crit
     : t)));
 }
 
+/**
+ * A **constructed** silent opening: every note that sounds inside the first
+ * `bars` bars removed from every part, so the song begins with the plan's
+ * opening families writing nothing (B-25, at the B-21 merge).
+ *
+ * This exists for the same reason `displaceHarmonyOffGrid` does. The silent
+ * intro used to be free: the owner's own arrangement began at 3.795 s in a
+ * 4:18 song because the Intro's writers found no chord event in their window,
+ * and R-1b P0-5 was written about it ("the judge ranks a 2-bar silent intro
+ * above everything else"). B-21's D1 closed it — `composer/opening.ts` reads
+ * the arc's decided opening figure and states the tonic under it, and the
+ * owner's first note is at 0.000 s. A test that still read
+ * `planned_family_silent` off the owner's anchor would be asserting the old
+ * composer, not the ranking rule that test is about.
+ *
+ * Nothing here touches a dimension or a threshold: the constructed opening is
+ * genuinely empty, and `orchestration` is left to say that the families the
+ * plan named do not play there. Returns `null` when the anchor's opening bars
+ * carry no note to remove (nothing changed is not a control).
+ */
+export function silenceOpeningBars(anchor: Anchor, bars = 2): Worsened | null {
+  const context = buildContext(anchor.input);
+  const until = context.barInfo(bars)?.end;
+  if (until === undefined) return null;
+  const changed: string[] = [];
+  const tracks = anchor.input.trackModels.map((t) => {
+    const kept = t.notes.filter((n) => n.start >= until - 1e-6);
+    if (kept.length === t.notes.length) return t;
+    changed.push(t.id);
+    return { ...t, notes: kept };
+  });
+  if (!changed.length) return null;
+  return {
+    input: withTracks(anchor.input, tracks),
+    targetTrackIds: changed,
+    detail: `bars 1-${bars} emptied on ${changed.join(",")}: the song starts at ${until.toFixed(3)} s`,
+  };
+}
+
 /** Tom pitches, as `groove.ts` reads them when it asks whether a fill was played. */
 const TOM_PITCHES: ReadonlySet<number> = new Set([41, 43, 45, 47, 48, 50]);
 
@@ -521,6 +560,19 @@ export function applyFamilyCorruption(anchor: Anchor, trackId: string, family: C
   const result = applyCorruption(ctx, family, severity, seed);
   if (!result.applicable) return null;
   const outside = part.track.notes.filter((n) => !(n.start >= ctx.window.start - 1e-6 && n.start < ctx.window.end - 1e-6));
+  // B-26: a corruption that **deletes the part** is not the corruption it
+  // claims to be, and the harness's own rule (an input that is not the damage
+  // named is not a control on that part) applies. Measured cause:
+  // `bar_copy_repetition` copies the window's first bar over every later bar,
+  // and for a part that is silent in that bar the copy is empty — on
+  // `rock-full/guitar-harmonic_bed` (first bar 29 of 36) it takes 91 notes to
+  // **0**, and on `dance-full/keys-harmonic_bed` (first bar 17 of 40) 152 to
+  // **0**. Both parts are new at B-21, so the miss appeared with them. A
+  // removed part is `orchestration`'s finding, not `repetitionVsVariation`'s,
+  // and scoring it as a missed detection would blame the dimension for a
+  // harness effect. Reported to the owner of `symbolicCorruptions.ts`; guarded
+  // here so no dimension's control counts it.
+  if (part.track.notes.length > 0 && result.notes.length + outside.length === 0) return null;
   return {
     input: replaceNotes(anchor.input, trackId, [...result.notes, ...outside]),
     targetTrackIds: [trackId],
@@ -1005,6 +1057,10 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
       return { input: withTracks(anchor.input, tracks), targetTrackIds: tracks.map((t) => t.id), detail: `${arrivals.length} arrival(s) thinned, unvoiced and softened` };
     },
   },
+  arrival_thinned_below_its_setup: {
+    description: "every arrival section (a section the plan makes louder than the one before it, and which is not itself the setup of another arrival) is thinned until it carries at most half its setup's onsets per bar, loses the top voice of what remains and is played 20 % softer — the arrival is smaller than its setup in onsets, voices and dynamics at once, on any anchor",
+    apply: (anchor) => thinArrivalsBelowSetup(anchor, 0.5),
+  },
   strip_bed_to_top_voice: {
     description: "every sustained bed reduced to its top voice — exactly what the perform → repair cascade does to the strings on the owner's song (R-1b P0-1): the chord becomes a solo line",
     apply: (anchor) => {
@@ -1032,6 +1088,97 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
 };
 
 export const PURPOSE_BUILT_NAMES = Object.keys(PURPOSE_BUILT).sort();
+
+/**
+ * The worsening behind `arrival_thinned_below_its_setup` (B-26, at the B-21
+ * merge). It exists because `arrival_thinned_and_softened` and
+ * `chorus_thinner_than_verse` both lost their lever, and the cause is measured
+ * rather than assumed:
+ *
+ *  - Both transforms damage a section by a **fixed fraction of itself** (keep
+ *    one onset cluster in three). B-21 made the choruses much denser than the
+ *    verses — pop-full's chorus goes 14.375 -> 17.125 onsets per bar while its
+ *    verse goes 10.00 -> 9.625 — so a third of the chorus is now **0.610** of
+ *    the verse, one hundredth over the 0.6 `louder_section_thinner` asks for
+ *    when a part is added. The dimension is right: a chorus at 61 % of its
+ *    verse with the drums entering is a thinner arrival, not a failed one.
+ *  - `arrival_thinner_than_setup` needs two of three respects to fall, and
+ *    B-21's broken chord makes the verse one voice per onset (pop-full mean
+ *    voices 2.00 -> 1.105). After the transform the arrival's *voices ratio
+ *    rises* (1.744 / 1.105 = 1.58), so only onsets fall and the finding is
+ *    correctly not raised.
+ *
+ * Neither dimension changed and no threshold moved; the harness stopped
+ * constructing the defect it names. This transform constructs it by its
+ * definition instead of by a fixed fraction: thin the arrival until it carries
+ * at most `targetRatio` of its **setup's** onsets per bar, take the top voice
+ * off what survives and play it 20 % softer. The setup itself is left
+ * untouched — an arrival that is also the setup of a later arrival is skipped,
+ * because softening the setup is what made the velocity ratio sit at 1.07 in
+ * the old transform and hid the damage.
+ *
+ * Onsets per bar is counted here from `onsetClusters`, the generic quantity,
+ * not from `sectionDensity` — a control must not be the detector's own
+ * definition inverted (this file's header rule).
+ */
+export function thinArrivalsBelowSetup(anchor: Anchor, targetRatio: number): Worsened | null {
+  const context = buildContext(anchor.input);
+  const clustersPerBar = (startBar: number, endBar: number): number => {
+    const bars = Math.max(1, endBar - startBar + 1);
+    return context.parts.reduce((sum, p) => sum + onsetClusters(context.notesInBars(p, startBar, endBar)).length / bars, 0);
+  };
+  const isArrival = (i: number) => i > 0 && i < context.sections.length
+    && context.sections[i].energy - context.sections[i - 1].energy >= 0.15;
+  const arrivals = context.sections
+    .map((s, i) => ({ s, i }))
+    .filter(({ i }) => isArrival(i))
+    // …and not itself the setup of the next arrival, so the comparison the
+    // finding makes is against an undamaged section.
+    .filter(({ i }) => !isArrival(i + 1));
+  if (!arrivals.length) return null;
+  const barOf = barOfNote(context);
+  const details: string[] = [];
+  let changed = false;
+  const tracks = anchor.input.trackModels.map((t) => {
+    const part = context.parts.find((p) => p.id === t.id);
+    if (!part) return t;
+    let notes = t.notes;
+    for (const { s, i } of arrivals) {
+      const setup = context.sections[i - 1];
+      const setupPerBar = clustersPerBar(setup.startBar, setup.endBar);
+      const arrivalPerBar = clustersPerBar(s.startBar, s.endBar);
+      if (setupPerBar <= 0 || arrivalPerBar <= 0) continue;
+      // Keep one cluster in `keepEvery`, the smallest step that lands at or
+      // under the target share of the setup.
+      const keepEvery = Math.max(2, Math.ceil(arrivalPerBar / Math.max(0.01, targetRatio * setupPerBar)));
+      const inside = onsetClusters(context.notesInBars(part, s.startBar, s.endBar));
+      if (inside.length < 4) continue;
+      const keep = new Map<string, boolean>();
+      inside.forEach((cluster, k) => {
+        const survives = k % keepEvery === 0;
+        cluster.forEach((n, v) => keep.set(n.note.id, survives && !(cluster.length > 1 && v === cluster.length - 1)));
+      });
+      notes = notes.flatMap((n) => {
+        if (!(barOf(n) >= s.startBar && barOf(n) <= s.endBar)) return [n];
+        if (keep.get(n.id) === false) return [];
+        if (keep.get(n.id) === undefined) return [n];
+        changed = true;
+        return [{ ...n, velocity: Math.max(1, Math.round(n.velocity * 0.8)) }];
+      });
+    }
+    return { ...t, notes };
+  }).filter((t) => t.notes.length > 0);
+  if (!changed) return null;
+  for (const { s, i } of arrivals) {
+    const setup = context.sections[i - 1];
+    details.push(`${s.name} (setup ${setup.name}: ${clustersPerBar(setup.startBar, setup.endBar).toFixed(2)}/bar)`);
+  }
+  return {
+    input: withTracks(anchor.input, tracks),
+    targetTrackIds: tracks.map((t) => t.id),
+    detail: `${details.join(", ")} thinned to at most ${Math.round(targetRatio * 100)} % of its setup's onsets per bar, unvoiced and softened 20 %`,
+  };
+}
 
 /**
  * Copy one named section over another in every part (B-05c). The generalisation

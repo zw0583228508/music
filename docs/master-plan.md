@@ -9993,6 +9993,689 @@ counts too, and those still move — the cause is isolated and named below.
     (`ENOENT`). The suite is registered and `node --check`-clean; it was built
     and run directly with `esbuild.CMD`, 27/27 green. Not fixed here: that file
     is shared with every other stream.
+### PR-B21 — Brain B-21: the writers write music
+
+- **PR-B21** ✅ (open; the lead merges) — `ws-brain-b21` (Arrangement &
+  Orchestration Brain, stream B-21, the note writers). Wave 3's brief listed four
+  musical defects the brain's own critics report on the owner's song and named a
+  suspected cause for one of them. Each cause was **measured before anything was
+  changed** (`artifacts/api-server/b21-probe-entry.ts`, not committed: every part
+  request of the owner's song with the arc intent, the groove cells, the texture,
+  the solved voicings, the bass plan and the register window it actually sees).
+  One of the four suspected causes was refuted, and a fifth defect was found on
+  the way. Pure TypeScript, no database, nothing rendered.
+
+  **D1 — the intro is the tonic, not silence (R-1b P1-7).** The owner's two-bar
+  intro shipped **silent**: the earliest note in a 4:18 arrangement was at
+  3.795 s. B-18 had already decided it — `arc.opening` = `tonic_pad`, `Intro`,
+  2 bars, `impliesTonic: true`, families `[keys, bass]`, source `brief` — and no
+  writer read it. Measured cause: the Intro's keys and bass tasks find **zero
+  chord events** in their window, and every step downstream is keyed on those
+  events (the voicing solver returns nothing, the bass skeleton is empty, the
+  comping onsets are filtered out because `chordAtTime` is null). New
+  `composer/opening.ts` answers the only two questions a writer has — *does the
+  arc want a figure here, and on which chord* — reading `figure`, `impliesTonic`,
+  the bar count and the families as decided, never re-deriving them; the tonic is
+  the song's own first analysed chord (`chordSource: next_bars`), never a pitch
+  this module chose. `writeChordal` realises `tonic_pad` / `piano_motif` /
+  `pickup_only` and `writeBassLine` states the root under it. The same module
+  reads `arc.ending`: **which** ending this is is the arc's decision, where
+  `transitionRealisation.endingGestureFor` still reads the section's level
+  (`level < 0.45 → thin_out`) and thinned the owner's `held_final_chord` to two
+  quiet voices. The final chord is now held to the end of the last bar instead of
+  released 5 % early.
+
+  **D2 — the verses were four to six times busier than the choruses.** The brief
+  named `chordalTextureFor`'s narrow `level` reads as the suspected cause. That is
+  true and is the *smallest* of three; the measurement found two bigger ones.
+  (a) The **role flips per section**: `sectionPhrasePlanner.assignRole` gives the
+  keys `RHYTHMIC_HARMONY` in Verse 1 / Verse 2 / Bridge and `HARMONIC_BED` in the
+  choruses, and `chordalTextureFor` keys off exactly that, so the verses read the
+  rhythmic cell (`arpeggiated_8ths`, 8 onsets a bar) and the choruses the bed cell
+  (`whole_note_bed`, about one onset a chord). That role assignment is B-07's file
+  and is untouched here. (b) The **`arpeggio` archetype was never realised**:
+  `writeChordal`'s arpeggio branch needs a group of at least two arpeggio steps,
+  and an `arpeggiated_8ths` group is 0.85 of *one*, so every onset fell silently
+  through to `emit` and struck the **whole voicing** — 22 bars × 8 eighths × 3
+  voices = 528, measured 501, at 12.4 notes a second inside ten semitones, with
+  the archetype still calling itself an arpeggio. An `arpeggio` is now a broken
+  chord: one voice per onset with the bottom voice held under it. (c) The arc's
+  *numeric* level now chooses how often a struck bed re-articulates — a `full` /
+  `tutti` texture, or level ≥ 0.5, is re-struck on the meter's pulses instead of
+  held, because that is what makes an arrival arrive on a piano. Also here: a
+  comping or bed part **breathes** — the last 1.5 beats of a phrase-final bar are
+  silent (one beat, the critic's minimum for a rest, does not survive the
+  performance stage's microtiming: the one-beat breaths shipped as 423–462 ms
+  against a 460 ms beat), and the hand percussion plays a two-sound, two-bar cell
+  with a phrase handover instead of one pitch on the same units in every bar
+  (measured: 120 notes on MIDI 54 with a bar-rhythm entropy of exactly 0).
+
+  **D3 — the bass keeps the plan's own onsets.** `bassRhythmFor`'s `pedal` branch
+  **discarded `groove.bassUnits`** — the plan's answer, `[0]`, the downbeat of
+  every bar — and rebuilt the onsets from chord starts, re-articulating only every
+  second bar when a bar had none. A second source of truth against
+  `groovePlan.bassUnitsFor`, inside the composer's own file, and the reason the
+  owner's bass had no onset in 12 of Verse 3's 24 bars and 7 of the Outro's 13
+  (`density:foundation_gaps`, major, twice). The pedal now keeps the plan's units
+  and adds the chord starts inside the bar.
+
+  **D4 — the register is the one the instrument's own profile gives the part.**
+  `composer/registers.ts` took the **family's** comfortable range (36–96 for a
+  piano) and widened it by the argmax of `section.registerDistribution` — which
+  `sectionPhrasePlanner` builds as a **histogram of the section's active
+  families**, so a section leaning high raised the bass, the keys and the strings
+  together. The critic reads `instrumentProfile.roleRegisterFor(profile, role)`
+  (piano HARMONIC_BED 48–67, violin section PAD 60–79, CLIMAX_LAYER 67–91,
+  electric bass 28–55) and the composer never called it: the keys wrote to MIDI
+  89 against a ceiling of 67 and the strings to 92, four
+  `register:top_line_above_comfortable_ceiling` findings and one
+  `climax_all_treble`. The window is now the role register intersected with the
+  instrument's playable and comfortable ranges, so the writers and the critic
+  share one table; `raise_register` lifts the **floor** inside that window (7
+  semitones, as far as a piano bed can move without leaving less than an octave),
+  never the ceiling above it.
+
+  **D5 — one grid for where the chord changes (found while fixing D2).**
+  `visibleChords` returned the **analysed** chord times while the voicing solver
+  worked from `chordEventsIn(..., { grid })`, whose onsets B-13 snapped to the beat
+  or the eighth they push to (P0-2). On the owner's Outro the analysed Cm begins at
+  238.06 s and the solved event at 238.29, so the comping onset at 238.06 asked
+  for the voicing of the chord *before* it and the piano played an F minor triad
+  for 1.95 s under a C minor chord — `harmony:clash_share` 0.42–0.58 on the Outro
+  keys and strings, **blocking**. `visibleChords` now returns the same quantised
+  chords the solver reads, and `writeChordal` gained the release rule the bass
+  writer already had: a voicing is released before the next chord whose tones it
+  does not all belong to.
+
+  **Decision provenance.** `ComposeContext.decisions` (B-11's `DecisionRegistry`)
+  reaches the writers, and each registers what it chose with its reason —
+  `register_window` (with the profile, the source and the section band it did
+  *not* apply), `chordal_texture`, `bass_line`, `opening_figure`,
+  `ending_gesture` — and attaches the part's bars to it. Without a registry the
+  writers behave identically and record nothing (asserted byte-for-byte), so the
+  seam is observation and never a second code path.
+
+  **Measured on the owner's song** (`orchestrateArrangement`, 3 candidates, the
+  candidate the orchestrator itself selects; the same gate on the saved v7a
+  candidate reproduces the wave-3 brief's table exactly). **Before → after**:
+  `releasable: false` (2 blocking, 22 major) → **`releasable: true`, 0 blocking,
+  0 major**; first note 3.786 s → **0.000 s**. Dimensions: harmony 40 → 83.2,
+  groove 42.3 → 91.6, orchestration 40 → 100, register 52.3 → 100, density 82.7 →
+  97.2, playability 50.8 → 100 (1245 → 80 observations), performanceRealisation
+  91.6 → 100, voiceLeading 93.5 → 94.5, transitions 87.7 → 90.1; adversarial
+  boredom 90 → 100, machineMade 77 → 97, causality 89 → 100, arbitrariness 59 →
+  85, instrumentReality 93 → 100, professionalWouldChange 82 → 99. Gone:
+  `planned_family_silent` (blocking), `clash_share` (blocking),
+  `top_line_above_comfortable_ceiling` ×5, `climax_all_treble`, `foundation_gaps`
+  ×2, `no_rests` ×2, `off_grid` ×3, `rhythm_predictable`,
+  `single_pitch_percussion`, `climax_not_realised`, `string_bed_too_high`,
+  `voice_crossing_between_parts`, `no_top_voice_line`. Per section, keys / bass
+  (notes, notes-per-second, mean voices, pitch range):
+
+  ```
+                     BEFORE                                    AFTER
+  Intro    keys   0                                   keys   4  1.09 n/s v4.00  55-67
+           bass   0                                   bass   3  0.82 n/s v1.00  36-36
+  Verse 1  keys 501 12.38 n/s v3.01  55-65            keys 187  4.62 n/s v2.53  55-65
+           bass  17  0.42 n/s v1.00  29-46            bass  25  0.62 n/s v1.00  29-46
+  Verse 2  keys 479 16.27 n/s v3.93  53-72            keys 142  4.82 n/s v2.73  50-72
+  Chorus   keys  91  3.09 n/s v9.04  56-75            keys 245  8.32 n/s v3.99  50-67
+  Chorus 2 keys  75  2.55 n/s v10.09 55-77            keys 196  6.66 n/s v3.71  48-65
+  Verse 3  keys 104  2.35 n/s v8.40  55-65            keys  98  2.22 n/s v8.14  55-65
+           bass  15  0.34 n/s (12 of 24 bars empty)   bass  30  0.68 n/s (0 empty)
+  Bridge   keys 338 11.48 n/s v3.10  53-66            keys  81  2.75 n/s v3.47  53-66
+  Chorus 3 keys 108  3.67 n/s v10.63 70-86            keys 192  6.52 n/s v3.15  55-67
+           str   41  1.39 n/s v8.95  72-92            str   46  1.56 n/s v6.83  72-84
+  Outro    bass   6  0.25 n/s (7 of 13 bars empty)    bass  17  0.71 n/s (0 empty)
+  ```
+
+  The arrival is no longer thinner than its setup, the climax is no longer the
+  shrillest section of the song, and no part is written above the ceiling its own
+  profile gives it.
+
+  **Tests.** `brainB21Writers.test.ts` (15 tests, registered as the `brain-b21`
+  focused suite) — one per behaviour, each with a control: the role register
+  against the register critic's own reader for five instrument/role pairs; the
+  section histogram proven inert in both directions plus an unknown instrument
+  falling back honestly; `raise_register` lifting the floor and not the ceiling,
+  with the bass and the strings as the families it must not touch; the broken
+  chord against a block comp; the arc's level moving a struck bed's rate with a
+  bowed bed as the control that must not move; the pedal bass's onsets against the
+  plan's own units; the opening figure with four controls (a section that has
+  harmony, a section that is not the arc's, `figure: none`, `impliesTonic: false`);
+  the ending gesture against a `fade` control; the decision registry with a
+  byte-identical no-registry control; determinism; and the whole song end to end.
+  Golden fixture re-pinned with `B00_WRITE_GOLDEN=1` and the five causes appended
+  to `recordedAt` (all nine cases moved; jazz-full 1365 → 1013 composed notes,
+  ballad-piano-vocal 292 → 411, cinematic-midi 205 → 298). Suites green:
+  `brain-b21` (15), `brain-b13`, `brain-b02` (31), `brain-b04`, `brain-b18`,
+  `arrangement-brain`. `pnpm run typecheck` green. Evidence:
+  `docs/evidence/brain-b21-writers.json` (the shipped v7a run, the before
+  re-composition and the after, per section and per dimension; every defect with
+  its measured cause; the golden diff; every moved expectation with its cause).
+
+  **Capability ladder.** The arc's opening figure realised in notes — DESIGNED ✓
+  IMPLEMENTED ✓ INTEGRATED ✓ TESTED ✓ BENCHMARKED — VALIDATED ON OUTPUT ✓ (the
+  owner's song starts at 0.000 s). The arc's ending gesture — IMPLEMENTED ✓
+  INTEGRATED ✓ TESTED ✓ VALIDATED ON OUTPUT ✓ (held to the last bar); the
+  ritardando the arc also asks for is **not** realised (performance stage).
+  Texture that follows the arc's level — IMPLEMENTED ✓ INTEGRATED ✓ TESTED ✓
+  VALIDATED ON OUTPUT ✓. The broken chord — IMPLEMENTED ✓ TESTED ✓ VALIDATED ON
+  OUTPUT ✓. The pedal bass on the plan's onsets — IMPLEMENTED ✓ TESTED ✓
+  VALIDATED ON OUTPUT ✓. Register from the instrument profile — IMPLEMENTED ✓
+  INTEGRATED ✓ TESTED ✓ VALIDATED ON OUTPUT ✓. Writer decision provenance —
+  IMPLEMENTED ✓ TESTED ✓ INTEGRATED — (the orchestrator's default composer lambda
+  does not forward the registry; one line, below). Nothing rendered, nothing
+  listened to.
+
+  **The reads other streams must add** (none of them is in this PR):
+
+  | file : function | change | what it fixes |
+  |---|---|---|
+  | `arrangementOrchestrator.ts:494-497` | forward `decisions: context?.decisions` to `composeReferencePart` | the writers' decisions reach the shipped candidate's provenance |
+  | `harmonyPlan/voicings.ts : planVoicings` | avoid the parallel perfect it now writes in a 19-semitone window | 3 of the owner's 16 chordal parts take one each (Chorus 3 keys 1 of 12 changes, Chorus strings 1 of 8, Verse 2 strings 1 of 11); opening the floor two octaves under the ceiling was tried and measured **worse** (4) |
+  | `transitionRealisation.ts:438 : endingGestureFor` | read `arc.ending.value.gesture` instead of `arcIntent.level < 0.45` | the arc says `held_final_chord` and the level rule says `thin_out` |
+  | `groovePlan.ts:390-392 : compingFor` | the bed cell should read the texture level, not only a `lift` at level ≥ 0.55 | an `arrival` at a `tutti` texture is planned to hold one chord a bar |
+  | `sectionPhrasePlanner.ts:497-519` | `registerDistribution` is a section histogram, not a per-part instruction; the per-part answer is `orchestrationBudget.registerBoundsFor`, which nothing on the production path calls | B-21 stopped reading the histogram; nothing yet reads the real register plan |
+  | `performanceEngine.ts` (agogics) | apply `arc.ending.value.ritardando` | the arc asks for one on the owner's song and no stage applies it |
+  | `critics/adversarial/instrumentReality.ts:30` vs `instrumentProfile.ts` `violin_section.roleRanges.CLIMAX_LAYER` | CONTESTED: a flat mean-pitch 79 for any string section against a sourced CLIMAX_LAYER register of 67–91 | a climax layer inside its own profile range can trip the flat constant |
+
+  **Honest limits.**
+  - **Nothing was rendered or listened to.** Every number is symbolic: composed
+    and shipped notes read by the brain's own critics.
+  - **One song, one strategy.** The judge's `releasable: true` is on the owner's
+    song and on the `conservative` candidate the orchestrator selects. The nine
+    benchmark cases were re-pinned, not re-judged.
+  - **The role flip is not fixed, only realised well.** A verse being a comping
+    part and a chorus a bed is `sectionPhrasePlanner.assignRole`'s decision
+    (B-07's file). B-21 made each role's realisation musical; it did not change
+    which role a section gets, and the inversion would return if the writers'
+    rate rules were removed.
+  - **Five of B-05c's tests fail with this stream on top of it, and the cause is
+    the fix working.** `critics/dimensions/ownerAnchor` (3 of 5), `critics/rank`
+    (1) and `critics/b05cEvidence` (1) pin the owner's song **as a defective
+    anchor**: `ownerAnchor.test.ts:54` requires the groove dimension under 50 (it
+    is 70.74), `:103` requires ≥ 3 `off_grid` findings on the bass (0), `:162`
+    requires exactly 12 attributed `off_grid` observations (0), and
+    `rank.test.ts:251` requires the song to carry
+    `top_line_above_comfortable_ceiling` (it does not). **No count this stream
+    caused to move was re-pinned in another stream's suite**; the anchors need a
+    deliberately worsened copy of the song rather than the song itself, which is
+    B-05c's call and not this stream's.
+  - **Four expectations in `brainB02Harmony.test.ts` were moved, each with its
+    cause written beside it** (a broken chord sounds two voices at a downbeat, not
+    three; the composed parallel-perfect pins 0 → ≤ 3; `bassApproachedByStep` 4 →
+    ≥ 3; Chorus 3's keys rise by more than 1 semitone over Chorus 2 rather than 3,
+    because a piano bed cannot rise 3 out of a 48–67 register). The +3 was
+    measured when the composer wrote 19 semitones above that ceiling.
+  - **Three parallel perfects appear that were not there before** (above). The
+    shipped voice leading is nonetheless better (93.49 → 94.46).
+  - **One `brain-b10` test fails, and the cause is the same trade-off.**
+    `brainB10Motif.test.ts:178` requires a counter-line that overlaps the voice to
+    clear it by a fifth; on `dance-full` the strings' `COUNTER_MELODY` register is
+    62-86 and the voice sits too high for a fifth of clearance inside it, so the
+    clearance is 0. The old window reached 98 because the section histogram
+    widened it, i.e. the clearance was bought by writing above the string
+    section's comfortable top. `melodicEngine.targetCentre` already records
+    "the instrument's range cannot sit a fifth clear of the voice"; whether a
+    counter-line may leave its comfortable range to clear the voice is a decision
+    for the melodic stream, and this stream did not make it.
+  - **The breath length and the percussion cell are this stream's own musical
+    choices**, written from common practice, not measured against a corpus. The
+    1.5-beat breath is calibrated to survive the performance stage's microtiming,
+    which is an engineering reason as much as a musical one.
+  - **`brain-invariants-b12b` fails 18 tests at base `3b9ace3` and 18 after
+    B-21 — but not the same 18** (both runs on this machine, the six composer
+    files checked out at base and at head, everything else identical). Four are
+    **fixed**: `every family the plan marks active writes at least one note`
+    (D1), `harmony_on_the_grid` (D5), `performance_respects_section_dynamics`
+    (D2), and one negative control. Four are **newly failing**: the grid
+    invariant's own sensitivity control (it proves itself by moving the sheet's
+    onsets off the grid and watching the shipped onsets follow — D5 quantises
+    them, which is what made the invariant pass); the transposition invariant's
+    isolating control (it shifts `constraints.comfortableRange` by k, which no
+    longer moves a window read from the profile's role register; the invariant
+    itself is 0/24 before and after); the corpus-scale parallel-perfect finding
+    already handed to the harmony stream; and **one this stream cannot explain**
+    — `negative controls: … a scrambled cell is refused` no longer refuses a
+    scrambled motif cell. That last one is **UNKNOWN**, not attributed.
+  - **`brain-invariants` (B-12's fuzz and property set) is red at base and after**
+    with the same self-annotated causes; it was not re-measured test by test, so
+    this stream cannot say whether any of its counts moved.
+  - **`before` and `after` are re-compositions on this machine**, not the database
+    path; the shipped v7a candidate is carried in the evidence as a third column
+    so the re-composition can be checked against what actually shipped.
+  - **The strings still reach 84 in Chorus 3** (their PAD ceiling is 79, their
+    CLIMAX_LAYER register 67–91 and their comfortable maximum 86). The register
+    critic reads the part's own role and does not fire; a reader who checks the
+    *track* against its lowest role's ceiling will still see it.
+
+### PR-B25 — Brain B-25: the anchors survive the song being fixed
+
+- **PR-B25** ✅ (open; the lead merges, **after PR-B21**) — `ws-brain-b25`,
+  branched from `origin/ws-brain-b21` (Arrangement & Orchestration Brain, stream
+  B-25, the critics' anchors). The owner's song "רחם נא" is the tenth anchor
+  because it was **defective**: it carried the off-grid harmony, the silent
+  intro, the single-voice string bed and the high string bed that B-05c's
+  positive controls were built to detect. The anchor is not stored data — it is
+  recomposed from live code by `orchestrateArrangement`, so the moment B-21
+  improved the writers the anchor stopped carrying the defects and seven
+  assertions that pinned them went red across four suites. This stream closes
+  them the way `ownerAnchor.test.ts`'s own header says the B-13 merge closed the
+  same event: **assert the fix, keep every control, and demonstrate the
+  sensitivity of any control the anchor can no longer exercise on a constructed
+  defect instead of deleting it.** No dimension, threshold, tolerance or release
+  rule was touched, and no composer file was opened.
+
+  **The control ledger, before → after → where its sensitivity lives now.**
+  Every figure measured on this tree; "was" names the stream that closed it.
+
+  | control | on the owner's song before | now | sensitivity demonstrated on |
+  |---|---|---|---|
+  | A — remove the performance timing (`ownerComposedAnchor`) | B-05c: composed 0 / shipped 0, off-grid shares 0.55–0.73 per part. B-13: 45.55 / 8.85, 3–4 `off_grid` per harmonic part | composed **83.00** / shipped **70.74**, **0** `off_grid` on either layer; every part's median deviation 3.3–12.4 ms inside a 30 ms tolerance | the same 180 ms displacement applied to the shipped notes alone vs to both layers: the same 22 findings, **17/22 → `perform`** vs **18/22 → `compose`**, with `composedOnGrid` true on 17 and false on 14 |
+  | B — quantise to the composer's grid (`quantiseFamiliesToGrid`) | B-05c/B-13: ≥ 3 `off_grid` on the bass, removed by the control; sixteenths 56.49 vs eighths 83.46 | **0** on the bass; the control is a **no-op** (observations byte-identical before and after) | the constructed off-grid case: bass **5 → 0**, keys **9 → 9**, strings **8 → 8** (isolating); all harmony → sixteenths **53.53** with 0 `off_grid` but `harmony_off_grid` still standing, → the kit's eighths **69.34** with both cleared |
+  | `strip_bed_to_top_voice` (`density:single_voice_bed`) | R-1b P0-1: ≥ 5 blocking on `strings-pad`, shipped mean voices 1.00 against a composed 3.0–4.0 (closed by **B-13**) | **0** | the same transform on the owner's own beds: **11** findings, **7** with the composed notes in view, all seven `perform` + blocking with composedMeanVoices 3–8; the other four `compose` + major |
+  | `displaceHarmonyOffGrid` (`groove` floor) | R-1a P1-1: `groove = 0` (closed by **B-13** + **B-21** D2/D3/D5) | **70.74** | the constructed case reproduces **0** exactly, 22 `off_grid` including 5 on the bass — a drop worth 70.74 points, against B-13's 8.85 |
+  | `strings_up_two_octaves` (`register:top_line_above_comfortable_ceiling`) | R-1b: **5** refusals under `major_on_a_bed` + one `climax_all_treble`, the bed at MIDI 92 (closed by **B-21** D4) | register **100**, **0** non-info observations | the same transform on the owner's bed: register **0**, **8** `top_line_above_comfortable_ceiling` majors, all on `strings-pad` |
+  | `silenceOpeningBars` (`orchestration:planned_family_silent`) — **new** | R-1b P0-5/P1-7: the first note at 3.795 s, the empty intro leading the judge at priority 2404 (closed by **B-21** D1) | first note **0.000 s**, **0** `planned_family_silent` | a constructed case built one transform per closed defect; all four refuse, and P0-5's ordering holds — off-grid harmony **#1**, string bed **#5**, empty intro **#33** at the salience floor |
+
+  **Where the owner's song now belongs: still out of `CLEAN_ANCHOR_IDS`, for a
+  measured reason rather than a remembered one.** It scores 70.74 on `groove`
+  and 100 on `register`, but the judge still refuses it: one **blocking**
+  `harmony:overhang_across_chord_change` on `strings-pad` in Chorus 3 (bars
+  97–112 — overhangShare 0.866, 5 of 10 notes clashing, chordToneShare 0.395)
+  and one **major** `groove:harmony_off_grid` on the same part in the Bridge
+  (median 53.4 ms from the kit against a 50 ms tolerance, with the kit itself on
+  its own grid). Both are located to the string bed the owner's brief asks for,
+  and the cause is isolated by a control rather than assumed: remove the
+  `strings-pad` part and both findings go; build the same arrangement with the
+  brief's **global** planner hints withheld and the plan has no strings part at
+  all (0 notes against 281) — harmony 40 → 88.77, groove 70.74 → 86.34, 0
+  blocking, 0 major. *Which* decision about that bed is wrong — the planner's,
+  the voicing solver's or the release rule's — is **UNKNOWN** here.
+
+  **What that costs the positive-control ledger: nothing, and it is checked
+  rather than asserted.** The owner's song is an anchor but not a control target
+  (141 bars × 22 part tasks is a different order of runtime, and worsening an
+  already-defective anchor measures the interaction rather than the worsening),
+  so `controls.ts` runs the nine benchmark anchors and the ledger's composition
+  does not depend on where the owner's song sits. The null control still holds:
+  no clean anchor gets a blocking observation from any dimension
+  (`cleanAnchorBlockingRate` 0 for all sixteen).
+
+  **The ledger itself was stale and is regenerated by its own generator**
+  (`B05A_WRITE_LEDGER=1`, never hand-edited), together with
+  `docs/evidence/brain-b05a-critic-controls.json`. B-21 moved eight rows:
+  `melodyAndCounterline` **informing → gated** (`top_line_into_vocal_register`
+  now 9/9), `emotionalArcAndTension` 0-of-2 → 1-of-2
+  (`swap_climax_with_quietest` 9/9), `register` 2 → 3 transforms (n 9 → 10),
+  `playability` 4 → 2, `motifRecurrence` 0.5 → 0.5556, `sectionDevelopment`
+  0.087 → 0.0435, `groove` unchanged but with a new strongest control — and
+  **`voiceLeading` gated → informing**, the one loss. Its cause is isolated, not
+  assumed: on `acoustic-demo` the guitar bed now repeats the **same bottom note
+  in 65 of 72 consecutive cluster pairs**, so `parallel_perfect_motion`'s
+  re-voicing over that bottom note moves no voice, the detector's
+  `movedA !== 0 && movedB !== 0` guard correctly declines to call it parallel
+  motion, and the parallel share is 14/216 = 6.5 % against a 20 % minor
+  threshold (`ballad-piano-vocal`, for contrast: 74/291 = 25.4 %, detected).
+  **The harness stops producing the damage on that anchor; the dimension is
+  right.** Making the transform skip static-bottom parts would restore the gate,
+  and this stream deliberately did not make a harness change whose effect is to
+  restore a gate — see *Honest limits*.
+
+  **Also fixed here (charter rule 6, the program's recurring bug):**
+  `b05cEvidence`'s §4 table quoted **eleven** hand-copied detection rates
+  ("onset_jitter@3 (29/31)", "strings_up_two_octaves (9/9)" …) that went stale
+  the moment the anchors moved. They are read from the generated ledger now, so
+  there is one source of truth for what a control showed. `judgeOnTheOwnersSong`
+  reported a rank of `0` for a finding that is not raised at all; it reports
+  `null` and names the stream that closed it, with R-1b P0-5's ordering
+  demonstrated on the constructed case beside it.
+
+  **Tests.** `critics/dimensions/ownerAnchor.test.ts` **8/8** (was 2/6 — four
+  red, and two tests added: the register control and the anchor's own remaining
+  defect with the control that isolated it); `critics/rank.test.ts` **12/12**
+  (was 11/12); `critics/controls.test.ts` **5/5** (was 4/5, the ledger stale);
+  `critics/b05cEvidence.test.ts` **1/1** (was 0/1). Also green and unchanged:
+  `critics/judge.test.ts` 10/10, `critics/failureTaxonomy.test.ts` 6/6,
+  `positiveControlLedger.test.ts` 7/7, and eight dimension suites. Evidence:
+  `docs/evidence/brain-b25-anchors-survive-the-fix.json`, plus the regenerated
+  `brain-b05a-critic-controls.json` and `brain-b05c-critics-decide.json`.
+  `pnpm run typecheck` green (exit 0); `node --check
+  scripts/run-focused-api-tests.mjs` clean — all four suites were already
+  registered, so the registry is unchanged.
+
+  **Found and not fixed — handed to the lead before PR-B21 merges.**
+
+  1. **`string_bed_too_high` is back, and two rules disagree about how high a
+     bed may sit.** `adversarial.instrumentReality:string_bed_too_high` fires on
+     `orchestral-midi/strings-climax_layer` (Chorus, bars 19–30, mean MIDI
+     **79.93**, max 86, 28.4 s) and on the owner's own `strings-pad` (Bridge,
+     bars 97–110, mean **80.00**, max 84, 25.8 s). B-13 had closed this —
+     orchestral-midi averaged 74.84 — and `critics/adversarial/adversarial.test.ts`
+     asserts the closure, so it is red. The adversarial rule uses a fixed
+     threshold of 79; B-21's D4 gives the writers
+     `instrumentProfile.roleRegisterFor`, which allows a violin section
+     `CLIMAX_LAYER` 67–91. So `register` scores **100** on the owner's song while
+     the adversarial critic calls its Bridge bed too high. Two sources of truth
+     for one musical claim. Belongs to B-21 and the adversarial stream.
+  2. **The judge's disagreement machinery has no demonstrated sensitivity.**
+     `critics/adversarial/evidence.test.ts` asserts "at least one anchor produces
+     a recorded disagreement"; measured now, **all ten anchors produce zero**
+     (6–20 agreements each). Same class as this stream's job — the remedy is a
+     constructed case, not a deleted assertion. Not this stream's file.
+  3. **PR-B21's headline number does not reproduce through the critics' anchor
+     path.** B-21's entry reports `releasable: true, 0 blocking, 0 major` on the
+     owner's song. Rebuilt with the review's brief
+     (`briefPlannerHints(compileProductionBrief(OWNER_BRIEF …))`) and
+     `composeReferencePart`, **every** candidate at `candidateCount` 1, 3 and 5
+     reports harmony 40, groove 70.74, one blocking
+     `overhang_across_chord_change@97-112` on `strings-pad` and one major
+     `harmony_off_grid` in the Bridge. Injecting `composeParts` or letting the
+     orchestrator default makes no difference (both report
+     `REFERENCE_PART_COMPOSER_V1`); withholding the brief's global hints does.
+     Either B-21 measured through a different gate or the runs differ in a
+     variable this stream did not find. It should be reconciled before merge,
+     because the finding sits on the string bed the owner's brief asks for.
+  4. **Fifteen more red tests in eleven suites at the B-21 base, all the same
+     class.** Measured by stashing this stream's changes and re-running:
+     identical failures, so B-21 leaves them and B-25 does not cause them.
+     `critics/dimensions/density` 2, `register` 2, `repetitionVsVariation` 2,
+     `sectionDevelopment` 2, `groove` 1, `harmony` 1,
+     `motifRecurrenceAndDevelopment` 1, `playability` 1, `transitions` 1,
+     `critics/adversarial/adversarial` 1, `critics/adversarial/evidence` 1.
+     Every one is an anchor pin the improved composer moved, and every one needs
+     the same treatment this stream gave its four: assert the fix, keep the
+     control, demonstrate it on a constructed case. They are outside this
+     stream's file set and are listed, with counts, rather than touched.
+  5. Minor: `scripts/run-focused-api-tests.mjs` spawns `esbuild` by bare name,
+     which cannot resolve `esbuild.CMD` on Windows without a shell, so the
+     grouped runner fails with `spawn esbuild ENOENT` on this machine. The
+     suites were run directly through `esbuild.CMD` + `node --test` instead. Not
+     changed here: the file is shared and the fix (`shell: true`, or resolving
+     `node_modules/.bin`) belongs with whoever owns the runner.
+
+  **Honest limits.**
+
+  - **Rung: TESTED.** Nothing was generated or rendered by this stream. The
+    anchors are recomposed from live code and every number is a symbolic
+    measurement by the unmodified critic dimensions. No audio, no listening.
+  - The owner's song is **still not clean**, and the cause of what remains is
+    located to the brief's string bed but **not** attributed to a decision. That
+    is a control result, not a diagnosis.
+  - **`voiceLeading` loses its gate and this stream did not restore it.** The
+    cause is isolated and reported above, and re-pointing
+    `parallel_perfect_motion` to skip parts whose bottom voice does not move
+    would restore it — the same recalibration `top_line_erratic` and the
+    `erase_*` transforms already use. This stream declined, because the decision
+    "change the harness in a way that restores a gate" should not be taken by
+    the stream that benefits from it. A reviewer should take it or refuse it
+    explicitly. Until then `voiceLeading` informs and does not refuse, which is
+    the conservative direction.
+  - The ledger's composition is **checked, not improved**: the owner's song was
+    never a control target, so moving it would have changed nothing, and no new
+    defective anchor was needed or constructed. `DEFECT_ANCHOR_REASONS` is still
+    empty and all nine benchmark anchors are still in the clean set.
+  - `silenceOpeningBars` is exercised on the owner's anchor only. It is
+    deliberately **not** in `PURPOSE_BUILT`, so it does not enter the
+    positive-control ledger and gates nothing.
+  - `docs/evidence/brain-b25-anchors-survive-the-fix.json` is a snapshot built
+    by a scratchpad script rather than by a committed builder. Every number in
+    it is re-asserted by a committed test, named per row in `reproducedBy`, but
+    the file itself has no generator in the repo.
+  - The fifteen red tests in item 4 mean the critics surface is **not** green at
+    this branch's head. Four suites are; eleven are not, for reasons that
+    predate this stream.
+
+### PR-B26 — Brain B-26: the critics' evidence after the writers improved
+
+- **PR-B26** ✅ (open; the lead merges, **after PR-B21 and PR-B25**) — `ws-brain-b26`,
+  branched from `origin/ws-brain-b25` (Arrangement & Orchestration Brain, stream
+  B-26, the critics' evidence). The lead's F16 measured thirteen red tests across
+  nine critic-dimension suites with B-21 on top and attributed eleven of them to
+  B-21 and two to `main`. **Every failure was classified before it was touched,
+  and the classification is written beside the assertion it moves.** No
+  dimension threshold, severity or release rule was changed; no composer file
+  was opened.
+
+  **First correction, because it changes what "already red" means.** F16 says
+  `main` carries two of the thirteen. Measured here in a worktree checked out at
+  **`3b9ace3`** — B-21's own base, the tree this PR is built on — all nine
+  suites are **fully green, 44/44**. So on this branch **all thirteen failures
+  are B-21's**. `main` at `7c14ecf` does carry two red of its own, in the same
+  two tests (`harmony` null control: rock-full `bass_rarely_states_root` 3 where
+  the pin says 4; `sectionDevelopment` climax: dance-full at identity 0.25 no
+  longer reported as a repeat without identity) — but they are *different
+  numbers in the same tests*, caused by what merged into main after `3b9ace3`
+  (B-07 / B-19 / B-24), and both rows are re-pinned here with B-21's numbers.
+  `main` has since moved again to `a53acd1` (B-22). See *Honest limits*.
+
+  **The classification table.** Every "before" figure was re-measured at
+  `3b9ace3` with the same harness; every "after" is on this tree.
+
+  | # | suite / test | classification | measured before → after | what changed | where the sensitivity lives now |
+  |---|---|---|---|---|---|
+  | 1 | `register` — a bass inverted to the top of the ensemble | **stale pin** (the control *gained* its lever) | `role_inversion` applicable 6/9 → **9/9**, detected **9/9**, drops 36–78 | the pin asserted `skipped = [dance-full, pop-full, rock-full]`; it asserts `skipped = []`, 9 applicable, 9 detected, with the bass ranges that explain it | this control alone, on every anchor in the corpus |
+  | 2 | `register` — the reference beds sit on the singer's pitches | **real regression** (pop-full) **and a rule that did not exist** | pop-full 2 → **5**; corpus **18 → 17** | `vocalRegisterConflict` added to `register.ts`: every masking finding now carries the role register, the sung band, the room on each side and which constraint has to give | the arbitration itself, unit-tested, plus the constructed octave fold |
+  | 3 | `density` — choruses thinned to a third | **control lost its lever** | caught 3/4 → **1/4**; pop-full ratio **0.610**, rock-full **0.627** against the rule's 0.6 | re-pinned with the numbers; re-pointed by a new transform | `arrival_thinned_below_its_setup`, 8/9 anchors raise `louder_section_thinner` |
+  | 4 | `density` — an arrival thinned, unvoiced and softened | **control lost its lever** | caught 2/3 → **0/3**; the *setup's* mean voices 2.00 → **1.105** (pop-full), so the arrival's voices ratio *rises* to 1.58 | re-pinned with the numbers; re-pointed | `arrival_thinned_below_its_setup`, 6/9 anchors raise `arrival_thinner_than_setup`; 0/9 clean anchors carry either finding |
+  | 5 | `repetitionVsVariation` — the pop anchor's second verse | **real change, and no dimension reports it** | keys exactShare 0.50 → **0.00**, rhythmShare 0.50 → **0.00**, bass 0 → 0 | the measurement is pinned exactly; a `todo` names the missing finding and its owner | — (recorded as a blind spot, see the `todo`) |
+  | 6 | `repetitionVsVariation` — bars overwritten with their predecessor | **stale pin** caused by a **harness defect** | 5/5 → 5/7 → **5/5** | `bar_copy_repetition@3` *deletes* a part that is silent in the window's first bar (rock-full `guitar-harmonic_bed` 91 → **0** notes, dance-full `keys-harmonic_bed` 152 → **0**); `applyFamilyCorruption` now refuses a corruption that empties its target | unchanged; the two skipped cases are asserted by name |
+  | 7 | `sectionDevelopment` — the climax reading | **stale pin** | pop-full loses `register` from `developedIn`; rock-full `identityKept` true → **false** (0.458 → 0.375); `repeat_without_identity` moves dance-full (0.188 → 0.219) → acoustic-demo (0.250 → 0.125) | the table re-pinned with the cause: chorus 2 used to be "developed" by rising above the instrument's own ceiling, which is what B-21's D4 stopped | unchanged |
+  | 8 | `sectionDevelopment` — chorus 1 pasted over a developed chorus 2 | **stale pin** (the control got stronger) | anchors already at the floor 3 → **1**; drops rock-full 4.80 → **8.00**, dance-full 4.68 → **7.80** | `alreadyWithoutIdentity` re-pinned to `acoustic-demo` only | unchanged |
+  | 9 | `groove` — erasing the planned drum fills | **control lost its composite flag, not its lever** | the two `planned_fill_missing` majors still appear at bars 12 and 28 on all three anchors; pop-full's net score **75.04 → 75.07** because the same erasure removes 2 × `backbeat_missing` and 2 × `anticipation_mismatch` | the located majors are asserted on all three; pop-full's net is recorded with the four findings that cancel it | isolated: deleting the pitched pickups alone moves **nothing** (drop 0, no new observation) on all three, so the whole effect is in the drum bars |
+  | 10 | `harmony` — the null control | **stale pin**, and the number is an improvement | `bass_rarely_states_root` across the clean anchors **19 → 9**; rock-full 81.20 → **94.00**, dance-full 90.64 → **100**, jazz-full 74.80 → **89.20**, orchestral-midi 82.00 → **96.40**; all three `approach_tone_wrong_mode` on jazz-full gone; still 0 blocking, 0 major | the exact table re-pinned, not widened | unchanged |
+  | 11 | `motifRecurrenceAndDevelopment` — the random-pitch composer | **stale pin** (a sentinel, not a share) | rock-full's new `guitar-harmonic_bed` plays in **one** section, so `laterSectionCells` is 0 and `recurrenceShare` is the dimension's own **−1 "not measurable"**; acoustic-demo stops being the null case (detected false → **true**, drop 0 → 8.25) | "every line falls to 0" split into "every line with later-section cells falls to 0" plus the not-measurable parts named | unchanged, and stronger on all three anchors |
+  | 12 | `playability` — a bed two octaves up | **control lost its lever on the piano anchors** | detected 3/3 → 2/3; jazz-full's bed 53–84 → **50–70**, +24 = 74–94, inside a piano's comfortable **36–96** | re-pointed at the five anchors whose bed is a guitar, synth or string section (all five detect); the four piano beds recorded as the measured null, with the assertion that the transform still moves their notes | the five non-piano beds |
+  | 13 | `transitions` — the dance-full intro boundary | **real regression, in a different part** | `registerMoves` 0 → **1**; the **bass** drops from mean 43.33 in the last intro bar to **30.50** in the first verse bar (12.83 semitones; at B-13 it was 4.83) | re-pinned to say which part moves and by how much; B-13's claim about the bed is separately asserted and still holds | unchanged |
+
+  Two more suites in this stream's file set were red at the same base and are
+  closed here — both were handed over by B-25:
+
+  | # | suite / test | classification | what changed |
+  |---|---|---|---|
+  | 14 | `critics/adversarial/adversarial` — `string_bed_too_high` | **two sources of truth** (the lead's **F15**) | the flat `STRING_BED_HIGH = 79` is gone; the rule asks `roleWindowForDefinition`, the register dimension's own reader, for the ceiling of the role the **plan** gives the part in that section |
+  | 15 | `critics/adversarial/evidence` — "at least one anchor produces a recorded disagreement" | **control lost its lever** | all ten anchors now produce **zero** disagreements of their own (6–20 agreements each); re-pointed at a constructed case built from the fighting module's **own** positive control (`same_register_offbeat`), which makes `boredom:rhythm_predictable` and `fighting:register_fight` overlap and the judge keep the pair **open** |
+
+  **Row 2 in full: the arbitration, because this is the one the ledger has been
+  carrying as N-pending since Wave 1.** B-21's D4 gave the writers
+  `instrumentProfile.roleRegisterFor`; this dimension has always also asked a
+  part to stay off the singer's pitches. Both are right and nothing said what to
+  do when they disagree — `vocal_masking` told the writer to "move out of the
+  vocal band" whether or not the band it is allowed to occupy had anywhere to
+  move to. Measured, with the window, the singer's band widened by the masking
+  distance, and the part's own span:
+
+  ```
+  anchor      part / role                     window   sung    span  below  above  ->
+  pop-full    keys RHYTHMIC_HARMONY           [48,72]  58-69    12     9      2    NO ROOM
+  pop-full    keys HARMONIC_BED               [48,67]  58-69    12     9     -3    NO ROOM
+  rock-full   keys RHYTHMIC_HARMONY           [48,72]  62-73    10    13     -2    clear below
+  ballad      keys RHYTHMIC_HARMONY           [48,72]  63-71     9    14      0    clear below
+  orch-midi   strings CLIMAX_LAYER            [67,91]  60-75    13    -8     15    clear above
+  ```
+
+  The rule is now in the code with its reasoning and its provenance: the two
+  constraints are compatible exactly when the window has, on one side of the
+  singer, at least as many semitones as the part's voicing spans; *below* is the
+  resolution for an accompaniment and *above* only for the roles a professional
+  writes over the lead (`ROLES_WRITTEN_ABOVE_THE_LEAD`); and when neither side
+  has room the decision is **not the writer's** — the plan gave this part a role
+  whose register the singer occupies, so the finding is attributed to
+  `orchestration` with `replan_register_band` instead of telling a composer to
+  move a part that cannot move. Across the anchors: **9 `no_room`, 7
+  `clear_below`, 1 `clear_above`**. The conflict is real and not an artefact of
+  a threshold: folding pop-full's two verses down one octave *inside* their own
+  48–72 register moves the dimension **66.58 → 82.18** and clears two of the
+  five; for the other three no octave inside the register clears the singer at
+  all.
+
+  **And where there is no vocal evidence the dimension now says so.** A model
+  with no melody scored exactly like one whose parts leave the singer room. The
+  owner's song is that case — `vocals.status` is `not_available`, so `register`
+  scores 100 with no masking observation at all, not because the arrangement
+  leaves room for him but because the platform does not know where his voice
+  sits. `vocal_masking_not_measured` (info) now states it in the report. The two
+  MIDI anchors carry a lead line with no vocal evidence and every masking
+  finding says which it is (`leadEvidence`).
+
+  **F15, and a correction to it.** The lead ruled that the adversarial rule is
+  wrong for `orchestral-midi/strings-climax_layer` (mean 79.93 against a
+  CLIMAX_LAYER register of 67–91) and that the owner's own `strings-pad` at mean
+  80.00 is the *writer's* problem because a PAD's ceiling is 79 too. The first
+  half is implemented. The second half does not survive measurement: the owner's
+  strings part is **not a PAD in that section**. The plan assigns it
+  `COUNTER_MELODY` in the Bridge (ceiling **86**) and `CLIMAX_LAYER` in Chorus 3
+  (ceiling 91); it is a PAD in the other seven sections, where its mean is
+  63.3–70.7, far below 79. The `register` dimension has always read the plan's
+  per-section role and has always scored that part 100. So once both rules ask
+  the same function with the same role lookup, the disagreement disappears in
+  both directions, and `adversarial.instrumentReality` on the owner's song goes
+  **97 → 100** with `string_bed_too_high` 0. The track *id* says `pad`; the plan
+  says otherwise, and the plan is what the writers and the critic both read.
+  **This is a finding for the lead, not a decision taken quietly** — see *Honest
+  limits*.
+
+  **The ledger was regenerated by its own generator** (`B05A_WRITE_LEDGER=1`,
+  never hand-edited), with `docs/evidence/brain-b05a-critic-controls.json`. Two
+  rows moved:
+
+  - `density` **gated → gated**, gaining a third gating transform
+    (`arrival_thinned_below_its_setup`, 9/9). No gate is restored: density
+    already gated on `piano_one_note_per_bar` + `strip_bed_to_top_voice`.
+  - `repetitionVsVariation` **informing → informing**, with
+    `bar_copy_repetition@3` moving from 17/32 (0.5313) to **17/18 (0.9444)**
+    because the fourteen items the corruption *deleted* are no longer counted as
+    detection misses. It earns one gating transform where it had none and still
+    needs two, so the status is unchanged.
+
+  `arrival_thinned_below_its_setup` is claimed by **density only**, deliberately:
+  `arrival_thinned_and_softened` is also claimed by `sectionDevelopment`,
+  `performanceRealisation` and `emotionalArcAndTension`, and adding a transform
+  to a dimension's claimed set can promote its status — a decision the stream
+  that benefits should not take (B-25's precedent on `voiceLeading`).
+
+  **Tests.** The nine dimension suites **44/44 with one `todo`** (was 31/44):
+  `density` 8/8 (was 5/7; two tests added), `register` 8/8 (was 3/5; three
+  added), `repetitionVsVariation` 5/5 + 1 todo (was 3/5), `sectionDevelopment`
+  4/4 (was 2/4), `groove` 6/6 (was 5/6), `harmony` 5/5 (was 4/5),
+  `motifRecurrenceAndDevelopment` 4/4 (was 3/4), `playability` 4/4 (was 3/4),
+  `transitions` 4/4 (was 3/4). Also green, and all of them run after the change:
+  `critics/adversarial/adversarial` **44/44** (was 42/43, one test added),
+  `critics/adversarial/evidence` **1/1** (was 0/1), `critics/dimensions/ownerAnchor`
+  8/8, `critics/rank` 12/12, `critics/controls` 5/5, `critics/b05cEvidence` 1/1,
+  `critics/judge` 10/10, `critics/failureTaxonomy` 6/6, `positiveControlLedger`
+  7/7, and the seven other dimension suites (orchestration, idiomaticity,
+  voiceLeading, melodyAndCounterline, rhythmicInteraction, performanceRealisation,
+  emotionalArcAndTension). `pnpm run typecheck` green (**exit 0**, log read);
+  `node --check scripts/run-focused-api-tests.mjs` clean — every suite touched
+  was already registered, so the registry is unchanged. Evidence:
+  `docs/evidence/brain-b26-critics-after-the-writers.json`, plus the regenerated
+  `brain-b05a-critic-controls.json`, `brain-b05b-adversarial-judge.json` and
+  `brain-b05c-critics-decide.json`.
+
+  **Capability ladder.** *Register plan applied to pitch choice* — the row the
+  ledger has carried as **I + T, N-pending** since Wave 1: DESIGNED ✓
+  IMPLEMENTED ✓ (the arbitration exists, states its reasoning and its
+  provenance, and says who owns each outcome) TESTED ✓ — **INTEGRATED ✗**: the
+  arbitration is a *critic-side* rule. It tells the writer which direction has
+  room and refuses to blame the writer when there is none, but **no writer reads
+  it**, so no note has moved because of it. NOT VALIDATED ON OUTPUT. *One
+  register ceiling for the whole repository* (F15) — IMPLEMENTED ✓ INTEGRATED ✓
+  TESTED ✓ VALIDATED ON OUTPUT ✓ (measured on the owner's song and on the
+  corpus). *The critics' positive controls after B-21* — TESTED ✓ BENCHMARKED ✓
+  (the ledger is regenerated from the harness). Nothing was rendered and nothing
+  was listened to.
+
+  **Found and not fixed — for the lead and for other streams.**
+
+  1. **The register/vocal arbitration belongs in a writer and this stream does
+     not own one.** `composer/registers.ts` `registerWindowFor` answers per part
+     task from the profile's role register and **never reads the vocal**; the
+     per-part register plan that does account for the singer is
+     `orchestrationBudget.registerBoundsFor`, which B-21's own hand-off table
+     records as "nothing on the production path calls" it, and
+     `sectionPhrasePlanner.registerDistribution` (`:497-519`) is a section
+     histogram B-21 deliberately stopped reading. So the platform has a
+     vocal-aware register plan and no writer that consumes it. Until one does,
+     `vocal_masking` is a report, not a repair. **Owner: B-21 / the writers.**
+  2. **A real regression on the anchors: the bass jumps an octave across a
+     section boundary.** dance-full's bass ends the intro at mean 43.33 and
+     enters the verse at 30.50. `composer/registers.ts` `registerWindowFor` has
+     no notion of continuity across a boundary, so nothing stops the same
+     instrument being seated an octave apart in two adjacent bars. Measured and
+     pinned in `transitions.test.ts`; **owner: B-21.**
+  3. **F15's second half is wrong about the owner's string bed, and the reason
+     matters.** The part is `COUNTER_MELODY` in the Bridge by the plan's own
+     role assignment, not `PAD`. If the lead wants the *track's* nominal role to
+     govern, that is a third source of truth and should be decided explicitly;
+     this stream implemented "ask the same function the register dimension asks,
+     with the same role lookup", which is what the ruling's own reasoning
+     requires. **Owner: the lead.**
+  4. **`bar_copy_repetition` deletes late-entering parts.**
+     `symbolicCorruptions.ts` copies the window's first bar over every later
+     bar; for a part silent in that bar the copy is empty and the part is
+     removed. Fourteen of the thirty-two items the control harness ran were
+     emptied this way. Guarded in `applyFamilyCorruption` so no dimension's
+     control counts it, but the transform itself is still wrong. **Owner: the
+     owner of `symbolicCorruptions.ts`.**
+  5. **A repeated section that repeats nothing has no observation anywhere.**
+     pop-full's Verse 2 shares 0.000 of its bars with Verse 1 in every part, in
+     pitch and in rhythm, and `repetitionVsVariation` raises no non-info
+     observation on the anchor at all. The right finding is
+     `sectionDevelopment.repeat_without_identity`, which is computed only for
+     the planned-climax pair. Carried as the suite's one `todo`, with the reason
+     it was not fixed here (a new observation kind must be registered in
+     `failureTaxonomy.ts`, weighted in `judge.ts` and classified in
+     `findingClassification.ts`, all of which B-19 owns).
+  6. **`orchestrateArrangement` composes some part tasks more than once, and
+     `ownerComposedAnchor` counts every call.** Measured: 56 calls for 22 part
+     tasks on the owner's song, with `part-Bridge-keys-RHYTHMIC_HARMONY`
+     composed three times. Changing one adversarial finding (the F15 fix) alters
+     which recompositions happen, so the anchor's *composed* keys count moves
+     670 → 829 while the **shipped notes are byte-identical**
+     (363/214/210/1081/281 both ways). The composed layer is an isolating
+     control for "compose vs perform" (B-05c's control A), and it is currently
+     an accumulator over attempts rather than the notes that were kept.
+     **Unassigned; it makes the composed layer's counts unreliable as evidence.**
+
+  **Honest limits.**
+
+  - **Rung: TESTED.** Nothing was generated, rendered or listened to. Every
+    number is a symbolic measurement by the critic dimensions on anchors
+    recomposed from live code.
+  - **The arbitration changes no note.** It is a critic-side rule; the ledger row
+    it answers stays **N-pending** until a writer reads it (finding 1).
+  - **Two rows are re-pinned against this branch, not against the merge.** The
+    `harmony` null-control table and the `sectionDevelopment` climax table are
+    exact-count assertions, and both are sensitive to composer changes on
+    `main`. They are measured on `3b9ace3 + B-21 + B-25`; `main` has moved twice
+    since the lead's F16 measurement (`7c14ecf` → `a53acd1`). **They must be
+    re-run at the merge**, with
+    `./node_modules/.bin/esbuild.CMD src/lib/critics/dimensions/<name>.test.ts --bundle --platform=node --format=esm --alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts --outfile=../../.tmp-tests/<name>.test.mjs && node --test ../../.tmp-tests/<name>.test.mjs`
+    from `artifacts/api-server`. A merge-preview was attempted and abandoned:
+    `origin/main` and `ws-brain-b25` conflict in six files including the golden
+    fixture and `b05cEvidence`, and resolving them is the lead's merge, not a
+    measurement this stream may take.
+  - **The re-pointed density transform is this stream's own construction.** Half
+    of the setup's onsets per bar is a chosen number, not a fitted one; what is
+    not chosen is the *shape* — it thins the arrival relative to its setup
+    rather than by a fraction of itself, which is what the defect's name means.
+    It is claimed by density only, and the three other dimensions that claim the
+    blunted `arrival_thinned_and_softened` are left exactly as they were.
+  - **`repetitionVsVariation`'s detection rate improves because items were
+    removed, not because the dimension improved.** 17/32 → 17/18. The removed
+    items are the ones the corruption deleted, and the status is unchanged.
+  - **`vocal_masking_not_measured` is an `info` observation and gates nothing.**
+    It makes the silence visible in the report; it does not make the platform
+    know where a singer sits. For the owner's song that still waits on B-22's
+    melody reaching the Song Model.
+  - **The evidence JSON is a snapshot built by a scratchpad entry point**, not by
+    a committed builder, in the same shape B-25 used. Every figure in it is
+    re-asserted by a committed test in the suites listed above.
+  - **Nine anchors and one song.** "Detected on every anchor" means nine
+    synthetic benchmark cases; the exact 95 % interval at 9/9 is [0.66, 1].
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

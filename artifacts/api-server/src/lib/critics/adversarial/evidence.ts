@@ -110,9 +110,30 @@ export function buildB05bEvidence(options: { anchorIds?: readonly string[]; now?
   // `orchestral-midi+keys_silenced` injects the defect the anchor carried before
   // B-01 (keys planned in every section, never written) so the evidence still
   // shows a blocking finding blocking under the measured ledger.
-  const judgeExamples = ["orchestral-midi", "orchestral-midi+keys_silenced", "pop-full", "jazz-full"].filter((id) => ids.includes(id.split("+")[0])).map((id) => {
+  //
+  // `orchestral-midi+same_register_offbeat` is the **constructed disagreement**
+  // (B-26). Until B-21 one anchor happened to produce two opposing positions at
+  // overlapping bars by itself; measured after B-21, all ten anchors produce
+  // zero (6-20 agreements each), so "at least one anchor produces a recorded
+  // disagreement" was testing the composer's accidents rather than the judge's
+  // machinery — the same class of failure this merge is about, with the same
+  // remedy: construct the case instead of deleting the assertion. The
+  // construction is the fighting module's **own positive control**
+  // (`same_register_offbeat`: two parts moved into one register with clashing
+  // onsets), so no new harness code is needed. It makes
+  // `adversarial.boredom:rhythm_predictable` and
+  // `adversarial.fighting:register_fight` overlap on the same bars — the
+  // "rhythmic independence" opposition — and no resolution rule covers that
+  // pair, so the disagreement is *kept open*, which is exactly the behaviour
+  // the judge documents and the evidence must be able to show.
+  const constructedDisagreement = CONTROLS.find((c) => c.name === "same_register_offbeat");
+  const judgeExamples = ["orchestral-midi", "orchestral-midi+keys_silenced", "orchestral-midi+same_register_offbeat", "pop-full", "jazz-full"].filter((id) => ids.includes(id.split("+")[0])).map((id) => {
     const a = anchorFor(id.split("+")[0]);
-    const input = id.endsWith("+keys_silenced") ? { ...a.input, trackModels: a.input.trackModels.filter((t) => t.instrument.toLowerCase() !== "keys") } : a.input;
+    const input = id.endsWith("+keys_silenced")
+      ? { ...a.input, trackModels: a.input.trackModels.filter((t) => t.instrument.toLowerCase() !== "keys") }
+      : id.endsWith("+same_register_offbeat") && constructedDisagreement
+        ? constructedDisagreement.apply(a.input)
+        : a.input;
     const ctx = judgeContextFromInput(input);
     const summarise = (ledger: ControlLedger | undefined) => {
       const v = judge(runAdversarialCritics(input, ledger ? { controlLedger: ledger } : {}), ctx);

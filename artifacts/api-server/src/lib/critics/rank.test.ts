@@ -7,13 +7,13 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { anchors, applyPurposeBuilt, displaceHarmonyOffGrid, ownerAnchor, ownerComposedAnchor, probeAnchor } from "./dimensions/anchors";
+import { anchors, applyPurposeBuilt, displaceHarmonyOffGrid, ownerAnchor, ownerComposedAnchor, probeAnchor, silenceOpeningBars, type Anchor } from "./dimensions/anchors";
 import { BENCHMARK_CORPUS } from "../benchmarkCorpus";
 import { evaluateAllDimensions } from "./dimensions/index";
 import { runAdversarialCritics } from "./adversarial/index";
 import { judge, judgeContextFromInput, SALIENCE_FLOOR } from "./judge";
 import { constructiveScoreOf, rankCandidates, CANDIDATE_RANK_VERSION, NEAR_IDENTICAL_CODE } from "./rank";
-import type { CriticDimensionReport, CriticObservation, ControlStatus, Severity } from "./types";
+import type { CriticDimensionReport, CriticInput, CriticObservation, ControlStatus, Severity } from "./types";
 
 // ---------------------------------------------------------------------------
 // Constructed reports
@@ -210,34 +210,61 @@ test("disagreement is still preserved", () => {
 // The real corpus and the owner's song
 // ---------------------------------------------------------------------------
 
-test("on the owner's song, constructed with R-1b's three defects, the judge refuses, and it refuses for the right reasons", () => {
-  // Re-anchored at the merge, and this is what changed.
+test("on the owner's song, constructed with R-1b's four defects, the judge refuses, and it refuses for the right reasons", () => {
+  // Re-anchored at the B-13 merge, and again at the B-21 merge. This is what
+  // changed the second time.
   //
   // This test is about the *ranking*: that the judge refuses on each of R-1b
-  // §7's three defects by its own rule, and that it puts them above an empty
-  // two-bar intro (P0-5). It used to get those three defects for free, because
-  // the owner's arrangement had them. B-13 fixed two of them - the harmony is
-  // now written on the bar grid (chord events median 140.8 ms -> 0.04 ms from
-  // the beat) and no bed ships as one voice (the owner's string bed 91 -> 278
-  // notes, no section below 3 voices) - so on today's owner anchor `off_grid`
-  // is no longer a refusal and `single_voice_bed` does not exist at all.
+  // §7's defects by its own rule, and that it puts them above an empty two-bar
+  // intro (P0-5). It used to get those defects for free, because the owner's
+  // arrangement had them. Every one of the four is now closed in the writers,
+  // measured on this tree:
+  //
+  //   `off_grid`                           B-13 put the chord events on the bar grid
+  //                                        (median 140.8 ms -> 0.04 ms) and B-21's
+  //                                        D2/D3/D5 closed the residue: **0** `off_grid`
+  //                                        observations, on either layer.
+  //   `single_voice_bed`                   B-13: the string bed ships 281 notes with no
+  //                                        section below three voices; **0** observations.
+  //   `top_line_above_comfortable_ceiling` B-21's D4 gave the writers the critic's own
+  //                                        `roleRegisterFor` table; register scores **100**
+  //                                        and raises nothing (was 5 refusals + climax_all_treble).
+  //   `planned_family_silent` (bars 1-2)   B-21's D1: `composer/opening.ts` states the arc's
+  //                                        decided opening on the song's own first chord;
+  //                                        the first note is at **0.000 s**, not 3.795 s.
   //
   // Reading the ranking off an arrangement that no longer has the defects
   // would be testing the composer's old output, not the ranking. So the case
-  // is now *constructed*: `strip_bed_to_top_voice` puts the beds back on one
-  // voice and `displaceHarmonyOffGrid` moves every harmonic part's onsets
-  // 180 ms off the beat - the middle of the 100-230 ms range R-1b measured.
-  // Both are deterministic, and the composed (pre-perform) notes are left on
-  // the grid, so the constructed defect has the shape the review found.
+  // is *constructed*, one transform per defect, each from the anchor set's own
+  // machinery and each deterministic:
   //
-  // The dimensions and the release rules are untouched: no threshold moved,
-  // and the defects are real observations raised by the unmodified critics.
+  //   `counterline_into_bed_register` puts the comping part's top voice into the
+  //     bed's octave (the shape R-1b found: above the comfortable ceiling, still
+  //     playable — not the +24 of `strings_up_two_octaves`, which also makes the
+  //     part physically unplayable and would be a different finding);
+  //   `strip_bed_to_top_voice` puts the beds back on one voice;
+  //   `silenceOpeningBars` empties bars 1-2, so the plan's opening families write
+  //     nothing there;
+  //   `displaceHarmonyOffGrid` moves every harmonic part's onsets 180 ms off the
+  //     beat — the middle of the 100-230 ms range R-1b measured.
+  //
+  // The composed (pre-perform) notes are left as the composer wrote them, so
+  // the constructed defect has the shape the review found. The dimensions and
+  // the release rules are untouched: no threshold moved, and every finding
+  // below is a real observation raised by the unmodified critics.
   const owner = ownerAnchor();
   const composed = ownerComposedAnchor();
-  const stripped = applyPurposeBuilt(owner, "strip_bed_to_top_voice");
+  const asAnchor = (input: CriticInput): Anchor => ({ ...owner, input });
+  const raised = applyPurposeBuilt(owner, "counterline_into_bed_register");
+  assert.ok(raised, "the owner's comping part can be lifted into the bed's register");
+  assert.match(raised.detail, /moved 12 semitones into strings-pad's register/);
+  const stripped = applyPurposeBuilt(asAnchor(raised.input), "strip_bed_to_top_voice");
   assert.ok(stripped, "the owner's beds can be reduced to one voice");
   assert.match(stripped.detail, /bed\(s\) reduced to one voice/);
-  const constructed = displaceHarmonyOffGrid(stripped.input);
+  const silent = silenceOpeningBars(asAnchor(stripped.input), 2);
+  assert.ok(silent, "the owner's opening bars can be emptied");
+  assert.match(silent.detail, /bars 1-2 emptied/);
+  const constructed = displaceHarmonyOffGrid(silent.input);
   const input = { ...constructed, composedTrackModels: composed.input.trackModels };
   const reports = [...evaluateAllDimensions(input), ...runAdversarialCritics(input)];
   const context = judgeContextFromInput(input);
@@ -245,23 +272,25 @@ test("on the owner's song, constructed with R-1b's three defects, the judge refu
 
   assert.equal(v.overall.releasable, false);
   const kinds = new Set(v.refusals.map((r) => r.kind));
-  // The three defects R-1b's §7 puts first, each refusing on its own rule.
+  // The four defects R-1b's §7 puts first, each refusing on its own rule.
   assert.ok(kinds.has("off_grid"), "the harmony is off the beat");
   assert.ok(kinds.has("single_voice_bed"), "the string bed ships as one voice");
   assert.ok(kinds.has("top_line_above_comfortable_ceiling"), "and it sits above the profile's ceiling");
+  assert.ok(kinds.has("planned_family_silent"), "and the plan's opening families write nothing");
   assert.ok(v.refusals.some((r) => r.rule === "major_on_a_bed"));
 
-  // And the fix B-13 landed is asserted where the defect used to be pinned:
-  // on the unmodified owner anchor the harmony is on the grid and no bed is a
-  // single voice, so neither refuses.
+  // And the fix is asserted where each defect used to be pinned: on the
+  // unmodified owner anchor not one of the four is raised at all, so none of
+  // them can refuse. This is the assertion that goes red if a writer
+  // regresses, and it is the reason the four transforms above are needed.
   const clean = { ...owner.input, composedTrackModels: composed.input.trackModels };
   const cleanVerdict = judge([...evaluateAllDimensions(clean), ...runAdversarialCritics(clean)], judgeContextFromInput(clean));
-  const cleanKinds = new Set(cleanVerdict.refusals.map((r) => r.kind));
-  assert.ok(!cleanKinds.has("off_grid"), "B-13: the harmony is on the bar grid, so off_grid no longer refuses the owner's song");
-  assert.ok(
-    !cleanVerdict.ranked.some((r) => r.observation.kind === "single_voice_bed"),
-    "B-13: no bed on the owner's song ships as one voice, so the observation is not raised at all",
-  );
+  const cleanKinds = new Set(cleanVerdict.ranked.map((r) => r.observation.kind));
+  for (const kind of ["off_grid", "single_voice_bed", "top_line_above_comfortable_ceiling", "planned_family_silent"]) {
+    assert.ok(!cleanKinds.has(kind), `B-13 / B-21: ${kind} is not raised on the owner's song at all`);
+  }
+  assert.equal(Math.min(...owner.input.trackModels.flatMap((t) => t.notes.map((n) => n.start))), 0,
+    "B-21 D1: the arrangement starts at 0.000 s (R-1b measured the first note at 3.795 s)");
 
   // R-1b P0-5: "the judge ranks a 2-bar silent intro above everything else …
   // Until the judge prefers a full string bed over an empty two-bar intro, the
@@ -273,16 +302,11 @@ test("on the owner's song, constructed with R-1b's three defects, the judge refu
   assert.ok(intro >= 0 && bed >= 0 && grid >= 0, `intro ${intro}, bed ${bed}, grid ${grid}`);
   assert.ok(bed < intro, `the string bed (#${bed + 1}) outranks the empty intro (#${intro + 1})`);
   assert.ok(grid < intro, `the off-grid harmony (#${grid + 1}) outranks the empty intro (#${intro + 1})`);
-  // The count moved with the arrangement, not with the intro. On B-05c's
-  // anchor thirteen blocking findings outranked the two silent bars; with
-  // B-18's per-family levels the owner's arrangement carries ten, because four
-  // `off_grid` findings fall under the blocking threshold — strings Verse 1
-  // 0.733 -> 0.400, keys Verse 3 0.618 -> 0.441, strings Verse 3 0.571 ->
-  // 0.500, keys Chorus 0.559 -> 0.529 — and one `single_voice_bed` (Chorus 2)
-  // joins them. Nothing about the intro moved: its priority is the same 60.1
+  // The count moves with the construction, not with the intro. Nothing about
+  // the intro moved across either re-anchoring: its priority is the same 60.1
   // and its salience the same floor, asserted below. The orderings R-1b P0-5
   // actually asked for are the two assertions above, and both hold with the
-  // bed at #2 and the off-grid harmony at #1.
+  // off-grid harmony at #1 and the bed at #5.
   assert.ok(intro >= 10, `the empty intro is out of the top ten (#${intro + 1})`);
   assert.ok(v.ranked.slice(0, intro).every((r) => r.observation.severity === "blocking"),
     "everything above it is blocking — the intro is last of the blocking findings that carry sounding music");
@@ -290,17 +314,20 @@ test("on the owner's song, constructed with R-1b's three defects, the judge refu
   // The salience that does it is measured, not asserted: two silent bars carry
   // no sounding music, so they sit at the floor.
   const introRanked = v.ranked[intro];
+  assert.equal(introRanked.priority, 60.1, "the intro's priority is unchanged by either re-anchoring");
   assert.equal(introRanked.salience, SALIENCE_FLOOR, "no music sounds in bars 1-2");
   assert.ok(v.ranked[bed].salience > SALIENCE_FLOOR);
   assert.match(introRanked.rationale, /silent_mandatory_family_outranks_all does not apply: no music sounds/);
 
   // And the verdict says what to fix first, one per kind, covering the
   // constructed defects. The order inside the top three is a property of *this
-  // construction's* magnitudes (a bed on one voice is blocking on every bed;
-  // the 180 ms displacement lands hardest on the harmony against the kit), not
-  // of the ranking rule, so it is pinned as measured rather than argued from
-  // R-1b's item 10 - which is about these problems coming first at all.
-  assert.deepEqual(v.topProblems.map((p) => p.kind), ["single_voice_bed", "harmony_off_grid", "off_grid"]);
+  // construction's* magnitudes (the 180 ms displacement is now the largest
+  // single loss, because the writers left nothing else for it to compete
+  // with), not of the ranking rule, so it is pinned as measured rather than
+  // argued from R-1b's item 10 — which is about these problems coming first at
+  // all. At the B-13 anchoring the same three kinds came out in the order
+  // single_voice_bed, harmony_off_grid, off_grid.
+  assert.deepEqual(v.topProblems.map((p) => p.kind), ["off_grid", "harmony_off_grid", "single_voice_bed"]);
 });
 
 test("on the corpus the ranking prefers the reference composer to the audit's probes, on every case", () => {

@@ -921,6 +921,11 @@ const suites = {
       ["src/lib/sectionNames.test.ts", "section-names.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  "brain-b21": {
+    bundles: [
+      ["src/lib/brainB21Writers.test.ts", "brain-b21-writers.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-invariants": {
     bundles: [
       ["src/lib/invariants/generators.property.test.ts", "b12-generators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],

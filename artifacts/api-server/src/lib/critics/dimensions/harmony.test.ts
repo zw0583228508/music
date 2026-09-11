@@ -156,15 +156,49 @@ test("null control: no blocking harmony observation on any clean anchor, and eve
   //   ethnic-vocal        85.60  bass_rarely_states_root x1, clash_share x3                (was 80.20; its MAJOR clash 0.241 -> 0.143 minor)
   //   jazz-full           74.80  bass_rarely_states_root x3, approach_tone_wrong_mode x3, clash_share x1  (was 73.00, one MAJOR)
   //   cinematic-midi     100.00  none
+  //
+  // **Re-measured at the B-21 merge (B-26). A STALE PIN, and the number it
+  // pins is the one B-13 lost.** The null control itself is untouched and still
+  // holds — zero blocking on all nine clean anchors, zero majors — and no
+  // threshold moved. What moved is the arrangement, in the direction the
+  // tracker has been asking for since B-13:
+  //
+  //   anchor              score B-13+B-18 -> B-21   located findings at B-21
+  //   pop-full            81.28 -> 81.28            bass_rarely_states_root x4, approach_tone_wrong_mode x2 (unchanged)
+  //   ballad-piano-vocal 100.00 -> 100.00           none
+  //   rock-full           81.20 ->  94.00           clash_share x1, bass_rarely_states_root x1  (was x2 / x4)
+  //   dance-full          90.64 -> 100.00           none                                        (was root x3)
+  //   acoustic-demo       83.50 ->  93.40           clash_share x1, bass_rarely_states_root x1  (was root x3, clash x1, approach x1)
+  //   orchestral-midi     82.00 ->  96.40           clash_share x1                              (was root x1, clash x4)
+  //   ethnic-vocal        85.60 ->  92.80           clash_share x1, bass_rarely_states_root x1  (was clash x3, root x1)
+  //   jazz-full           74.80 ->  89.20           clash_share x1, bass_rarely_states_root x2  (was approach x3, root x3, clash x1)
+  //   cinematic-midi     100.00 -> 100.00           none
+  //
+  // `bass_rarely_states_root` across the clean anchors: **19 -> 9**. B-13 took
+  // it from 1 to 20 by letting the bass-line planner's slash basses and
+  // inversions through to the notes, B-18 gave one back, and B-21's D3 gives
+  // ten more: the pedal branch of `bassRhythmFor` now keeps the groove plan's
+  // own bass units instead of rebuilding the onsets from chord starts, so the
+  // bass meets a chord change on its downbeat far more often. All three
+  // `approach_tone_wrong_mode` findings on jazz-full are also gone, which is the
+  // writer/critic mode disagreement B-18 recorded as an honest limit closing
+  // from the writer's side.
+  //
+  // The exact table is asserted, not a band, for the reason B-05c gave: raising
+  // a threshold for every anchor would hide the individual findings, and the
+  // point of this control is to record what the composer does.
   const measured: Record<string, { minScore: number; kinds: Record<string, number>; majors: number }> = {
     "pop-full": { minScore: 81, kinds: { bass_rarely_states_root: 4, approach_tone_wrong_mode: 2 }, majors: 0 },
     "ballad-piano-vocal": { minScore: 100, kinds: {}, majors: 0 },
-    "rock-full": { minScore: 81, kinds: { bass_rarely_states_root: 4, clash_share: 2 }, majors: 0 },
-    "dance-full": { minScore: 90, kinds: { bass_rarely_states_root: 3 }, majors: 0 },
-    "acoustic-demo": { minScore: 83, kinds: { bass_rarely_states_root: 3, clash_share: 1, approach_tone_wrong_mode: 1 }, majors: 0 },
-    "orchestral-midi": { minScore: 82, kinds: { bass_rarely_states_root: 1, clash_share: 4 }, majors: 0 },
-    "ethnic-vocal": { minScore: 85, kinds: { bass_rarely_states_root: 1, clash_share: 3 }, majors: 0 },
-    "jazz-full": { minScore: 74, kinds: { bass_rarely_states_root: 3, approach_tone_wrong_mode: 3, clash_share: 1 }, majors: 0 },
+    // Re-measured at the Wave 3 merge: rock-full's `bass_rarely_states_root`
+    // is gone (1 -> 0) and the score rises 94 -> 97.2. An improvement, not a
+    // pin that drifted — the bass states its root there now.
+    "rock-full": { minScore: 97, kinds: { clash_share: 1 }, majors: 0 },
+    "dance-full": { minScore: 100, kinds: {}, majors: 0 },
+    "acoustic-demo": { minScore: 93, kinds: { bass_rarely_states_root: 1, clash_share: 1 }, majors: 0 },
+    "orchestral-midi": { minScore: 96, kinds: { clash_share: 1 }, majors: 0 },
+    "ethnic-vocal": { minScore: 92, kinds: { bass_rarely_states_root: 1, clash_share: 1 }, majors: 0 },
+    "jazz-full": { minScore: 89, kinds: { bass_rarely_states_root: 2, clash_share: 1 }, majors: 0 },
     "cinematic-midi": { minScore: 100, kinds: {}, majors: 0 },
   };
   let rootRarely = 0;
@@ -197,5 +231,11 @@ test("null control: no blocking harmony observation on any clean anchor, and eve
   // span instead of beside the change. Nineteen is still the loud number this
   // stream owns, and the threshold behind it (`stated / counted < 0.5` over
   // 4+ changes) is untouched.
-  assert.equal(rootRarely, 19, `bass_rarely_states_root across the clean anchors: ${rootRarely} (B-05c measured 1; B-13 alone measured 20)`);
+  //
+  // B-26 at the B-21 merge: **19 -> 9**, with the same threshold. B-21's D3
+  // gives the pedal bass the groove plan's own units instead of rebuilding its
+  // onsets from chord starts, so the bass is present at the change and states
+  // its root there. The number is still asserted exactly, because it is the
+  // one this suite exists to watch.
+  assert.equal(rootRarely, 8, `bass_rarely_states_root across the clean anchors: ${rootRarely} (B-05c measured 1; B-13 alone 20; B-13+B-18 19; the Wave 3 merge 8)`);
 });

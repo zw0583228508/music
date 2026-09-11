@@ -20,6 +20,7 @@ import { cleanFixture, fixtureWith } from "./fixture";
 import { penaltyOf } from "./shared";
 import { PROFESSIONAL_DIMENSION, PROFESSIONAL_RULES, critiqueProfessionalWouldChange } from "./professionalWouldChange";
 import { critiqueInstrumentReality } from "./instrumentReality";
+import { roleWindowForDefinition } from "../dimensions/register";
 import { critiqueArbitrariness } from "./arbitrariness";
 import { critiqueFighting } from "./fighting";
 import { critiqueCopiedRepeat } from "./copiedRepeat";
@@ -157,18 +158,83 @@ test("the reference composer is rejected on several axes (recorded, not hidden)"
   // asks for, per section as well as overall. The tops still reach 86 and 84;
   // a violin line over a bed is not the defect, a bed parked up there was.
   // The rule and its threshold are untouched: the arrangement moved.
-  assert.equal(byKind.get("string_bed_too_high") ?? 0, 0, "B-13: no string part is a bed parked at MIDI 79+ any more (was >= 2 in the orchestral anchors)");
-  const stringMeans = ALL
-    .flatMap((a) => a.input.trackModels.filter((t) => t.instrumentDefinition.family === "strings" && !/bass/i.test(t.instrument)))
-    .filter((t) => t.notes.length > 0)
-    .map((t) => t.notes.reduce((s, n) => s + n.pitch, 0) / t.notes.length);
-  assert.ok(stringMeans.length >= 2, `${stringMeans.length} string parts across the anchors`);
-  assert.ok(stringMeans.every((m) => m < 79), `every string part averages below the 79 the rule asks for: ${stringMeans.map((m) => m.toFixed(2)).join(", ")}`);
+  //
+  // **Re-anchored at B-26, and this time the rule moved — the lead's F15
+  // ruling.** After B-21 the writers place a part inside
+  // `instrumentProfile.roleRegisterFor`, and `orchestral-midi`'s
+  // `strings-climax_layer` averages **79.93** in the Chorus: inside the
+  // profile's CLIMAX_LAYER register of 67–91 and above this rule's old flat
+  // 79, so the count came back to 1 while the `register` dimension scored the
+  // same arrangement 100. Two sources of truth for one musical claim, the
+  // third recurrence of the program's standing bug. The constant is gone —
+  // `instrumentReality` now asks `roleWindowForDefinition`, the register
+  // dimension's own reader, for the ceiling of the role the part holds in that
+  // section. A PAD violin section still answers 79 (exactly the number the
+  // constant was, so the owner's `strings-pad` at mean 80.00 still fires, as
+  // F15 requires); a CLIMAX_LAYER answers 91. The count is 0 again, because a
+  // climax layer sitting above a bed is not a defect — which is what a flat
+  // number could not say.
+  assert.equal(byKind.get("string_bed_too_high") ?? 0, 0,
+    "B-26: no string part averages at or above the ceiling its own profile gives it in the role it holds (orchestral-midi CLIMAX_LAYER 79.93 against 91; the flat-79 rule reported 1)");
+  const stringParts = ALL
+    .flatMap((a) => a.input.trackModels
+      .filter((t) => t.instrumentDefinition.family === "strings" && !/bass/i.test(t.instrument) && t.notes.length > 0)
+      .map((t) => ({ anchor: a.id, track: t })));
+  assert.ok(stringParts.length >= 2, `${stringParts.length} string parts across the anchors`);
+  for (const { anchor, track } of stringParts) {
+    const meanPitch = track.notes.reduce((s, n) => s + n.pitch, 0) / track.notes.length;
+    const ceiling = roleWindowForDefinition(track.instrumentDefinition, track.role.toUpperCase(),
+      { min: track.instrumentDefinition.comfortableRange.min, max: track.instrumentDefinition.comfortableRange.max }).hi;
+    assert.ok(meanPitch < ceiling,
+      `${anchor}/${track.id}: mean ${meanPitch.toFixed(2)} against the ${track.role} ceiling ${ceiling} its own profile gives it`);
+  }
   // F5 (the planned LEAD keys wrote nothing) was closed by B-01: keys is never LEAD in a sung section, so the count is no longer asserted here.
   // Repeated sections as note copies (diagnosis §11.2) were closed by B-01 (operators) + B-10 (recall with variation) + B-02
   // (voicings solved per chord in context); the count is recorded in the evidence, not asserted here.
   assert.equal(byKind.get("root_position_only") ?? 0, 0, "root-position-only harmony (F6) was closed by B-02: voicings are solved per role with inversions");
   assert.ok((byKind.get("melody_masked") ?? 0) >= 3, "keys at high velocity in the vocal register while sung (audit §1.3)");
+});
+
+test("B-26 (F15): `string_bed_too_high` reads the role the part holds here, and the rule still fires on a constructed bed above that role's own ceiling", () => {
+  // The re-point, with both halves measured — it must fire on the constructed
+  // defect and not on the clean case.
+  //
+  // **Not on the clean case.** Every string part on every anchor now averages
+  // below the ceiling its own profile gives it in the role the *plan* assigns
+  // it in that section (asserted in the test above). The one firing that came
+  // back after B-21 was `orchestral-midi/strings-climax_layer` at mean 79.93 in
+  // the Chorus, which the profile allows a CLIMAX_LAYER (67-91) and the flat 79
+  // refused.
+  //
+  // **On the constructed defect.** A bed lifted two octaves is above any of
+  // those ceilings, and the rule says so with the ceiling and the role in its
+  // evidence.
+  const anchor = anchorFor("orchestral-midi");
+  const strings = anchor.input.trackModels.find((t) => t.id === "strings-climax_layer")!;
+  const clean = critiqueInstrumentReality(anchor.input).observations.filter((o) => o.kind === "string_bed_too_high");
+  assert.deepEqual(clean, [], "the clean anchor carries none");
+  const lifted = {
+    ...anchor.input,
+    trackModels: anchor.input.trackModels.map((t) => (t.id === strings.id
+      ? { ...t, notes: t.notes.map((n) => ({ ...n, pitch: Math.min(127, n.pitch + 24) })) }
+      : t)),
+  };
+  const fired = critiqueInstrumentReality(lifted).observations.filter((o) => o.kind === "string_bed_too_high");
+  assert.ok(fired.length >= 1, "the constructed bed two octaves up is reported");
+  for (const o of fired) {
+    assert.equal(o.severity, "major");
+    assert.deepEqual(o.location.trackIds, [strings.id]);
+    assert.ok((o.evidence.meanPitch as number) >= (o.evidence.threshold as number),
+      `${o.evidence.meanPitch} against ${o.evidence.threshold}`);
+    // The threshold is sourced, not a constant: it names the role and the profile.
+    assert.ok(String(o.evidence.role).length > 0);
+    assert.match(String(o.evidence.ceilingSource), /instrumentProfile/);
+  }
+  // …and the role that answers is the one the plan gives the part in that
+  // section, which is the same lookup `critics/dimensions/register` makes.
+  // The two rules cannot drift apart again.
+  const roles = new Set(fired.map((o) => String(o.evidence.role)));
+  assert.ok(roles.size >= 1 && [...roles].every((r) => r === r.toUpperCase()), [...roles].join(","));
 });
 
 test("instrument reality: after B-03 no keys part resolves to a drum-kit definition (dance-full)", () => {
