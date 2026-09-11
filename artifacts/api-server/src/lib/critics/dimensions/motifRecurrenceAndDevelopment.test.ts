@@ -40,9 +40,27 @@ test("positive control: the random-pitch composer leaves no recurrence in the pa
   // random-pitch composer. Where the transform also produces a new observation
   // that is asserted too. No threshold is moved, and the finding on the base
   // acoustic-demo anchor is recorded loudly rather than tolerated silently.
-  const alreadyFlagged: Record<string, { sections: string[]; baseShares: number[] }> = {
-    "acoustic-demo": { sections: ["Chorus", "Verse 2", "Chorus 2"], baseShares: [0.0333, 0.1429, 0.0833] },
-  };
+  //
+  // **Re-anchored at the B-21 merge (B-26): a STALE PIN, and the control got
+  // stronger on every anchor.** acoustic-demo is no longer the null case —
+  // B-21's writers leave its parts enough recurring material that randomising
+  // the pitches *does* produce a new section to flag (detected false -> true,
+  // score drop 0 -> 8.25). rock-full's drop goes 24.00 -> 36.80 and
+  // dance-full's 7.80 -> 12.48.
+  //
+  // What moved against the test is a **sentinel, not a share**. B-21 gives
+  // rock-full a `guitar-harmonic_bed` that plays in **Chorus 2 only** (91 notes,
+  // 8 bars). The dimension compares cells across sections, so a part with no
+  // later section reports `laterSectionCells: 0` and `recurrenceShare: -1` —
+  // its own "not measurable", written precisely so that a part with nothing to
+  // compare is not scored as if nothing recurred. The blanket
+  // `every(share === 0)` read that -1 as a failure. The control's claim is
+  // unchanged and is now written the way the dimension reports it: every line
+  // that *has* later-section cells falls to 0, and the parts that cannot be
+  // measured are named with the reason instead of being silently excluded.
+  const alreadyFlagged: Record<string, { sections: string[]; baseShares: number[] }> = {};
+  /** Parts with no later section to compare against — asserted so a change of that set is visible. */
+  const notMeasurable: Record<string, string[]> = { "rock-full": ["guitar-harmonic_bed"] };
   for (const anchor of anchors(["rock-full", "dance-full", "acoustic-demo"])) {
     const worsened = applyPurposeBuilt(anchor, "random_pitch")!;
     const d = detect(motifDimension, anchor.input, worsened);
@@ -69,7 +87,19 @@ test("positive control: the random-pitch composer leaves no recurrence in the pa
     assert.ok(after.length >= 1, anchor.id);
     for (const o of after) assert.equal(o.evidence.recurrenceShare, 0, `${anchor.id}/${o.location.sectionName}: ${o.evidence.recurrenceShare}`);
     const measured = d.after.observations.filter((o) => o.kind === "measured");
-    assert.ok(measured.length >= 1 && measured.every((o) => o.evidence.recurrenceShare === 0), `${anchor.id}: every line's recurrence falls to 0`);
+    assert.ok(measured.length >= 1, anchor.id);
+    const measurable = measured.filter((o) => (o.evidence.laterSectionCells as number) > 0);
+    const unmeasurable = measured.filter((o) => (o.evidence.laterSectionCells as number) === 0);
+    assert.ok(measurable.length >= 1, `${anchor.id}: at least one line can be compared across sections`);
+    for (const o of measurable) {
+      assert.equal(o.evidence.recurrenceShare, 0, `${anchor.id}/${o.location.trackIds[0]}: every line with later-section cells falls to 0`);
+    }
+    assert.deepEqual(unmeasurable.map((o) => o.location.trackIds[0]).sort(), notMeasurable[anchor.id] ?? [],
+      `${anchor.id}: parts with no later section to compare against`);
+    for (const o of unmeasurable) {
+      assert.equal(o.evidence.recurrenceShare, -1, "the dimension's own 'not measurable' sentinel, not a recurrence of zero");
+      assert.equal(o.evidence.sectionsWithMaterial, 1, `${anchor.id}/${o.location.trackIds[0]}: it plays in exactly one section`);
+    }
   }
 });
 

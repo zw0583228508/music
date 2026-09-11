@@ -41,14 +41,44 @@ test("re-anchored (B-05c): at the planned climax the composer develops but does 
   // B-01 made and could not hold — and acoustic-demo, which had 0, is no longer
   // reported as a repeat without identity. dance-full moves the other way and
   // is the one anchor that now carries the finding, which the table pins.
+  //
+  // **Re-anchored at the B-21 merge (B-26): a STALE PIN, and every number in it
+  // moved.** Measured on this tree against `3b9ace3` (identity share at the
+  // planned climax, then the axes the dimension reads as developed):
+  //
+  //   anchor         identity B-13 -> B-21   developed in
+  //   pop-full       0.458 -> 0.458          register,dynamics,rhythm -> dynamics,rhythm
+  //   rock-full      0.458 -> 0.375          instrumentation,register,dynamics,texture -> instrumentation,dynamics,rhythm
+  //                                          — `identityKept` true -> FALSE
+  //   dance-full     0.188 -> 0.219          register,dynamics (unchanged) — `repeat_without_identity` GONE
+  //   acoustic-demo  0.250 -> 0.125          register,dynamics (unchanged) — `repeat_without_identity` NEW
+  //
+  // Two things are going on and both are B-21's D4. `register` disappears from
+  // pop-full's and rock-full's developed axes because the writers no longer
+  // lift chorus 2 out of the role register the profile gives it — a piano
+  // HARMONIC_BED is 48-67 and a chorus that was developed by rising above it
+  // now develops in dynamics and rhythm instead. And which anchor sits at the
+  // identity floor changes hands: dance-full crosses up over the threshold
+  // (0.188 -> 0.219) and acoustic-demo falls under it (0.250 -> 0.125).
+  //
+  // The same event on **main** (7c14ecf, without B-21) is the first half of it
+  // only — dance-full at 0.25 no longer reports `repeat_without_identity`, and
+  // that is the one of main's own two red tests in these nine suites. It is the
+  // same class and the same treatment; the numbers here are measured with B-21
+  // on top, which is what will be merged.
+  //
+  // Whether "develops in dynamics and rhythm but not register" is worse than
+  // "develops in register too" is a musical question this suite cannot settle
+  // — the register axis was being earned by writing above the instrument's own
+  // ceiling, which is the defect B-21 was sent to fix. Recorded as measured.
   const expected: Record<string, { identityKept: boolean; developed: string[] }> = {
-    "pop-full": { identityKept: false, developed: ["register", "dynamics", "rhythm"] },
-    "rock-full": { identityKept: true, developed: ["instrumentation", "register", "dynamics", "texture"] },
+    "pop-full": { identityKept: false, developed: ["dynamics", "rhythm"] },
+    "rock-full": { identityKept: false, developed: ["instrumentation", "dynamics", "rhythm"] },
     "dance-full": { identityKept: false, developed: ["register", "dynamics"] },
     "acoustic-demo": { identityKept: false, developed: ["register", "dynamics"] },
   };
   /** The anchors whose climax the dimension reports as a repeat without identity, measured. */
-  const withoutIdentity = new Set(["dance-full"]);
+  const withoutIdentity = new Set(["acoustic-demo"]);
   for (const anchor of anchors(["pop-full", "rock-full", "dance-full", "acoustic-demo"])) {
     const report = sectionDevelopmentDimension.evaluate(anchor.input);
     const climax = anchor.input.plan.globalPlan!.climax!.sectionName;
@@ -118,11 +148,26 @@ test("positive control: pasting chorus 1 over the developed chorus 2 removes the
     // has an identity left to lose, and only it drops the full 7.8. Measured
     // drops: pop-full 7.80, acoustic-demo 4.95, rock-full 4.80, dance-full
     // 4.68. The floors are untouched; which anchor sits at which is measured.
+    //
+    // **Re-anchored at the B-21 merge (B-26): a STALE PIN, and it moved the
+    // right way.** The floors and the rule are again untouched; three of the
+    // four anchors now have an identity to lose where only one did:
+    //
+    //   anchor         prepared identity B-13 -> B-21   already without identity   drop
+    //   pop-full       0.208 -> 0.208                   no  -> no                  7.80 -> 7.80
+    //   rock-full      0.167 -> 0.208                   yes -> NO                  4.80 -> 8.00
+    //   dance-full     0.188 -> 0.219                   yes -> NO                  4.68 -> 7.80
+    //   acoustic-demo  0.000 -> 0.000                   yes -> yes                 4.95 -> 4.95
+    //
+    // B-21's writers give chorus 2 more in common with chorus 1 on rock-full
+    // and dance-full, so the prepared anchor is no longer already at the floor
+    // and pasting chorus 1 over it costs the full 7.8-8.0 instead of trading
+    // one finding for another. Only acoustic-demo still starts at 0.
     const anchorReport = sectionDevelopmentDimension.evaluate(prepared.input);
     const alreadyWithoutIdentity = anchorReport.observations.some((x) => x.kind === "repeat_without_identity" && x.location.sectionName === "Chorus 2");
     const floor = alreadyWithoutIdentity ? 4.5 : 7;
     assert.ok(d.scoreDrop! >= floor, `${anchor.id}: ${d.scoreDrop} (identity already lost: ${alreadyWithoutIdentity})`);
-    assert.equal(alreadyWithoutIdentity, anchor.id !== "pop-full", `${anchor.id}: which anchors sit at the dimension's floor`);
+    assert.equal(alreadyWithoutIdentity, anchor.id === "acoustic-demo", `${anchor.id}: which anchors sit at the dimension's floor`);
   }
 });
 

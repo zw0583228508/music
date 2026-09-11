@@ -10427,6 +10427,255 @@ counts too, and those still move — the cause is isolated and named below.
     this branch's head. Four suites are; eleven are not, for reasons that
     predate this stream.
 
+### PR-B26 — Brain B-26: the critics' evidence after the writers improved
+
+- **PR-B26** ✅ (open; the lead merges, **after PR-B21 and PR-B25**) — `ws-brain-b26`,
+  branched from `origin/ws-brain-b25` (Arrangement & Orchestration Brain, stream
+  B-26, the critics' evidence). The lead's F16 measured thirteen red tests across
+  nine critic-dimension suites with B-21 on top and attributed eleven of them to
+  B-21 and two to `main`. **Every failure was classified before it was touched,
+  and the classification is written beside the assertion it moves.** No
+  dimension threshold, severity or release rule was changed; no composer file
+  was opened.
+
+  **First correction, because it changes what "already red" means.** F16 says
+  `main` carries two of the thirteen. Measured here in a worktree checked out at
+  **`3b9ace3`** — B-21's own base, the tree this PR is built on — all nine
+  suites are **fully green, 44/44**. So on this branch **all thirteen failures
+  are B-21's**. `main` at `7c14ecf` does carry two red of its own, in the same
+  two tests (`harmony` null control: rock-full `bass_rarely_states_root` 3 where
+  the pin says 4; `sectionDevelopment` climax: dance-full at identity 0.25 no
+  longer reported as a repeat without identity) — but they are *different
+  numbers in the same tests*, caused by what merged into main after `3b9ace3`
+  (B-07 / B-19 / B-24), and both rows are re-pinned here with B-21's numbers.
+  `main` has since moved again to `a53acd1` (B-22). See *Honest limits*.
+
+  **The classification table.** Every "before" figure was re-measured at
+  `3b9ace3` with the same harness; every "after" is on this tree.
+
+  | # | suite / test | classification | measured before → after | what changed | where the sensitivity lives now |
+  |---|---|---|---|---|---|
+  | 1 | `register` — a bass inverted to the top of the ensemble | **stale pin** (the control *gained* its lever) | `role_inversion` applicable 6/9 → **9/9**, detected **9/9**, drops 36–78 | the pin asserted `skipped = [dance-full, pop-full, rock-full]`; it asserts `skipped = []`, 9 applicable, 9 detected, with the bass ranges that explain it | this control alone, on every anchor in the corpus |
+  | 2 | `register` — the reference beds sit on the singer's pitches | **real regression** (pop-full) **and a rule that did not exist** | pop-full 2 → **5**; corpus **18 → 17** | `vocalRegisterConflict` added to `register.ts`: every masking finding now carries the role register, the sung band, the room on each side and which constraint has to give | the arbitration itself, unit-tested, plus the constructed octave fold |
+  | 3 | `density` — choruses thinned to a third | **control lost its lever** | caught 3/4 → **1/4**; pop-full ratio **0.610**, rock-full **0.627** against the rule's 0.6 | re-pinned with the numbers; re-pointed by a new transform | `arrival_thinned_below_its_setup`, 8/9 anchors raise `louder_section_thinner` |
+  | 4 | `density` — an arrival thinned, unvoiced and softened | **control lost its lever** | caught 2/3 → **0/3**; the *setup's* mean voices 2.00 → **1.105** (pop-full), so the arrival's voices ratio *rises* to 1.58 | re-pinned with the numbers; re-pointed | `arrival_thinned_below_its_setup`, 6/9 anchors raise `arrival_thinner_than_setup`; 0/9 clean anchors carry either finding |
+  | 5 | `repetitionVsVariation` — the pop anchor's second verse | **real change, and no dimension reports it** | keys exactShare 0.50 → **0.00**, rhythmShare 0.50 → **0.00**, bass 0 → 0 | the measurement is pinned exactly; a `todo` names the missing finding and its owner | — (recorded as a blind spot, see the `todo`) |
+  | 6 | `repetitionVsVariation` — bars overwritten with their predecessor | **stale pin** caused by a **harness defect** | 5/5 → 5/7 → **5/5** | `bar_copy_repetition@3` *deletes* a part that is silent in the window's first bar (rock-full `guitar-harmonic_bed` 91 → **0** notes, dance-full `keys-harmonic_bed` 152 → **0**); `applyFamilyCorruption` now refuses a corruption that empties its target | unchanged; the two skipped cases are asserted by name |
+  | 7 | `sectionDevelopment` — the climax reading | **stale pin** | pop-full loses `register` from `developedIn`; rock-full `identityKept` true → **false** (0.458 → 0.375); `repeat_without_identity` moves dance-full (0.188 → 0.219) → acoustic-demo (0.250 → 0.125) | the table re-pinned with the cause: chorus 2 used to be "developed" by rising above the instrument's own ceiling, which is what B-21's D4 stopped | unchanged |
+  | 8 | `sectionDevelopment` — chorus 1 pasted over a developed chorus 2 | **stale pin** (the control got stronger) | anchors already at the floor 3 → **1**; drops rock-full 4.80 → **8.00**, dance-full 4.68 → **7.80** | `alreadyWithoutIdentity` re-pinned to `acoustic-demo` only | unchanged |
+  | 9 | `groove` — erasing the planned drum fills | **control lost its composite flag, not its lever** | the two `planned_fill_missing` majors still appear at bars 12 and 28 on all three anchors; pop-full's net score **75.04 → 75.07** because the same erasure removes 2 × `backbeat_missing` and 2 × `anticipation_mismatch` | the located majors are asserted on all three; pop-full's net is recorded with the four findings that cancel it | isolated: deleting the pitched pickups alone moves **nothing** (drop 0, no new observation) on all three, so the whole effect is in the drum bars |
+  | 10 | `harmony` — the null control | **stale pin**, and the number is an improvement | `bass_rarely_states_root` across the clean anchors **19 → 9**; rock-full 81.20 → **94.00**, dance-full 90.64 → **100**, jazz-full 74.80 → **89.20**, orchestral-midi 82.00 → **96.40**; all three `approach_tone_wrong_mode` on jazz-full gone; still 0 blocking, 0 major | the exact table re-pinned, not widened | unchanged |
+  | 11 | `motifRecurrenceAndDevelopment` — the random-pitch composer | **stale pin** (a sentinel, not a share) | rock-full's new `guitar-harmonic_bed` plays in **one** section, so `laterSectionCells` is 0 and `recurrenceShare` is the dimension's own **−1 "not measurable"**; acoustic-demo stops being the null case (detected false → **true**, drop 0 → 8.25) | "every line falls to 0" split into "every line with later-section cells falls to 0" plus the not-measurable parts named | unchanged, and stronger on all three anchors |
+  | 12 | `playability` — a bed two octaves up | **control lost its lever on the piano anchors** | detected 3/3 → 2/3; jazz-full's bed 53–84 → **50–70**, +24 = 74–94, inside a piano's comfortable **36–96** | re-pointed at the five anchors whose bed is a guitar, synth or string section (all five detect); the four piano beds recorded as the measured null, with the assertion that the transform still moves their notes | the five non-piano beds |
+  | 13 | `transitions` — the dance-full intro boundary | **real regression, in a different part** | `registerMoves` 0 → **1**; the **bass** drops from mean 43.33 in the last intro bar to **30.50** in the first verse bar (12.83 semitones; at B-13 it was 4.83) | re-pinned to say which part moves and by how much; B-13's claim about the bed is separately asserted and still holds | unchanged |
+
+  Two more suites in this stream's file set were red at the same base and are
+  closed here — both were handed over by B-25:
+
+  | # | suite / test | classification | what changed |
+  |---|---|---|---|
+  | 14 | `critics/adversarial/adversarial` — `string_bed_too_high` | **two sources of truth** (the lead's **F15**) | the flat `STRING_BED_HIGH = 79` is gone; the rule asks `roleWindowForDefinition`, the register dimension's own reader, for the ceiling of the role the **plan** gives the part in that section |
+  | 15 | `critics/adversarial/evidence` — "at least one anchor produces a recorded disagreement" | **control lost its lever** | all ten anchors now produce **zero** disagreements of their own (6–20 agreements each); re-pointed at a constructed case built from the fighting module's **own** positive control (`same_register_offbeat`), which makes `boredom:rhythm_predictable` and `fighting:register_fight` overlap and the judge keep the pair **open** |
+
+  **Row 2 in full: the arbitration, because this is the one the ledger has been
+  carrying as N-pending since Wave 1.** B-21's D4 gave the writers
+  `instrumentProfile.roleRegisterFor`; this dimension has always also asked a
+  part to stay off the singer's pitches. Both are right and nothing said what to
+  do when they disagree — `vocal_masking` told the writer to "move out of the
+  vocal band" whether or not the band it is allowed to occupy had anywhere to
+  move to. Measured, with the window, the singer's band widened by the masking
+  distance, and the part's own span:
+
+  ```
+  anchor      part / role                     window   sung    span  below  above  ->
+  pop-full    keys RHYTHMIC_HARMONY           [48,72]  58-69    12     9      2    NO ROOM
+  pop-full    keys HARMONIC_BED               [48,67]  58-69    12     9     -3    NO ROOM
+  rock-full   keys RHYTHMIC_HARMONY           [48,72]  62-73    10    13     -2    clear below
+  ballad      keys RHYTHMIC_HARMONY           [48,72]  63-71     9    14      0    clear below
+  orch-midi   strings CLIMAX_LAYER            [67,91]  60-75    13    -8     15    clear above
+  ```
+
+  The rule is now in the code with its reasoning and its provenance: the two
+  constraints are compatible exactly when the window has, on one side of the
+  singer, at least as many semitones as the part's voicing spans; *below* is the
+  resolution for an accompaniment and *above* only for the roles a professional
+  writes over the lead (`ROLES_WRITTEN_ABOVE_THE_LEAD`); and when neither side
+  has room the decision is **not the writer's** — the plan gave this part a role
+  whose register the singer occupies, so the finding is attributed to
+  `orchestration` with `replan_register_band` instead of telling a composer to
+  move a part that cannot move. Across the anchors: **9 `no_room`, 7
+  `clear_below`, 1 `clear_above`**. The conflict is real and not an artefact of
+  a threshold: folding pop-full's two verses down one octave *inside* their own
+  48–72 register moves the dimension **66.58 → 82.18** and clears two of the
+  five; for the other three no octave inside the register clears the singer at
+  all.
+
+  **And where there is no vocal evidence the dimension now says so.** A model
+  with no melody scored exactly like one whose parts leave the singer room. The
+  owner's song is that case — `vocals.status` is `not_available`, so `register`
+  scores 100 with no masking observation at all, not because the arrangement
+  leaves room for him but because the platform does not know where his voice
+  sits. `vocal_masking_not_measured` (info) now states it in the report. The two
+  MIDI anchors carry a lead line with no vocal evidence and every masking
+  finding says which it is (`leadEvidence`).
+
+  **F15, and a correction to it.** The lead ruled that the adversarial rule is
+  wrong for `orchestral-midi/strings-climax_layer` (mean 79.93 against a
+  CLIMAX_LAYER register of 67–91) and that the owner's own `strings-pad` at mean
+  80.00 is the *writer's* problem because a PAD's ceiling is 79 too. The first
+  half is implemented. The second half does not survive measurement: the owner's
+  strings part is **not a PAD in that section**. The plan assigns it
+  `COUNTER_MELODY` in the Bridge (ceiling **86**) and `CLIMAX_LAYER` in Chorus 3
+  (ceiling 91); it is a PAD in the other seven sections, where its mean is
+  63.3–70.7, far below 79. The `register` dimension has always read the plan's
+  per-section role and has always scored that part 100. So once both rules ask
+  the same function with the same role lookup, the disagreement disappears in
+  both directions, and `adversarial.instrumentReality` on the owner's song goes
+  **97 → 100** with `string_bed_too_high` 0. The track *id* says `pad`; the plan
+  says otherwise, and the plan is what the writers and the critic both read.
+  **This is a finding for the lead, not a decision taken quietly** — see *Honest
+  limits*.
+
+  **The ledger was regenerated by its own generator** (`B05A_WRITE_LEDGER=1`,
+  never hand-edited), with `docs/evidence/brain-b05a-critic-controls.json`. Two
+  rows moved:
+
+  - `density` **gated → gated**, gaining a third gating transform
+    (`arrival_thinned_below_its_setup`, 9/9). No gate is restored: density
+    already gated on `piano_one_note_per_bar` + `strip_bed_to_top_voice`.
+  - `repetitionVsVariation` **informing → informing**, with
+    `bar_copy_repetition@3` moving from 17/32 (0.5313) to **17/18 (0.9444)**
+    because the fourteen items the corruption *deleted* are no longer counted as
+    detection misses. It earns one gating transform where it had none and still
+    needs two, so the status is unchanged.
+
+  `arrival_thinned_below_its_setup` is claimed by **density only**, deliberately:
+  `arrival_thinned_and_softened` is also claimed by `sectionDevelopment`,
+  `performanceRealisation` and `emotionalArcAndTension`, and adding a transform
+  to a dimension's claimed set can promote its status — a decision the stream
+  that benefits should not take (B-25's precedent on `voiceLeading`).
+
+  **Tests.** The nine dimension suites **44/44 with one `todo`** (was 31/44):
+  `density` 8/8 (was 5/7; two tests added), `register` 8/8 (was 3/5; three
+  added), `repetitionVsVariation` 5/5 + 1 todo (was 3/5), `sectionDevelopment`
+  4/4 (was 2/4), `groove` 6/6 (was 5/6), `harmony` 5/5 (was 4/5),
+  `motifRecurrenceAndDevelopment` 4/4 (was 3/4), `playability` 4/4 (was 3/4),
+  `transitions` 4/4 (was 3/4). Also green, and all of them run after the change:
+  `critics/adversarial/adversarial` **44/44** (was 42/43, one test added),
+  `critics/adversarial/evidence` **1/1** (was 0/1), `critics/dimensions/ownerAnchor`
+  8/8, `critics/rank` 12/12, `critics/controls` 5/5, `critics/b05cEvidence` 1/1,
+  `critics/judge` 10/10, `critics/failureTaxonomy` 6/6, `positiveControlLedger`
+  7/7, and the seven other dimension suites (orchestration, idiomaticity,
+  voiceLeading, melodyAndCounterline, rhythmicInteraction, performanceRealisation,
+  emotionalArcAndTension). `pnpm run typecheck` green (**exit 0**, log read);
+  `node --check scripts/run-focused-api-tests.mjs` clean — every suite touched
+  was already registered, so the registry is unchanged. Evidence:
+  `docs/evidence/brain-b26-critics-after-the-writers.json`, plus the regenerated
+  `brain-b05a-critic-controls.json`, `brain-b05b-adversarial-judge.json` and
+  `brain-b05c-critics-decide.json`.
+
+  **Capability ladder.** *Register plan applied to pitch choice* — the row the
+  ledger has carried as **I + T, N-pending** since Wave 1: DESIGNED ✓
+  IMPLEMENTED ✓ (the arbitration exists, states its reasoning and its
+  provenance, and says who owns each outcome) TESTED ✓ — **INTEGRATED ✗**: the
+  arbitration is a *critic-side* rule. It tells the writer which direction has
+  room and refuses to blame the writer when there is none, but **no writer reads
+  it**, so no note has moved because of it. NOT VALIDATED ON OUTPUT. *One
+  register ceiling for the whole repository* (F15) — IMPLEMENTED ✓ INTEGRATED ✓
+  TESTED ✓ VALIDATED ON OUTPUT ✓ (measured on the owner's song and on the
+  corpus). *The critics' positive controls after B-21* — TESTED ✓ BENCHMARKED ✓
+  (the ledger is regenerated from the harness). Nothing was rendered and nothing
+  was listened to.
+
+  **Found and not fixed — for the lead and for other streams.**
+
+  1. **The register/vocal arbitration belongs in a writer and this stream does
+     not own one.** `composer/registers.ts` `registerWindowFor` answers per part
+     task from the profile's role register and **never reads the vocal**; the
+     per-part register plan that does account for the singer is
+     `orchestrationBudget.registerBoundsFor`, which B-21's own hand-off table
+     records as "nothing on the production path calls" it, and
+     `sectionPhrasePlanner.registerDistribution` (`:497-519`) is a section
+     histogram B-21 deliberately stopped reading. So the platform has a
+     vocal-aware register plan and no writer that consumes it. Until one does,
+     `vocal_masking` is a report, not a repair. **Owner: B-21 / the writers.**
+  2. **A real regression on the anchors: the bass jumps an octave across a
+     section boundary.** dance-full's bass ends the intro at mean 43.33 and
+     enters the verse at 30.50. `composer/registers.ts` `registerWindowFor` has
+     no notion of continuity across a boundary, so nothing stops the same
+     instrument being seated an octave apart in two adjacent bars. Measured and
+     pinned in `transitions.test.ts`; **owner: B-21.**
+  3. **F15's second half is wrong about the owner's string bed, and the reason
+     matters.** The part is `COUNTER_MELODY` in the Bridge by the plan's own
+     role assignment, not `PAD`. If the lead wants the *track's* nominal role to
+     govern, that is a third source of truth and should be decided explicitly;
+     this stream implemented "ask the same function the register dimension asks,
+     with the same role lookup", which is what the ruling's own reasoning
+     requires. **Owner: the lead.**
+  4. **`bar_copy_repetition` deletes late-entering parts.**
+     `symbolicCorruptions.ts` copies the window's first bar over every later
+     bar; for a part silent in that bar the copy is empty and the part is
+     removed. Fourteen of the thirty-two items the control harness ran were
+     emptied this way. Guarded in `applyFamilyCorruption` so no dimension's
+     control counts it, but the transform itself is still wrong. **Owner: the
+     owner of `symbolicCorruptions.ts`.**
+  5. **A repeated section that repeats nothing has no observation anywhere.**
+     pop-full's Verse 2 shares 0.000 of its bars with Verse 1 in every part, in
+     pitch and in rhythm, and `repetitionVsVariation` raises no non-info
+     observation on the anchor at all. The right finding is
+     `sectionDevelopment.repeat_without_identity`, which is computed only for
+     the planned-climax pair. Carried as the suite's one `todo`, with the reason
+     it was not fixed here (a new observation kind must be registered in
+     `failureTaxonomy.ts`, weighted in `judge.ts` and classified in
+     `findingClassification.ts`, all of which B-19 owns).
+  6. **`orchestrateArrangement` composes some part tasks more than once, and
+     `ownerComposedAnchor` counts every call.** Measured: 56 calls for 22 part
+     tasks on the owner's song, with `part-Bridge-keys-RHYTHMIC_HARMONY`
+     composed three times. Changing one adversarial finding (the F15 fix) alters
+     which recompositions happen, so the anchor's *composed* keys count moves
+     670 → 829 while the **shipped notes are byte-identical**
+     (363/214/210/1081/281 both ways). The composed layer is an isolating
+     control for "compose vs perform" (B-05c's control A), and it is currently
+     an accumulator over attempts rather than the notes that were kept.
+     **Unassigned; it makes the composed layer's counts unreliable as evidence.**
+
+  **Honest limits.**
+
+  - **Rung: TESTED.** Nothing was generated, rendered or listened to. Every
+    number is a symbolic measurement by the critic dimensions on anchors
+    recomposed from live code.
+  - **The arbitration changes no note.** It is a critic-side rule; the ledger row
+    it answers stays **N-pending** until a writer reads it (finding 1).
+  - **Two rows are re-pinned against this branch, not against the merge.** The
+    `harmony` null-control table and the `sectionDevelopment` climax table are
+    exact-count assertions, and both are sensitive to composer changes on
+    `main`. They are measured on `3b9ace3 + B-21 + B-25`; `main` has moved twice
+    since the lead's F16 measurement (`7c14ecf` → `a53acd1`). **They must be
+    re-run at the merge**, with
+    `./node_modules/.bin/esbuild.CMD src/lib/critics/dimensions/<name>.test.ts --bundle --platform=node --format=esm --alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts --outfile=../../.tmp-tests/<name>.test.mjs && node --test ../../.tmp-tests/<name>.test.mjs`
+    from `artifacts/api-server`. A merge-preview was attempted and abandoned:
+    `origin/main` and `ws-brain-b25` conflict in six files including the golden
+    fixture and `b05cEvidence`, and resolving them is the lead's merge, not a
+    measurement this stream may take.
+  - **The re-pointed density transform is this stream's own construction.** Half
+    of the setup's onsets per bar is a chosen number, not a fitted one; what is
+    not chosen is the *shape* — it thins the arrival relative to its setup
+    rather than by a fraction of itself, which is what the defect's name means.
+    It is claimed by density only, and the three other dimensions that claim the
+    blunted `arrival_thinned_and_softened` are left exactly as they were.
+  - **`repetitionVsVariation`'s detection rate improves because items were
+    removed, not because the dimension improved.** 17/32 → 17/18. The removed
+    items are the ones the corruption deleted, and the status is unchanged.
+  - **`vocal_masking_not_measured` is an `info` observation and gates nothing.**
+    It makes the silence visible in the report; it does not make the platform
+    know where a singer sits. For the owner's song that still waits on B-22's
+    melody reaching the Song Model.
+  - **The evidence JSON is a snapshot built by a scratchpad entry point**, not by
+    a committed builder, in the same shape B-25 used. Every figure in it is
+    re-asserted by a committed test in the suites listed above.
+  - **Nine anchors and one song.** "Detected on every anchor" means nine
+    synthetic benchmark cases; the exact 95 % interval at 9/9 is [0.66, 1].
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

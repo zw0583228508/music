@@ -23,9 +23,23 @@
  *    note-seconds between C3 and C5 while the top voice sits above C6
  *    (R-1b P0-4: "bass C2, keys 93 % ≥ C5, strings 100 % ≥ C6 — the climax is
  *    the thinnest-textured, shrillest section of the song").
+ *
+ * B-26 adds the **arbitration** between the two constraints this dimension
+ * carries, because B-21 made them collide. Since B-21's D4 the writers place a
+ * part inside `roleRegisterFor(profile, role)`; this dimension has always also
+ * asked the part to stay off the singer's pitches. Both are right and neither
+ * is negotiable on its own, and until now nothing said what to do when they
+ * disagree — `vocal_masking` simply told the writer to "move out of the vocal
+ * band" whether or not the band it is allowed to occupy had anywhere to move
+ * to. `vocalRegisterConflict` answers that with a number instead of an
+ * instruction (see its own comment), and every `vocal_masking` observation now
+ * carries the window, the sung band, the room on each side and which of the
+ * two constraints has to give. Where the Song Model carries no melody at all
+ * the dimension says so in the report (`vocal_masking_not_measured`) rather
+ * than scoring as if there were room — the owner's song is exactly that case.
  */
 import { profileForDefinition, roleRegisterFor } from "../../instrumentProfile";
-import type { InstrumentArrangementRole } from "@workspace/db";
+import type { InstrumentArrangementRole, InstrumentDefinition } from "@workspace/db";
 import type { CriticDimension, CriticInput } from "../types";
 import {
   buildContext,
@@ -45,8 +59,12 @@ import {
 } from "./shared";
 
 export const REGISTER_DIMENSION = "register";
-/** 1.1 (B-05c): `top_line_above_comfortable_ceiling` and `climax_all_treble`. */
-export const REGISTER_VERSION = "1.1";
+/**
+ * 1.1 (B-05c): `top_line_above_comfortable_ceiling` and `climax_all_treble`.
+ * 1.2 (B-26): the role-register / vocal arbitration on `vocal_masking`, and
+ * `vocal_masking_not_measured` where the model carries no melody.
+ */
+export const REGISTER_VERSION = "1.2";
 
 /**
  * The middle register a climax must not vacate. C3 (48) to C5 (72) is where a
@@ -69,13 +87,130 @@ export const MIN_SECTION_BARS_FOR_REGISTER = 4;
  * reader can check the number against the profile table.
  */
 export function comfortableCeilingFor(part: PartInfo, role: string): { ceiling: number; source: string } {
-  const profile = part.track.instrumentDefinition ? profileForDefinition(part.track.instrumentDefinition) : null;
+  const window = roleWindowForDefinition(part.track.instrumentDefinition, role, part.comfortableRange);
+  return { ceiling: window.hi, source: window.source };
+}
+
+/**
+ * The same answer read from an instrument definition and a role alone, for
+ * callers that do not build a `PartInfo` — the adversarial critics
+ * (`critics/adversarial/instrumentReality.ts`) among them.
+ *
+ * This exists so that there is exactly **one** function in the repository that
+ * answers "how high may this instrument sit in this role". Before B-26 the
+ * adversarial `string_bed_too_high` rule carried its own constant 79 while
+ * this dimension asked the profile, and the two disagreed about a violin
+ * section `CLIMAX_LAYER` (profile 67-91, constant 79) — the lead's F15 ruling,
+ * and the third recurrence of the program's standing two-sources-of-truth bug.
+ */
+export function roleWindowForDefinition(
+  definition: Pick<InstrumentDefinition, "id" | "profile"> | null | undefined,
+  role: string,
+  fallback: { min: number; max: number },
+): { lo: number; hi: number; source: string; fromRole: boolean } {
+  const profile = definition ? profileForDefinition(definition) : null;
   if (profile) {
     const roleRegister = roleRegisterFor(profile, role as InstrumentArrangementRole);
-    if (roleRegister.fromRole) return { ceiling: roleRegister.hi, source: `instrumentProfile ${profile.id} roleRegisters.${role}` };
-    return { ceiling: profile.range.comfortable.value[1], source: `instrumentProfile ${profile.id} range.comfortable` };
+    if (roleRegister.fromRole) {
+      return { lo: roleRegister.lo, hi: roleRegister.hi, source: `instrumentProfile ${profile.id} roleRegisters.${role}`, fromRole: true };
+    }
+    const comfortable = profile.range.comfortable.value;
+    return { lo: comfortable[0], hi: comfortable[1], source: `instrumentProfile ${profile.id} range.comfortable`, fromRole: false };
   }
-  return { ceiling: part.comfortableRange.max, source: "family fallback comfortable range" };
+  return { lo: fallback.min, hi: fallback.max, source: "family fallback comfortable range", fromRole: false };
+}
+
+/** Semitones within which a sounding note masks the sung pitch (the `vocal_masking` rule's own distance). */
+export const VOCAL_MASK_SEMITONES = 2;
+
+/**
+ * Roles a professional writes above the lead. A counter-line or a climax
+ * layer over the voice is normal orchestration; a bed or a comping part over
+ * it is the defect `vocal_masking` is named for. This is why the arbitration
+ * below does not simply take whichever side has more room.
+ */
+export const ROLES_WRITTEN_ABOVE_THE_LEAD: ReadonlySet<string> = new Set(["LEAD", "COUNTER_MELODY", "CALL_RESPONSE", "CLIMAX_LAYER"]);
+
+export type VocalRegisterConflict = {
+  /** The register this part's own profile gives it in the role it holds — the table B-21's D4 gave the writers. */
+  window: [number, number];
+  windowSource: string;
+  /** The band the singer occupies over this section's sung notes, widened by the masking distance. */
+  vocalBand: [number, number];
+  /** The part's own span in this section. */
+  partSpan: [number, number];
+  /** Semitones of the window lying clear below / above the singer. */
+  roomBelow: number;
+  roomAbove: number;
+  resolution: "clear_below" | "clear_above" | "no_room";
+  reason: string;
+};
+
+/**
+ * **The arbitration.** Two rules of this dimension pull in opposite
+ * directions once the writers obey the first:
+ *
+ *   (A) a part stays inside the register its own profile gives it in the role
+ *       it holds — `roleRegisterFor`, the number B-21's D4 gave the writers
+ *       and the number `top_line_above_comfortable_ceiling` judges by;
+ *   (B) a part does not sound within `VOCAL_MASK_SEMITONES` of the sung pitch.
+ *
+ * Neither yields to the other by taste. They are compatible exactly when the
+ * window has, on one side of the singer, at least as many semitones as the
+ * part's own voicing spans — so that is what this function measures, and it
+ * reports which side, or that there is none.
+ *
+ * *Below* is the resolution for an accompaniment: a bed, a comping part or a
+ * pad belongs under the voice. *Above* is admitted only for the roles a
+ * professional writes over the lead (`ROLES_WRITTEN_ABOVE_THE_LEAD`).
+ *
+ * When neither side has room the two constraints cannot both be satisfied by
+ * **any** placement of this voicing, and the decision is no longer the
+ * writer's: the plan gave this part a role whose register the singer occupies.
+ * That is reported as `no_room`, and `vocal_masking` attributes it to
+ * `orchestration` rather than telling the composer to move a part that has
+ * nowhere to go.
+ *
+ * Measured on the anchors at B-26 (window / sung band / part span / room):
+ *   pop-full   keys RHYTHMIC_HARMONY [48,72] sung 60-67 span 12  below 9  above 2  -> no_room
+ *   rock-full  keys RHYTHMIC_HARMONY [48,72] sung 64-71 span 10  below 13 above -2 -> clear_below
+ *   orchestral strings CLIMAX_LAYER  [67,91] sung 62-73 span 13  below -8 above 15 -> clear_above
+ */
+export function vocalRegisterConflict(input: {
+  window: { lo: number; hi: number; source: string };
+  role: string;
+  vocalLow: number;
+  vocalHigh: number;
+  partLow: number;
+  partHigh: number;
+}): VocalRegisterConflict {
+  const { window, role, vocalLow, vocalHigh, partLow, partHigh } = input;
+  const span = partHigh - partLow;
+  const maskedFrom = vocalLow - VOCAL_MASK_SEMITONES;
+  const maskedTo = vocalHigh + VOCAL_MASK_SEMITONES;
+  const roomBelow = (maskedFrom - 1) - window.lo;
+  const roomAbove = window.hi - (maskedTo + 1);
+  const fitsBelow = roomBelow >= span;
+  const fitsAbove = roomAbove >= span && ROLES_WRITTEN_ABOVE_THE_LEAD.has(role.toUpperCase());
+  const base = {
+    window: [window.lo, window.hi] as [number, number],
+    windowSource: window.source,
+    vocalBand: [maskedFrom, maskedTo] as [number, number],
+    partSpan: [partLow, partHigh] as [number, number],
+    roomBelow,
+    roomAbove,
+  };
+  if (fitsBelow) {
+    return { ...base, resolution: "clear_below", reason: `${window.lo}-${maskedFrom - 1} is ${roomBelow} semitones of this part's own ${role} register clear below the singer, and the voicing spans ${span}: it can be seated under the voice without leaving the register` };
+  }
+  if (fitsAbove) {
+    return { ...base, resolution: "clear_above", reason: `${role} is written above the lead and ${maskedTo + 1}-${window.hi} is ${roomAbove} semitones clear above the singer for a voicing spanning ${span}` };
+  }
+  return {
+    ...base,
+    resolution: "no_room",
+    reason: `the singer occupies ${maskedFrom}-${maskedTo} and this part's ${role} register is ${window.lo}-${window.hi}, leaving ${roomBelow} semitones below and ${roomAbove} above for a voicing spanning ${span}: no placement satisfies both the register and the voice, so the role or the band is the plan's decision to revisit, not the writer's`,
+  };
 }
 
 /** Pitch range the plan's register bands denote (the budget engine's five bands). */
@@ -178,8 +313,11 @@ export function evaluateRegister(input: CriticInput) {
       });
     }
 
-    // Vocal masking per part.
+    // Vocal masking per part, arbitrated against the part's own role register (B-26).
     if (context.vocal) {
+      const sectionStart = context.barInfo(section.startBar)?.start ?? 0;
+      const sectionEnd = context.barInfo(section.endBar)?.end ?? context.songEnd;
+      const sungHere = context.vocal.notes.filter((n) => n.end > sectionStart && n.start < sectionEnd).map((n) => n.pitch);
       for (const p of active) {
         if (p.family === "bass") continue;
         let sungBeats = 0;
@@ -190,7 +328,7 @@ export function evaluateRegister(input: CriticInput) {
           const s = soundingAt(p.notes, t);
           if (!s.length) continue;
           sungBeats += 1;
-          if (s.some((n) => Math.abs(n.pitch - sung) <= 2)) masked += 1;
+          if (s.some((n) => Math.abs(n.pitch - sung) <= VOCAL_MASK_SEMITONES)) masked += 1;
         }
         if (sungBeats < 8) continue;
         const share = masked / sungBeats;
@@ -199,14 +337,55 @@ export function evaluateRegister(input: CriticInput) {
           const planned = p.plannedRoles.find((r) => r.sectionName === section.name);
           const vocalBand = context.vocal.range ? pitchBand(Math.round((context.vocal.range.low + context.vocal.range.high) / 2)) : null;
           const plannedIntoVocalBand = Boolean(planned && vocalBand && planned.register === vocalBand);
+          const notes = context.notesInBars(p, section.startBar, section.endBar);
+          const role = roleInSection(p, section.name);
+          const window = roleWindowForDefinition(p.track.instrumentDefinition, role, p.comfortableRange);
+          // The arbitration: can this part be placed clear of the singer at
+          // all, inside the register its own profile gives it in this role?
+          const conflict = sungHere.length && notes.length
+            ? vocalRegisterConflict({
+              window, role,
+              vocalLow: Math.min(...sungHere), vocalHigh: Math.max(...sungHere),
+              partLow: Math.min(...notes.map((n) => n.pitch)), partHigh: Math.max(...notes.map((n) => n.pitch)),
+            })
+            : null;
+          // Who owns it. When no placement satisfies both constraints the
+          // writer has nowhere to move the part to, and the decision that has
+          // to be revisited is the plan's (which role, which band), not the
+          // composer's. When there is room, it is the composer's.
+          const origin = conflict?.resolution === "no_room" ? "orchestration" : plannedIntoVocalBand ? "register" : "compose";
+          const repair = conflict?.resolution === "no_room"
+            ? { operation: "replan_register_band", scope: "plan" as const, detail: `${p.instrument} masks the singer on ${Math.round(share * 100)} % of the sung beats in ${section.name} and cannot be moved clear of the voice inside its own ${role} register (${conflict.reason}, ${window.source}). Give the part a different role, narrow its voicing, or replan the band.` }
+            : conflict?.resolution === "clear_above"
+              ? { operation: "lift_line_above_vocal", scope: "section" as const, detail: `${p.instrument} sounds within ${VOCAL_MASK_SEMITONES} semitones of the sung pitch on ${Math.round(share * 100)} % of the sung beats in ${section.name}; ${conflict.reason}` }
+              : { operation: "open_voicing_below_vocal", scope: "section" as const, detail: `${p.instrument} sounds within ${VOCAL_MASK_SEMITONES} semitones of the sung pitch on ${Math.round(share * 100)} % of the sung beats in ${section.name}; ${conflict ? conflict.reason : `seat the voicing under the singer inside ${window.lo}-${window.hi} (${window.source})`}` };
           drafts.push({
             kind: "vocal_masking",
             severity: sev,
             location: { startBar: section.startBar, endBar: section.endBar, sectionName: section.name, trackIds: [p.id] },
-            evidence: { maskedBeatShare: share, sungBeats, plannedRegister: planned?.register ?? "", vocalBand: vocalBand ?? "", leadIsVocal: context.vocal.isVocal },
-            suspectedOrigin: plannedIntoVocalBand ? "register" : "compose",
-            originConfidence: confidenceFromCount(masked, 6, plannedIntoVocalBand ? 0.85 : 0.7),
-            recommendedRepair: { operation: "move_out_of_vocal_band", scope: "section", detail: `${p.instrument} sounds within two semitones of the sung pitch on ${Math.round(share * 100)} % of the sung beats in ${section.name}` },
+            evidence: {
+              maskedBeatShare: share, sungBeats, plannedRegister: planned?.register ?? "", vocalBand: vocalBand ?? "",
+              leadIsVocal: context.vocal.isVocal,
+              // B-26: the two constraints and the room between them, so the
+              // reader sees the conflict rather than inferring it.
+              leadEvidence: context.vocal.isVocal ? "vocal_detected" : "lead_line_without_vocal_evidence",
+              role,
+              roleRegisterLo: window.lo, roleRegisterHi: window.hi, roleRegisterSource: window.source,
+              // `-1` is "not measurable here", the sentinel this dimension set
+              // already uses (`motifRecurrenceAndDevelopment.recurrenceShare`):
+              // it can only appear when the section has no sung note or the
+              // part no note, which the `sungBeats >= 8` guard above excludes.
+              sungLow: conflict ? conflict.vocalBand[0] + VOCAL_MASK_SEMITONES : -1,
+              sungHigh: conflict ? conflict.vocalBand[1] - VOCAL_MASK_SEMITONES : -1,
+              partLow: conflict ? conflict.partSpan[0] : -1,
+              partHigh: conflict ? conflict.partSpan[1] : -1,
+              roomBelowVocal: conflict ? conflict.roomBelow : -1,
+              roomAboveVocal: conflict ? conflict.roomAbove : -1,
+              resolution: conflict?.resolution ?? "not_measurable",
+            },
+            suspectedOrigin: origin,
+            originConfidence: confidenceFromCount(masked, 6, conflict?.resolution === "no_room" ? 0.85 : plannedIntoVocalBand ? 0.85 : 0.7),
+            recommendedRepair: repair,
             confidence: confidenceFromCount(sungBeats, 12),
           });
         }
@@ -355,6 +534,29 @@ export function evaluateRegister(input: CriticInput) {
         });
       }
     }
+  }
+
+  // B-26: say when the masking check did not run. Without this a model with no
+  // melody scores exactly like a model whose parts leave the singer room, and
+  // the report cannot tell the two apart. The owner's song is the case that
+  // matters: `vocals.status` is `not_available`, so `register` scores 100 with
+  // no masking observation at all — not because the arrangement leaves room
+  // for him but because the platform does not know where his voice sits.
+  if (!context.vocal) {
+    drafts.push({
+      kind: "vocal_masking_not_measured",
+      severity: "info",
+      location: { startBar: 1, endBar: context.totalBars, trackIds: context.pitched.map((p) => p.id).sort() },
+      evidence: {
+        reason: "the Song Model carries no melody, so there is no sung pitch to measure against",
+        pitchedParts: context.pitched.length,
+        maskingChecked: false,
+      },
+      suspectedOrigin: "unknown",
+      originConfidence: 0,
+      recommendedRepair: null,
+      confidence: 0,
+    });
   }
 
   return buildReport({

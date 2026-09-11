@@ -59,6 +59,29 @@ test("positive control: erasing the drum fills the plan asked for is flagged at 
   // therefore runs on anchors prepared by `realise_boundaries` (the planned
   // fills written), which is the same device the sectionDevelopment control
   // uses for a composer sitting at the dimension's floor.
+  //
+  // **Re-anchored at the B-21 merge (B-26), and the honest reading is that the
+  // dimension still hears the erasure on all three anchors while `detect`'s
+  // composite flag says otherwise on one.** What `detect` requires is a score
+  // drop of at least 1 *and* a new located observation. The observations are
+  // there on every anchor — two `planned_fill_missing` majors at exactly the
+  // bars the plan named, origin `compose` — but on pop-full the same erasure
+  // also *removes* four minor findings, because copying bar 11 over bar 12 (and
+  // 27 over 28) replaces the drum bars whose backbeat and anticipation the
+  // dimension was reading:
+  //
+  //   anchor         score       new                              also removed
+  //   pop-full       75.04 -> 75.07 (+0.03)  planned_fill_missing@12, @28   backbeat_missing@5-12, @21-28, anticipation_mismatch@5-12, @21-28
+  //   rock-full      80.80 -> 74.70 (-6.10)  planned_fill_missing@12, @28   backbeat_missing@5-12, @21-28, anticipation_mismatch@21-28
+  //   acoustic-demo  86.80 -> 84.14 (-2.66)  planned_fill_missing@8,  @24   backbeat_missing@1-8, @17-24, anticipation_mismatch@17-24
+  //
+  // Isolated rather than assumed: running the same erasure with **only** the
+  // pickups deleted changes nothing at all on any of the three (drop 0, no new
+  // observation, none removed), so the whole effect — both the majors and the
+  // cancelled minors — is in the drum bars. The control's claim is asserted on
+  // what it produces; pop-full's net score is recorded with the four findings
+  // that cancel it, and no threshold is moved.
+  const netScore: Record<string, boolean> = { "pop-full": false, "rock-full": true, "acoustic-demo": true };
   for (const anchor of anchors(["pop-full", "rock-full", "acoustic-demo"])) {
     const prepared = applyPreparation(anchor, "realise_boundaries")!;
     assert.ok(prepared, `${anchor.id}: the plan has fills to realise`);
@@ -66,15 +89,29 @@ test("positive control: erasing the drum fills the plan asked for is flagged at 
     assert.equal(before.observations.filter((o) => o.kind === "planned_fill_missing").length, 0, `${anchor.id}: the prepared anchor realises every planned fill`);
     const worsened = applyPurposeBuilt(prepared, "erase_boundary_events")!;
     const d = detect(grooveDimension, prepared.input, worsened);
-    assert.ok(d.detected, anchor.id);
     const missing = d.newObservations.filter((o) => o.kind === "planned_fill_missing");
-    assert.ok(missing.length >= 2, anchor.id);
+    // The claim the control is for, on every anchor.
+    assert.ok(missing.length >= 2, `${anchor.id}: ${d.newObservations.map((o) => o.kind).join(",")}`);
     const transitions = anchor.input.plan.transitionPlan!.transitions.filter((t) => t.devices.some((x) => x.device === "drum_fill"));
     for (const o of missing) {
       assert.equal(o.location.startBar, o.location.endBar);
       assert.ok(transitions.some((t) => t.atBar - 1 === o.location.startBar), `bar ${o.location.startBar} is before a planned fill`);
       assert.equal(o.suspectedOrigin, "compose");
+      assert.equal(o.severity, "major");
     }
+    // …and the composite flag, with the cause where it disagrees.
+    assert.equal(d.detected, netScore[anchor.id], `${anchor.id}: drop ${d.scoreDrop}`);
+    if (!d.detected) {
+      const removed = d.before.observations.filter((o) => o.severity !== "info" && !d.after.observations.some((x) => x.id === o.id));
+      assert.equal(removed.length, 4,
+        `${anchor.id}: the erasure also removes ${removed.map((o) => `${o.kind}@${o.location.startBar}-${o.location.endBar}`).join(", ")}, which is why the net score is ${d.scoreDrop}`);
+      assert.deepEqual([...new Set(removed.map((o) => o.kind))].sort(), ["anticipation_mismatch", "backbeat_missing"]);
+    }
+    // The isolating control: the pickups are not what the dimension is reading.
+    const pickupsOnly = applyPurposeBuilt(prepared, "erase_pickups")!;
+    const p = detect(grooveDimension, prepared.input, pickupsOnly);
+    assert.equal(p.scoreDrop, 0, `${anchor.id}: deleting the pitched pickups alone moves nothing`);
+    assert.deepEqual(p.newObservations, [], anchor.id);
   }
   // Re-anchored (B-05c), with the cause. The B-01-merge version claimed
   // "dance-full, whose drummer plays before its planned fills, still detects

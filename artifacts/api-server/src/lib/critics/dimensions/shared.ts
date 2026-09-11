@@ -358,7 +358,27 @@ function effectiveRanges(track: TrackModel, family: PartFamily): { playable: { m
 
 /** The role a part holds in a section: the plan's assignment when it has one, else the track's role. */
 export function roleInSection(part: PartInfo, sectionName: string): string {
-  return (part.plannedRoles.find((r) => r.sectionName === sectionName)?.role ?? part.role).toUpperCase();
+  return roleInSectionFor(part.plannedRoles, sectionName, part.role);
+}
+
+/**
+ * The same lookup from the plan's own role assignments, for callers that do
+ * not build a `PartInfo` — the adversarial critics reach the plan directly
+ * (B-26; charter rule 6: one definition of "which role does this part hold
+ * here", imported rather than copied).
+ */
+export function roleInSectionFor(
+  plannedRoles: readonly InstrumentRoleAssignment[],
+  sectionName: string,
+  trackRole: string,
+): string {
+  return (plannedRoles.find((r) => r.sectionName === sectionName)?.role ?? trackRole).toUpperCase();
+}
+
+/** The plan's role assignments for one instrument, keyed as `buildContext` keys them. */
+export function plannedRolesFor(plan: ArrangementPlan, instrument: string): InstrumentRoleAssignment[] {
+  const key = instrument.toLowerCase();
+  return (plan.sectionPlan?.roleAssignments ?? []).filter((r) => r.instrument.toLowerCase() === key);
 }
 
 /**
@@ -473,6 +493,7 @@ function deriveContext(input: CriticInput): CriticContext {
         percussive: family === "drums" || family === "percussion",
         notes,
         plannedRoles: roleAssignments.filter((r) => r.instrument.toLowerCase() === instrumentKey),
+      // (`plannedRolesFor` answers the same question for callers without a PartInfo.)
         playableRange: ranges.playable,
         comfortableRange: ranges.comfortable,
         maxVoices: ranges.maxVoices,

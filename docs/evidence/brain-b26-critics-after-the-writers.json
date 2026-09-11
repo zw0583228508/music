@@ -1,0 +1,1740 @@
+{
+  "title": "Brain B-26 - the critics' evidence after the writers improved: thirteen red tests classified, two controls re-pointed, the register/vocal conflict arbitrated",
+  "generatedAt": "2026-09-11T00:53:24.946Z",
+  "builtAgainst": "ws-brain-b26 (origin/ws-brain-b25 5e064f6, which is origin/ws-brain-b21 on 3b9ace3)",
+  "method": "every dimension re-evaluated on the anchors `orchestrateArrangement` recomposes from live code; every 'before' figure re-measured in a worktree checked out at 3b9ace3 (B-21's base) with the same harness; nothing rendered, nothing listened to",
+  "baselines": {
+    "b21Base": "3b9ace3 (PR-B13)",
+    "mainAtTheLeadsF16Measurement": "7c14ecf (PR-B24)",
+    "mainNow": "a53acd1 (PR-B22)"
+  },
+  "suiteCounts": {
+    "atB21Base": {
+      "density": "7/7",
+      "register": "5/5",
+      "repetitionVsVariation": "5/5",
+      "sectionDevelopment": "4/4",
+      "groove": "6/6",
+      "harmony": "5/5",
+      "motifRecurrenceAndDevelopment": "4/4",
+      "playability": "4/4",
+      "transitions": "4/4",
+      "note": "all nine suites are fully green at 3b9ace3: every one of the thirteen failures is B-21's, not two of them main's"
+    },
+    "atMain7c14ecf": {
+      "harmony": "4/5",
+      "sectionDevelopment": "3/4",
+      "note": "main carries two red of its own, caused by what merged after 3b9ace3 (B-07/B-19/B-24), and they are different numbers in the same two tests"
+    }
+  },
+  "registerBassInversionControl": [
+    {
+      "anchor": "pop-full",
+      "bassRangeAtB21": [
+        28,
+        48
+      ],
+      "applicable": true,
+      "detected": true,
+      "scoreDrop": 66.58,
+      "newKinds": [
+        "part_outside_comfortable_range",
+        "part_outside_planned_band"
+      ]
+    },
+    {
+      "anchor": "ballad-piano-vocal",
+      "bassRangeAtB21": [
+        33,
+        41
+      ],
+      "applicable": true,
+      "detected": true,
+      "scoreDrop": 51.42,
+      "newKinds": [
+        "part_outside_comfortable_range",
+        "part_outside_planned_band"
+      ]
+    },
+    {
+      "anchor": "rock-full",
+      "bassRangeAtB21": [
+        28,
+        40
+      ],
+      "applicable": true,
+      "detected": true,
+      "scoreDrop": 78,
+      "newKinds": [
+        "part_outside_comfortable_range",
+        "part_outside_planned_band"
+      ]
+    },
+    {
+      "anchor": "dance-full",
+      "bassRangeAtB21": [
+        28,
+        48
+      ],
+      "applicable": true,
+      "detected": true,
+      "scoreDrop": 78,
+      "newKinds": [
+        "part_outside_comfortable_range",
+        "part_outside_planned_band"
+      ]
+    },
+    {
+      "anchor": "acoustic-demo",
+      "bassRangeAtB21": [
+        31,
+        52
+      ],
+      "applicable": true,
+      "detected": true,
+      "scoreDrop": 66,
+      "newKinds": [
+        "part_outside_comfortable_range",
+        "part_outside_planned_band"
+      ]
+    },
+    {
+      "anchor": "orchestral-midi",
+      "bassRangeAtB21": [
+        33,
+        45
+      ],
+      "applicable": true,
+      "detected": true,
+      "scoreDrop": 36,
+      "newKinds": [
+        "part_outside_comfortable_range",
+        "part_outside_planned_band"
+      ]
+    },
+    {
+      "anchor": "ethnic-vocal",
+      "bassRangeAtB21": [
+        33,
+        43
+      ],
+      "applicable": true,
+      "detected": true,
+      "scoreDrop": 54,
+      "newKinds": [
+        "part_outside_comfortable_range",
+        "part_outside_planned_band"
+      ]
+    },
+    {
+      "anchor": "jazz-full",
+      "bassRangeAtB21": [
+        29,
+        53
+      ],
+      "applicable": true,
+      "detected": true,
+      "scoreDrop": 54,
+      "newKinds": [
+        "part_outside_comfortable_range",
+        "part_outside_planned_band"
+      ]
+    },
+    {
+      "anchor": "cinematic-midi",
+      "bassRangeAtB21": [
+        34,
+        39
+      ],
+      "applicable": true,
+      "detected": true,
+      "scoreDrop": 66,
+      "newKinds": [
+        "part_outside_comfortable_range",
+        "part_outside_planned_band"
+      ]
+    }
+  ],
+  "registerVocalArbitration": {
+    "perAnchor": [
+      {
+        "anchor": "pop-full",
+        "vocal": {
+          "isVocal": true,
+          "range": {
+            "low": 60,
+            "high": 67
+          }
+        },
+        "findings": [
+          {
+            "section": "Intro",
+            "part": "keys-harmonic_bed",
+            "role": "RHYTHMIC_HARMONY",
+            "maskedBeatShare": 0.625,
+            "severity": "major",
+            "roleRegister": [
+              48,
+              72
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.RHYTHMIC_HARMONY",
+            "sung": [
+              60,
+              67
+            ],
+            "part_": [
+              57,
+              72
+            ],
+            "roomBelowVocal": 9,
+            "roomAboveVocal": 2,
+            "resolution": "no_room",
+            "suspectedOrigin": "orchestration",
+            "repair": "replan_register_band",
+            "leadEvidence": "vocal_detected"
+          },
+          {
+            "section": "Verse",
+            "part": "keys-harmonic_bed",
+            "role": "RHYTHMIC_HARMONY",
+            "maskedBeatShare": 0.6875,
+            "severity": "major",
+            "roleRegister": [
+              48,
+              72
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.RHYTHMIC_HARMONY",
+            "sung": [
+              60,
+              67
+            ],
+            "part_": [
+              60,
+              72
+            ],
+            "roomBelowVocal": 9,
+            "roomAboveVocal": 2,
+            "resolution": "no_room",
+            "suspectedOrigin": "orchestration",
+            "repair": "replan_register_band",
+            "leadEvidence": "vocal_detected"
+          },
+          {
+            "section": "Chorus",
+            "part": "keys-harmonic_bed",
+            "role": "HARMONIC_BED",
+            "maskedBeatShare": 0.3333,
+            "severity": "minor",
+            "roleRegister": [
+              48,
+              67
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.HARMONIC_BED",
+            "sung": [
+              60,
+              67
+            ],
+            "part_": [
+              50,
+              67
+            ],
+            "roomBelowVocal": 9,
+            "roomAboveVocal": -3,
+            "resolution": "no_room",
+            "suspectedOrigin": "orchestration",
+            "repair": "replan_register_band",
+            "leadEvidence": "vocal_detected"
+          },
+          {
+            "section": "Verse 2",
+            "part": "keys-harmonic_bed",
+            "role": "RHYTHMIC_HARMONY",
+            "maskedBeatShare": 0.625,
+            "severity": "major",
+            "roleRegister": [
+              48,
+              72
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.RHYTHMIC_HARMONY",
+            "sung": [
+              60,
+              67
+            ],
+            "part_": [
+              60,
+              72
+            ],
+            "roomBelowVocal": 9,
+            "roomAboveVocal": 2,
+            "resolution": "no_room",
+            "suspectedOrigin": "orchestration",
+            "repair": "replan_register_band",
+            "leadEvidence": "vocal_detected"
+          },
+          {
+            "section": "Chorus 2",
+            "part": "keys-harmonic_bed",
+            "role": "HARMONIC_BED",
+            "maskedBeatShare": 0.4444,
+            "severity": "major",
+            "roleRegister": [
+              48,
+              67
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.HARMONIC_BED",
+            "sung": [
+              60,
+              67
+            ],
+            "part_": [
+              55,
+              67
+            ],
+            "roomBelowVocal": 9,
+            "roomAboveVocal": -3,
+            "resolution": "no_room",
+            "suspectedOrigin": "orchestration",
+            "repair": "replan_register_band",
+            "leadEvidence": "vocal_detected"
+          }
+        ]
+      },
+      {
+        "anchor": "ballad-piano-vocal",
+        "vocal": {
+          "isVocal": true,
+          "range": {
+            "low": 65,
+            "high": 69
+          }
+        },
+        "findings": [
+          {
+            "section": "Bridge",
+            "part": "keys-rhythmic_harmony",
+            "role": "RHYTHMIC_HARMONY",
+            "maskedBeatShare": 0.5,
+            "severity": "major",
+            "roleRegister": [
+              48,
+              72
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.RHYTHMIC_HARMONY",
+            "sung": [
+              65,
+              69
+            ],
+            "part_": [
+              60,
+              69
+            ],
+            "roomBelowVocal": 14,
+            "roomAboveVocal": 0,
+            "resolution": "clear_below",
+            "suspectedOrigin": "register",
+            "repair": "open_voicing_below_vocal",
+            "leadEvidence": "vocal_detected"
+          }
+        ]
+      },
+      {
+        "anchor": "rock-full",
+        "vocal": {
+          "isVocal": true,
+          "range": {
+            "low": 64,
+            "high": 71
+          }
+        },
+        "findings": [
+          {
+            "section": "Intro",
+            "part": "keys-rhythmic_harmony",
+            "role": "RHYTHMIC_HARMONY",
+            "maskedBeatShare": 0.375,
+            "severity": "major",
+            "roleRegister": [
+              48,
+              72
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.RHYTHMIC_HARMONY",
+            "sung": [
+              64,
+              71
+            ],
+            "part_": [
+              59,
+              69
+            ],
+            "roomBelowVocal": 13,
+            "roomAboveVocal": -2,
+            "resolution": "clear_below",
+            "suspectedOrigin": "register",
+            "repair": "open_voicing_below_vocal",
+            "leadEvidence": "vocal_detected"
+          },
+          {
+            "section": "Verse",
+            "part": "keys-rhythmic_harmony",
+            "role": "RHYTHMIC_HARMONY",
+            "maskedBeatShare": 0.5,
+            "severity": "major",
+            "roleRegister": [
+              48,
+              72
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.RHYTHMIC_HARMONY",
+            "sung": [
+              64,
+              71
+            ],
+            "part_": [
+              59,
+              69
+            ],
+            "roomBelowVocal": 13,
+            "roomAboveVocal": -2,
+            "resolution": "clear_below",
+            "suspectedOrigin": "register",
+            "repair": "open_voicing_below_vocal",
+            "leadEvidence": "vocal_detected"
+          }
+        ]
+      },
+      {
+        "anchor": "dance-full",
+        "vocal": {
+          "isVocal": true,
+          "range": {
+            "low": 69,
+            "high": 81
+          }
+        },
+        "findings": []
+      },
+      {
+        "anchor": "acoustic-demo",
+        "vocal": {
+          "isVocal": true,
+          "range": {
+            "low": 67,
+            "high": 74
+          }
+        },
+        "findings": []
+      },
+      {
+        "anchor": "orchestral-midi",
+        "vocal": {
+          "isVocal": false,
+          "range": {
+            "low": 62,
+            "high": 73
+          }
+        },
+        "findings": [
+          {
+            "section": "Intro",
+            "part": "keys-ostinato",
+            "role": "OSTINATO",
+            "maskedBeatShare": 0.25,
+            "severity": "minor",
+            "roleRegister": [
+              48,
+              79
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.OSTINATO",
+            "sung": [
+              62,
+              73
+            ],
+            "part_": [
+              58,
+              69
+            ],
+            "roomBelowVocal": 11,
+            "roomAboveVocal": 3,
+            "resolution": "clear_below",
+            "suspectedOrigin": "register",
+            "repair": "open_voicing_below_vocal",
+            "leadEvidence": "lead_line_without_vocal_evidence"
+          },
+          {
+            "section": "Verse",
+            "part": "keys-ostinato",
+            "role": "OSTINATO",
+            "maskedBeatShare": 0.4444,
+            "severity": "major",
+            "roleRegister": [
+              48,
+              79
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.OSTINATO",
+            "sung": [
+              62,
+              73
+            ],
+            "part_": [
+              58,
+              69
+            ],
+            "roomBelowVocal": 11,
+            "roomAboveVocal": 3,
+            "resolution": "clear_below",
+            "suspectedOrigin": "register",
+            "repair": "open_voicing_below_vocal",
+            "leadEvidence": "lead_line_without_vocal_evidence"
+          },
+          {
+            "section": "Verse",
+            "part": "strings-climax_layer",
+            "role": "PAD",
+            "maskedBeatShare": 0.5,
+            "severity": "major",
+            "roleRegister": [
+              60,
+              79
+            ],
+            "roleRegisterSource": "instrumentProfile violin_section roleRegisters.PAD",
+            "sung": [
+              62,
+              73
+            ],
+            "part_": [
+              61,
+              79
+            ],
+            "roomBelowVocal": -1,
+            "roomAboveVocal": 3,
+            "resolution": "no_room",
+            "suspectedOrigin": "orchestration",
+            "repair": "replan_register_band",
+            "leadEvidence": "lead_line_without_vocal_evidence"
+          },
+          {
+            "section": "Chorus",
+            "part": "brass-climax_layer",
+            "role": "CLIMAX_LAYER",
+            "maskedBeatShare": 0.25,
+            "severity": "minor",
+            "roleRegister": [
+              48,
+              84
+            ],
+            "roleRegisterSource": "instrumentProfile brass_section roleRegisters.CLIMAX_LAYER",
+            "sung": [
+              62,
+              73
+            ],
+            "part_": [
+              59,
+              66
+            ],
+            "roomBelowVocal": 11,
+            "roomAboveVocal": 8,
+            "resolution": "clear_below",
+            "suspectedOrigin": "compose",
+            "repair": "open_voicing_below_vocal",
+            "leadEvidence": "lead_line_without_vocal_evidence"
+          },
+          {
+            "section": "Chorus",
+            "part": "keys-ostinato",
+            "role": "OSTINATO",
+            "maskedBeatShare": 0.25,
+            "severity": "minor",
+            "roleRegister": [
+              48,
+              79
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.OSTINATO",
+            "sung": [
+              62,
+              73
+            ],
+            "part_": [
+              58,
+              69
+            ],
+            "roomBelowVocal": 11,
+            "roomAboveVocal": 3,
+            "resolution": "clear_below",
+            "suspectedOrigin": "register",
+            "repair": "open_voicing_below_vocal",
+            "leadEvidence": "lead_line_without_vocal_evidence"
+          },
+          {
+            "section": "Chorus",
+            "part": "strings-climax_layer",
+            "role": "CLIMAX_LAYER",
+            "maskedBeatShare": 0.3,
+            "severity": "minor",
+            "roleRegister": [
+              67,
+              91
+            ],
+            "roleRegisterSource": "instrumentProfile violin_section roleRegisters.CLIMAX_LAYER",
+            "sung": [
+              62,
+              73
+            ],
+            "part_": [
+              73,
+              86
+            ],
+            "roomBelowVocal": -8,
+            "roomAboveVocal": 15,
+            "resolution": "clear_above",
+            "suspectedOrigin": "compose",
+            "repair": "lift_line_above_vocal",
+            "leadEvidence": "lead_line_without_vocal_evidence"
+          },
+          {
+            "section": "Outro",
+            "part": "keys-ostinato",
+            "role": "OSTINATO",
+            "maskedBeatShare": 0.25,
+            "severity": "minor",
+            "roleRegister": [
+              48,
+              79
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.OSTINATO",
+            "sung": [
+              62,
+              73
+            ],
+            "part_": [
+              58,
+              77
+            ],
+            "roomBelowVocal": 11,
+            "roomAboveVocal": 3,
+            "resolution": "no_room",
+            "suspectedOrigin": "orchestration",
+            "repair": "replan_register_band",
+            "leadEvidence": "lead_line_without_vocal_evidence"
+          }
+        ]
+      },
+      {
+        "anchor": "ethnic-vocal",
+        "vocal": {
+          "isVocal": true,
+          "range": {
+            "low": 62,
+            "high": 67
+          }
+        },
+        "findings": []
+      },
+      {
+        "anchor": "jazz-full",
+        "vocal": {
+          "isVocal": true,
+          "range": {
+            "low": 70,
+            "high": 80
+          }
+        },
+        "findings": []
+      },
+      {
+        "anchor": "cinematic-midi",
+        "vocal": {
+          "isVocal": false,
+          "range": {
+            "low": 60,
+            "high": 67
+          }
+        },
+        "findings": [
+          {
+            "section": "Intro",
+            "part": "keys-harmonic_bed",
+            "role": "RHYTHMIC_HARMONY",
+            "maskedBeatShare": 0.625,
+            "severity": "major",
+            "roleRegister": [
+              48,
+              72
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.RHYTHMIC_HARMONY",
+            "sung": [
+              60,
+              67
+            ],
+            "part_": [
+              53,
+              63
+            ],
+            "roomBelowVocal": 9,
+            "roomAboveVocal": 2,
+            "resolution": "no_room",
+            "suspectedOrigin": "orchestration",
+            "repair": "replan_register_band",
+            "leadEvidence": "lead_line_without_vocal_evidence"
+          },
+          {
+            "section": "Outro",
+            "part": "keys-harmonic_bed",
+            "role": "RHYTHMIC_HARMONY",
+            "maskedBeatShare": 0.625,
+            "severity": "major",
+            "roleRegister": [
+              48,
+              72
+            ],
+            "roleRegisterSource": "instrumentProfile piano roleRegisters.RHYTHMIC_HARMONY",
+            "sung": [
+              60,
+              67
+            ],
+            "part_": [
+              53,
+              63
+            ],
+            "roomBelowVocal": 9,
+            "roomAboveVocal": 2,
+            "resolution": "no_room",
+            "suspectedOrigin": "orchestration",
+            "repair": "replan_register_band",
+            "leadEvidence": "lead_line_without_vocal_evidence"
+          }
+        ]
+      }
+    ],
+    "unitGeometry": {
+      "popFullGeometry": {
+        "window": [
+          48,
+          72
+        ],
+        "windowSource": "instrumentProfile piano roleRegisters.RHYTHMIC_HARMONY",
+        "vocalBand": [
+          58,
+          69
+        ],
+        "partSpan": [
+          60,
+          72
+        ],
+        "roomBelow": 9,
+        "roomAbove": 2,
+        "resolution": "no_room",
+        "reason": "the singer occupies 58-69 and this part's RHYTHMIC_HARMONY register is 48-72, leaving 9 semitones below and 2 above for a voicing spanning 12: no placement satisfies both the register and the voice, so the role or the band is the plan's decision to revisit, not the writer's"
+      },
+      "rockFullGeometry": {
+        "window": [
+          48,
+          72
+        ],
+        "windowSource": "instrumentProfile piano roleRegisters.RHYTHMIC_HARMONY",
+        "vocalBand": [
+          62,
+          73
+        ],
+        "partSpan": [
+          59,
+          69
+        ],
+        "roomBelow": 13,
+        "roomAbove": -2,
+        "resolution": "clear_below",
+        "reason": "48-61 is 13 semitones of this part's own RHYTHMIC_HARMONY register clear below the singer, and the voicing spans 10: it can be seated under the voice without leaving the register"
+      },
+      "climaxLayerAbove": {
+        "window": [
+          67,
+          91
+        ],
+        "windowSource": "instrumentProfile violin_section roleRegisters.CLIMAX_LAYER",
+        "vocalBand": [
+          60,
+          75
+        ],
+        "partSpan": [
+          73,
+          86
+        ],
+        "roomBelow": -8,
+        "roomAbove": 15,
+        "resolution": "clear_above",
+        "reason": "CLIMAX_LAYER is written above the lead and 76-91 is 15 semitones clear above the singer for a voicing spanning 13"
+      },
+      "samePlacementAsAPad": {
+        "window": [
+          67,
+          91
+        ],
+        "windowSource": "instrumentProfile violin_section roleRegisters.CLIMAX_LAYER",
+        "vocalBand": [
+          60,
+          75
+        ],
+        "partSpan": [
+          73,
+          86
+        ],
+        "roomBelow": -8,
+        "roomAbove": 15,
+        "resolution": "no_room",
+        "reason": "the singer occupies 60-75 and this part's PAD register is 67-91, leaving -8 semitones below and 15 above for a voicing spanning 13: no placement satisfies both the register and the voice, so the role or the band is the plan's decision to revisit, not the writer's"
+      }
+    },
+    "constructedFold": {
+      "what": "the two verses' piano bed folded down one octave, inside its own 48-72 RHYTHMIC_HARMONY register",
+      "scoreBefore": 66.58,
+      "scoreAfter": 82.18,
+      "maskingBefore": [
+        "Intro:0.625",
+        "Verse:0.6875",
+        "Chorus:0.3333",
+        "Verse 2:0.625",
+        "Chorus 2:0.4444"
+      ],
+      "maskingAfter": [
+        "Intro:0.625",
+        "Chorus:0.3333",
+        "Chorus 2:0.4444"
+      ],
+      "note": "the two sections whose part span fits under the singer clear; the other three have no octave inside the register that clears, which is what `no_room` says"
+    }
+  },
+  "densityChorusThinnerThanVerse": [
+    {
+      "anchor": "pop-full",
+      "detected": false,
+      "scoreDrop": 0,
+      "newKinds": [],
+      "onsetsPerBarBefore": {
+        "Intro": 9.75,
+        "Verse": 9.625,
+        "Chorus": 17.125,
+        "Verse 2": 8.75,
+        "Chorus 2": 17.875,
+        "Outro": 7
+      },
+      "onsetsPerBarAfter": {
+        "Intro": 9.75,
+        "Verse": 9.625,
+        "Chorus": 5.875,
+        "Verse 2": 8.75,
+        "Chorus 2": 6.125,
+        "Outro": 7
+      }
+    },
+    {
+      "anchor": "rock-full",
+      "detected": false,
+      "scoreDrop": 0,
+      "newKinds": [],
+      "onsetsPerBarBefore": {
+        "Intro": 9.75,
+        "Verse": 9.375,
+        "Chorus": 17.125,
+        "Bridge": 7.125,
+        "Chorus 2": 19.25
+      },
+      "onsetsPerBarAfter": {
+        "Intro": 9.75,
+        "Verse": 9.375,
+        "Chorus": 5.875,
+        "Bridge": 7.125,
+        "Chorus 2": 6.625
+      }
+    },
+    {
+      "anchor": "dance-full",
+      "detected": true,
+      "scoreDrop": 7.8,
+      "newKinds": [
+        "louder_section_thinner"
+      ],
+      "onsetsPerBarBefore": {
+        "Intro": 6.125,
+        "Verse": 13.75,
+        "Chorus": 20.375,
+        "Breakdown": 7.625,
+        "Chorus 2": 22.125
+      },
+      "onsetsPerBarAfter": {
+        "Intro": 6.125,
+        "Verse": 13.75,
+        "Chorus": 7,
+        "Breakdown": 7.625,
+        "Chorus 2": 7.625
+      }
+    },
+    {
+      "anchor": "acoustic-demo",
+      "detected": false,
+      "scoreDrop": 0,
+      "newKinds": [],
+      "onsetsPerBarBefore": {
+        "Verse": 1.875,
+        "Chorus": 17.125,
+        "Verse 2": 2.25,
+        "Chorus 2": 15.75
+      },
+      "onsetsPerBarAfter": {
+        "Verse": 1.875,
+        "Chorus": 5.875,
+        "Verse 2": 2.25,
+        "Chorus 2": 5.375
+      }
+    }
+  ],
+  "densityArrivalThinnedAndSoftened": [
+    {
+      "anchor": "pop-full",
+      "detected": false,
+      "scoreDrop": 0,
+      "newKinds": [],
+      "setupMeanVoices": 1.1053,
+      "thinnedArrivalMeanVoices": 1.7436
+    },
+    {
+      "anchor": "rock-full",
+      "detected": false,
+      "scoreDrop": 0,
+      "newKinds": [],
+      "setupMeanVoices": 1.0804,
+      "thinnedArrivalMeanVoices": 1.4103
+    },
+    {
+      "anchor": "acoustic-demo",
+      "detected": false,
+      "scoreDrop": 0,
+      "newKinds": [],
+      "setupMeanVoices": 2,
+      "thinnedArrivalMeanVoices": 1.4128
+    }
+  ],
+  "densityRepointedControl": [
+    {
+      "anchor": "pop-full",
+      "detail": "Chorus (setup Verse: 9.63/bar), Chorus 2 (setup Verse 2: 8.75/bar) thinned to at most 50 % of its setup's onsets per bar, unvoiced and softened 20 %",
+      "detected": true,
+      "scoreDrop": 18.36,
+      "louderSectionThinner": {
+        "section": "Chorus",
+        "onsetsRatio": 0.4545
+      },
+      "arrivalThinnerThanSetup": null
+    },
+    {
+      "anchor": "ballad-piano-vocal",
+      "detail": "Chorus (setup Verse: 2.38/bar), Chorus 2 (setup Bridge: 8.50/bar) thinned to at most 50 % of its setup's onsets per bar, unvoiced and softened 20 %",
+      "detected": true,
+      "scoreDrop": 42.86,
+      "louderSectionThinner": {
+        "section": "Chorus",
+        "onsetsRatio": 0.4737
+      },
+      "arrivalThinnerThanSetup": {
+        "section": "Chorus",
+        "severity": "major",
+        "combinedRatio": 0.693,
+        "respectsThatFell": 2
+      }
+    },
+    {
+      "anchor": "rock-full",
+      "detail": "Chorus (setup Verse: 9.38/bar), Chorus 2 (setup Bridge: 7.13/bar) thinned to at most 50 % of its setup's onsets per bar, unvoiced and softened 20 %",
+      "detected": true,
+      "scoreDrop": 27.2,
+      "louderSectionThinner": {
+        "section": "Chorus",
+        "onsetsRatio": 0.4667
+      },
+      "arrivalThinnerThanSetup": {
+        "section": "Chorus 2",
+        "severity": "major",
+        "combinedRatio": 0.7813,
+        "respectsThatFell": 2
+      }
+    },
+    {
+      "anchor": "dance-full",
+      "detail": "Chorus (setup Verse: 13.75/bar), Chorus 2 (setup Breakdown: 7.63/bar) thinned to at most 50 % of its setup's onsets per bar, unvoiced and softened 20 %",
+      "detected": true,
+      "scoreDrop": 18.72,
+      "louderSectionThinner": {
+        "section": "Chorus",
+        "onsetsRatio": 0.5091
+      },
+      "arrivalThinnerThanSetup": null
+    },
+    {
+      "anchor": "acoustic-demo",
+      "detail": "Chorus (setup Verse: 1.88/bar), Chorus 2 (setup Verse 2: 2.25/bar) thinned to at most 50 % of its setup's onsets per bar, unvoiced and softened 20 %",
+      "detected": true,
+      "scoreDrop": 52.8,
+      "louderSectionThinner": {
+        "section": "Chorus",
+        "onsetsRatio": 0.5333
+      },
+      "arrivalThinnerThanSetup": {
+        "section": "Chorus",
+        "severity": "major",
+        "combinedRatio": 0.7299,
+        "respectsThatFell": 2
+      }
+    },
+    {
+      "anchor": "orchestral-midi",
+      "detail": "Chorus (setup Verse: 6.25/bar) thinned to at most 50 % of its setup's onsets per bar, unvoiced and softened 20 %",
+      "detected": true,
+      "scoreDrop": 21.6,
+      "louderSectionThinner": {
+        "section": "Chorus",
+        "onsetsRatio": 0.52
+      },
+      "arrivalThinnerThanSetup": null
+    },
+    {
+      "anchor": "ethnic-vocal",
+      "detail": "Chorus (setup Verse: 2.00/bar) thinned to at most 50 % of its setup's onsets per bar, unvoiced and softened 20 %",
+      "detected": true,
+      "scoreDrop": 34.2,
+      "louderSectionThinner": {
+        "section": "Chorus",
+        "onsetsRatio": 0.5625
+      },
+      "arrivalThinnerThanSetup": {
+        "section": "Chorus",
+        "severity": "major",
+        "combinedRatio": 0.8412,
+        "respectsThatFell": 2
+      }
+    },
+    {
+      "anchor": "jazz-full",
+      "detail": "Chorus (setup Verse: 2.06/bar) thinned to at most 50 % of its setup's onsets per bar, unvoiced and softened 20 %",
+      "detected": true,
+      "scoreDrop": 34.2,
+      "louderSectionThinner": {
+        "section": "Chorus",
+        "onsetsRatio": 0.5152
+      },
+      "arrivalThinnerThanSetup": {
+        "section": "Chorus",
+        "severity": "major",
+        "combinedRatio": 0.8026,
+        "respectsThatFell": 2
+      }
+    },
+    {
+      "anchor": "cinematic-midi",
+      "detail": "Chorus (setup Verse: 1.88/bar) thinned to at most 50 % of its setup's onsets per bar, unvoiced and softened 20 %",
+      "detected": true,
+      "scoreDrop": 24.75,
+      "louderSectionThinner": null,
+      "arrivalThinnerThanSetup": {
+        "section": "Chorus",
+        "severity": "major",
+        "combinedRatio": 0.8153,
+        "respectsThatFell": 2
+      }
+    }
+  ],
+  "densityNullControl": [
+    {
+      "anchor": "pop-full",
+      "arrivalOrLouderOnTheCleanAnchor": 0
+    },
+    {
+      "anchor": "ballad-piano-vocal",
+      "arrivalOrLouderOnTheCleanAnchor": 0
+    },
+    {
+      "anchor": "rock-full",
+      "arrivalOrLouderOnTheCleanAnchor": 0
+    },
+    {
+      "anchor": "dance-full",
+      "arrivalOrLouderOnTheCleanAnchor": 0
+    },
+    {
+      "anchor": "acoustic-demo",
+      "arrivalOrLouderOnTheCleanAnchor": 0
+    },
+    {
+      "anchor": "orchestral-midi",
+      "arrivalOrLouderOnTheCleanAnchor": 0
+    },
+    {
+      "anchor": "ethnic-vocal",
+      "arrivalOrLouderOnTheCleanAnchor": 0
+    },
+    {
+      "anchor": "jazz-full",
+      "arrivalOrLouderOnTheCleanAnchor": 0
+    },
+    {
+      "anchor": "cinematic-midi",
+      "arrivalOrLouderOnTheCleanAnchor": 0
+    }
+  ],
+  "playabilityBedTwoOctavesUp": [
+    {
+      "anchor": "pop-full",
+      "bed": "keys-harmonic_bed",
+      "family": "keys",
+      "range": [
+        50,
+        72
+      ],
+      "plusTwoOctaves": [
+        74,
+        96
+      ],
+      "comfortable": [
+        36,
+        96
+      ],
+      "detected": false,
+      "scoreDrop": 0,
+      "newKinds": []
+    },
+    {
+      "anchor": "ballad-piano-vocal",
+      "bed": "keys-rhythmic_harmony",
+      "family": "keys",
+      "range": [
+        52,
+        69
+      ],
+      "plusTwoOctaves": [
+        76,
+        93
+      ],
+      "comfortable": [
+        36,
+        96
+      ],
+      "detected": false,
+      "scoreDrop": 0,
+      "newKinds": []
+    },
+    {
+      "anchor": "rock-full",
+      "bed": "guitar-harmonic_bed",
+      "family": "guitar",
+      "range": [
+        55,
+        73
+      ],
+      "plusTwoOctaves": [
+        79,
+        97
+      ],
+      "comfortable": [
+        45,
+        84
+      ],
+      "detected": true,
+      "scoreDrop": 100,
+      "newKinds": [
+        "out_of_range",
+        "outside_comfortable_range",
+        "part_unplayable"
+      ]
+    },
+    {
+      "anchor": "dance-full",
+      "bed": "synth-pad",
+      "family": "synth",
+      "range": [
+        55,
+        79
+      ],
+      "plusTwoOctaves": [
+        79,
+        103
+      ],
+      "comfortable": [
+        40,
+        88
+      ],
+      "detected": true,
+      "scoreDrop": 84.06,
+      "newKinds": [
+        "outside_comfortable_range"
+      ]
+    },
+    {
+      "anchor": "acoustic-demo",
+      "bed": "guitar-harmonic_bed",
+      "family": "guitar",
+      "range": [
+        54,
+        79
+      ],
+      "plusTwoOctaves": [
+        78,
+        103
+      ],
+      "comfortable": [
+        45,
+        84
+      ],
+      "detected": true,
+      "scoreDrop": 100,
+      "newKinds": [
+        "impossible_fingering",
+        "outside_comfortable_range",
+        "part_unplayable",
+        "out_of_range"
+      ]
+    },
+    {
+      "anchor": "orchestral-midi",
+      "bed": "strings-climax_layer",
+      "family": "strings",
+      "range": [
+        61,
+        86
+      ],
+      "plusTwoOctaves": [
+        85,
+        110
+      ],
+      "comfortable": [
+        60,
+        86
+      ],
+      "detected": true,
+      "scoreDrop": 100,
+      "newKinds": [
+        "outside_comfortable_range",
+        "out_of_range",
+        "part_unplayable"
+      ]
+    },
+    {
+      "anchor": "ethnic-vocal",
+      "bed": "keys-harmonic_bed",
+      "family": "keys",
+      "range": [
+        49,
+        69
+      ],
+      "plusTwoOctaves": [
+        73,
+        93
+      ],
+      "comfortable": [
+        36,
+        96
+      ],
+      "detected": false,
+      "scoreDrop": 0,
+      "newKinds": []
+    },
+    {
+      "anchor": "jazz-full",
+      "bed": "keys-harmonic_bed",
+      "family": "keys",
+      "range": [
+        50,
+        70
+      ],
+      "plusTwoOctaves": [
+        74,
+        94
+      ],
+      "comfortable": [
+        36,
+        96
+      ],
+      "detected": false,
+      "scoreDrop": 0,
+      "newKinds": []
+    },
+    {
+      "anchor": "cinematic-midi",
+      "bed": "strings-climax_layer",
+      "family": "strings",
+      "range": [
+        67,
+        84
+      ],
+      "plusTwoOctaves": [
+        91,
+        108
+      ],
+      "comfortable": [
+        60,
+        86
+      ],
+      "detected": true,
+      "scoreDrop": 95.09,
+      "newKinds": [
+        "outside_comfortable_range",
+        "out_of_range",
+        "part_unplayable"
+      ]
+    }
+  ],
+  "grooveBoundaryErasure": [
+    {
+      "anchor": "pop-full",
+      "detected": false,
+      "scoreDrop": -0.03,
+      "scoreBefore": 75.04,
+      "scoreAfter": 75.07,
+      "newPlannedFillMissing": [
+        "bar 12:major:compose",
+        "bar 28:major:compose"
+      ],
+      "alsoRemoved": [
+        "anticipation_mismatch@5-12:minor",
+        "backbeat_missing@5-12:minor",
+        "anticipation_mismatch@21-28:minor",
+        "backbeat_missing@21-28:minor"
+      ],
+      "pickupsOnlyScoreDrop": 0,
+      "pickupsOnlyNewObservations": 0
+    },
+    {
+      "anchor": "rock-full",
+      "detected": true,
+      "scoreDrop": 6.1,
+      "scoreBefore": 80.8,
+      "scoreAfter": 74.7,
+      "newPlannedFillMissing": [
+        "bar 12:major:compose",
+        "bar 28:major:compose"
+      ],
+      "alsoRemoved": [
+        "backbeat_missing@5-12:minor",
+        "anticipation_mismatch@21-28:minor",
+        "backbeat_missing@21-28:minor"
+      ],
+      "pickupsOnlyScoreDrop": 0,
+      "pickupsOnlyNewObservations": 0
+    },
+    {
+      "anchor": "acoustic-demo",
+      "detected": true,
+      "scoreDrop": 2.66,
+      "scoreBefore": 86.8,
+      "scoreAfter": 84.14,
+      "newPlannedFillMissing": [
+        "bar 8:major:compose",
+        "bar 24:major:compose"
+      ],
+      "alsoRemoved": [
+        "backbeat_missing@1-8:minor",
+        "anticipation_mismatch@17-24:minor",
+        "backbeat_missing@17-24:minor"
+      ],
+      "pickupsOnlyScoreDrop": 0,
+      "pickupsOnlyNewObservations": 0
+    }
+  ],
+  "harmonyNullControl": [
+    {
+      "anchor": "pop-full",
+      "score": 81.28,
+      "counts": {
+        "bass_rarely_states_root": 4,
+        "approach_tone_wrong_mode": 2
+      },
+      "majors": 0,
+      "blocking": 0
+    },
+    {
+      "anchor": "ballad-piano-vocal",
+      "score": 100,
+      "counts": {},
+      "majors": 0,
+      "blocking": 0
+    },
+    {
+      "anchor": "rock-full",
+      "score": 94,
+      "counts": {
+        "clash_share": 1,
+        "bass_rarely_states_root": 1
+      },
+      "majors": 0,
+      "blocking": 0
+    },
+    {
+      "anchor": "dance-full",
+      "score": 100,
+      "counts": {},
+      "majors": 0,
+      "blocking": 0
+    },
+    {
+      "anchor": "acoustic-demo",
+      "score": 93.4,
+      "counts": {
+        "clash_share": 1,
+        "bass_rarely_states_root": 1
+      },
+      "majors": 0,
+      "blocking": 0
+    },
+    {
+      "anchor": "orchestral-midi",
+      "score": 96.4,
+      "counts": {
+        "clash_share": 1
+      },
+      "majors": 0,
+      "blocking": 0
+    },
+    {
+      "anchor": "ethnic-vocal",
+      "score": 92.8,
+      "counts": {
+        "clash_share": 1,
+        "bass_rarely_states_root": 1
+      },
+      "majors": 0,
+      "blocking": 0
+    },
+    {
+      "anchor": "jazz-full",
+      "score": 89.2,
+      "counts": {
+        "clash_share": 1,
+        "bass_rarely_states_root": 2
+      },
+      "majors": 0,
+      "blocking": 0
+    },
+    {
+      "anchor": "cinematic-midi",
+      "score": 100,
+      "counts": {},
+      "majors": 0,
+      "blocking": 0
+    }
+  ],
+  "motifRandomPitchControl": [
+    {
+      "anchor": "rock-full",
+      "detected": true,
+      "scoreDrop": 36.8,
+      "measuredAfter": [
+        {
+          "part": "bass-bass",
+          "laterSectionCells": 99,
+          "recurrenceShare": 0,
+          "sectionsWithMaterial": 4
+        },
+        {
+          "part": "guitar-harmonic_bed",
+          "laterSectionCells": 0,
+          "recurrenceShare": -1,
+          "sectionsWithMaterial": 1
+        },
+        {
+          "part": "keys-rhythmic_harmony",
+          "laterSectionCells": 141,
+          "recurrenceShare": 0,
+          "sectionsWithMaterial": 4
+        }
+      ]
+    },
+    {
+      "anchor": "dance-full",
+      "detected": true,
+      "scoreDrop": 12.48,
+      "measuredAfter": [
+        {
+          "part": "bass-bass",
+          "laterSectionCells": 75,
+          "recurrenceShare": 0,
+          "sectionsWithMaterial": 4
+        },
+        {
+          "part": "keys-harmonic_bed",
+          "laterSectionCells": 23,
+          "recurrenceShare": 0,
+          "sectionsWithMaterial": 2
+        }
+      ]
+    },
+    {
+      "anchor": "acoustic-demo",
+      "detected": true,
+      "scoreDrop": 8.25,
+      "measuredAfter": [
+        {
+          "part": "bass-bass",
+          "laterSectionCells": 61,
+          "recurrenceShare": 0,
+          "sectionsWithMaterial": 3
+        },
+        {
+          "part": "guitar-harmonic_bed",
+          "laterSectionCells": 133,
+          "recurrenceShare": 0,
+          "sectionsWithMaterial": 3
+        }
+      ]
+    }
+  ],
+  "repetition": {
+    "popVerseIdentity": [
+      {
+        "part": "bass-bass",
+        "exactShare": 0,
+        "rhythmShare": 0
+      },
+      {
+        "part": "keys-harmonic_bed",
+        "exactShare": 0,
+        "rhythmShare": 0
+      }
+    ],
+    "popNonInfoObservations": 0,
+    "barCopyControl": {
+      "detected": 5,
+      "total": 5,
+      "emptiedByTheCorruption": [
+        "rock-full/guitar-harmonic_bed",
+        "dance-full/keys-harmonic_bed"
+      ]
+    }
+  },
+  "sectionDevelopment": [
+    {
+      "anchor": "pop-full",
+      "climax": "Chorus 2",
+      "identityShare": 0.4583,
+      "identityKept": false,
+      "developedIn": "dynamics,rhythm",
+      "repeatWithoutIdentity": false,
+      "preparedIdentityShare": 0.2083,
+      "preparedAlreadyWithoutIdentity": false,
+      "controlScoreDrop": 7.8
+    },
+    {
+      "anchor": "rock-full",
+      "climax": "Chorus 2",
+      "identityShare": 0.375,
+      "identityKept": false,
+      "developedIn": "instrumentation,dynamics,rhythm",
+      "repeatWithoutIdentity": false,
+      "preparedIdentityShare": 0.2083,
+      "preparedAlreadyWithoutIdentity": false,
+      "controlScoreDrop": 8
+    },
+    {
+      "anchor": "dance-full",
+      "climax": "Chorus 2",
+      "identityShare": 0.2188,
+      "identityKept": false,
+      "developedIn": "register,dynamics",
+      "repeatWithoutIdentity": false,
+      "preparedIdentityShare": 0.2188,
+      "preparedAlreadyWithoutIdentity": false,
+      "controlScoreDrop": 7.8
+    },
+    {
+      "anchor": "acoustic-demo",
+      "climax": "Chorus 2",
+      "identityShare": 0.125,
+      "identityKept": false,
+      "developedIn": "register,dynamics",
+      "repeatWithoutIdentity": true,
+      "preparedIdentityShare": 0,
+      "preparedAlreadyWithoutIdentity": true,
+      "controlScoreDrop": 4.95
+    }
+  ],
+  "transitions": {
+    "anchor": "dance-full",
+    "reading": {
+      "fromSection": "Intro",
+      "toSection": "Verse",
+      "lastBar": 8,
+      "firstBar": 9,
+      "fillRatio": 1.180327868852459,
+      "tomHits": 0,
+      "crashOnDownbeat": true,
+      "entries": [],
+      "exits": [],
+      "registerMoves": 1,
+      "breakBeats": 0,
+      "pickups": [
+        "bass"
+      ],
+      "velocityStep": -4.845588235294116
+    },
+    "perPart": [
+      {
+        "part": "bass-bass",
+        "lastIntroBarMean": 43.33,
+        "firstVerseBarMean": 30.5,
+        "delta": 12.83
+      },
+      {
+        "part": "drums-groove",
+        "lastIntroBarMean": 41.22,
+        "firstVerseBarMean": 40.79,
+        "delta": 0.44
+      },
+      {
+        "part": "keys-harmonic_bed",
+        "lastIntroBarMean": null,
+        "firstVerseBarMean": null,
+        "delta": null
+      },
+      {
+        "part": "synth-pad",
+        "lastIntroBarMean": null,
+        "firstVerseBarMean": null,
+        "delta": null
+      }
+    ],
+    "dimension": [
+      "planned_device_unrealised@23-25",
+      "planned_device_unrealised@31-33"
+    ]
+  },
+  "f15StringBedCeiling": {
+    "track": "strings-pad",
+    "trackRole": "PAD",
+    "perSection": [
+      {
+        "section": "Intro",
+        "planRole": "PAD",
+        "ceilingForPlanRole": 79,
+        "ceilingForTrackRole": 79,
+        "registerDimensionCeiling": 79,
+        "notes": 3,
+        "meanPitch": 63.33,
+        "maxPitch": 67
+      },
+      {
+        "section": "Verse 1",
+        "planRole": "PAD",
+        "ceilingForPlanRole": 79,
+        "ceilingForTrackRole": 79,
+        "registerDimensionCeiling": 79,
+        "notes": 45,
+        "meanPitch": 67.71,
+        "maxPitch": 74
+      },
+      {
+        "section": "Verse 2",
+        "planRole": "PAD",
+        "ceilingForPlanRole": 79,
+        "ceilingForTrackRole": 79,
+        "registerDimensionCeiling": 79,
+        "notes": 54,
+        "meanPitch": 69.94,
+        "maxPitch": 79
+      },
+      {
+        "section": "Chorus",
+        "planRole": "PAD",
+        "ceilingForPlanRole": 79,
+        "ceilingForTrackRole": 79,
+        "registerDimensionCeiling": 79,
+        "notes": 37,
+        "meanPitch": 70.51,
+        "maxPitch": 77
+      },
+      {
+        "section": "Chorus 2",
+        "planRole": "PAD",
+        "ceilingForPlanRole": 79,
+        "ceilingForTrackRole": 79,
+        "registerDimensionCeiling": 79,
+        "notes": 25,
+        "meanPitch": 70.68,
+        "maxPitch": 77
+      },
+      {
+        "section": "Verse 3",
+        "planRole": "PAD",
+        "ceilingForPlanRole": 79,
+        "ceilingForTrackRole": 79,
+        "registerDimensionCeiling": 79,
+        "notes": 36,
+        "meanPitch": 68.03,
+        "maxPitch": 74
+      },
+      {
+        "section": "Bridge",
+        "planRole": "COUNTER_MELODY",
+        "ceilingForPlanRole": 86,
+        "ceilingForTrackRole": 79,
+        "registerDimensionCeiling": 86,
+        "notes": 10,
+        "meanPitch": 80,
+        "maxPitch": 84
+      },
+      {
+        "section": "Chorus 3",
+        "planRole": "CLIMAX_LAYER",
+        "ceilingForPlanRole": 91,
+        "ceilingForTrackRole": 79,
+        "registerDimensionCeiling": 91,
+        "notes": 50,
+        "meanPitch": 77.8,
+        "maxPitch": 84
+      },
+      {
+        "section": "Outro",
+        "planRole": "PAD",
+        "ceilingForPlanRole": 79,
+        "ceilingForTrackRole": 79,
+        "registerDimensionCeiling": 79,
+        "notes": 21,
+        "meanPitch": 67.81,
+        "maxPitch": 72
+      }
+    ],
+    "instrumentRealityOnTheOwnersSong": {
+      "score": 100,
+      "stringBedTooHigh": 0
+    },
+    "registerDimensionOnTheOwnersSong": 100
+  },
+  "controlLedger": {
+    "version": "B05C_CONTROLS_v3",
+    "density": {
+      "status": "gated",
+      "strongestControl": "arrival_thinned_below_its_setup",
+      "detectionRate": 1,
+      "ci95": [
+        0.6637,
+        1
+      ],
+      "n": 9,
+      "cleanAnchorBlockingRate": 0,
+      "gatingTransforms": [
+        "arrival_thinned_below_its_setup",
+        "piano_one_note_per_bar",
+        "strip_bed_to_top_voice"
+      ],
+      "reason": "3 independent non-prepared transforms passed (arrival_thinned_below_its_setup, piano_one_note_per_bar, strip_bed_to_top_voice) and no clean anchor is blocked"
+    },
+    "repetitionVsVariation": {
+      "status": "informing",
+      "strongestControl": "bar_copy_repetition@3",
+      "detectionRate": 0.9444,
+      "ci95": [
+        0.7271,
+        0.9986
+      ],
+      "n": 18,
+      "cleanAnchorBlockingRate": 0,
+      "gatingTransforms": [
+        "bar_copy_repetition@3"
+      ],
+      "reason": "1 of 2 independent non-prepared transforms pass; caught chorus_copy 5/5, chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)"
+    }
+  }
+}

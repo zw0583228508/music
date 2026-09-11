@@ -99,6 +99,7 @@
         "density_thinning@3",
         "tutti_everywhere",
         "arrival_thinned_and_softened",
+        "arrival_thinned_below_its_setup",
         "strip_bed_to_top_voice"
       ],
       "transitions": [
@@ -193,7 +194,7 @@
         },
         {
           "id": "keys-rhythmic_harmony",
-          "notes": 670
+          "notes": 829
         },
         {
           "id": "strings-pad",
@@ -213,7 +214,7 @@
       ],
       "controlStatus": "gated",
       "measuredOnTheOwnersSong": "0 sections (B-05c measured >= 5, all blocking). Closed by B-13: `playabilityRepair` releases the earlier voices of a crowded onset instead of dropping them, and the bed ships 281 notes with no section below three voices. The control that found it keeps its sensitivity on a constructed case - `strip_bed_to_top_voice` on the owner's own beds raises it again in 11 sections, 7 of them attributed to `perform` with composedMeanVoices 3-8 against a shipped 1.0 (`dimensions/ownerAnchor.test.ts`)",
-      "control": "density gates on piano_one_note_per_bar + strip_bed_to_top_voice (strongest strip_bed_to_top_voice, 100 % of 9 items); for the origin, the composed-notes control"
+      "control": "density gates on arrival_thinned_below_its_setup + piano_one_note_per_bar + strip_bed_to_top_voice (strongest arrival_thinned_below_its_setup, 100 % of 9 items); for the origin, the composed-notes control"
     },
     {
       "observedDefect": "Strings at 89-92 in the climax; 79-84 elsewhere read as \"in range\"",
@@ -260,7 +261,7 @@
       ],
       "controlStatus": "gated",
       "measuredOnTheOwnersSong": "0 arrivals smaller than their setup in two of onsets/voices/dynamics, 0 on onsets alone; the new kind refuses a candidate on its own",
-      "control": "density gates on piano_one_note_per_bar + strip_bed_to_top_voice (strongest strip_bed_to_top_voice, 100 % of 9 items)"
+      "control": "density gates on arrival_thinned_below_its_setup + piano_one_note_per_bar + strip_bed_to_top_voice (strongest arrival_thinned_below_its_setup, 100 % of 9 items)"
     },
     {
       "observedDefect": "No LH / empty C3-C5 in the climax",
@@ -784,7 +785,7 @@
         "applicable": true
       },
       "adversarial.instrumentReality": {
-        "score": 97,
+        "score": 100,
         "controlStatus": "uncalibrated",
         "applicable": true
       },
@@ -809,7 +810,7 @@
       "releasable": false,
       "top8": [
         {
-          "priority": 310,
+          "priority": 465,
           "salience": 1,
           "what": "harmony:overhang_across_chord_change",
           "severity": "blocking",
@@ -841,14 +842,6 @@
           "bars": "97-120"
         },
         {
-          "priority": 12.858,
-          "salience": 1,
-          "what": "adversarial.instrumentReality:string_bed_too_high",
-          "severity": "major",
-          "section": "Bridge",
-          "bars": "97-110"
-        },
-        {
           "priority": 9.5,
           "salience": 1,
           "what": "density:foundation_gaps",
@@ -871,6 +864,14 @@
           "severity": "minor",
           "section": "Bridge",
           "bars": "97-112"
+        },
+        {
+          "priority": 9.31,
+          "salience": 1,
+          "what": "groove:backbeat_missing",
+          "severity": "minor",
+          "section": "Chorus 3",
+          "bars": "113-128"
         }
       ],
       "positions": {
@@ -884,7 +885,7 @@
       "releasable": false,
       "top8": [
         {
-          "priority": 65.813,
+          "priority": 98.7195,
           "salience": 0.2123,
           "what": "harmony:overhang_across_chord_change",
           "severity": "blocking",
@@ -940,12 +941,12 @@
           "bars": "113-128"
         },
         {
-          "priority": 2.5523,
-          "salience": 0.1985,
-          "what": "adversarial.instrumentReality:string_bed_too_high",
-          "severity": "major",
-          "section": "Bridge",
-          "bars": "97-110"
+          "priority": 2.5508,
+          "salience": 0.2685,
+          "what": "density:foundation_gaps",
+          "severity": "minor",
+          "section": "Verse 3",
+          "bars": "73-96"
         }
       ],
       "positions": {
@@ -1010,7 +1011,7 @@
           "severity": "blocking",
           "bars": "97-112",
           "section": "Bridge",
-          "priority": 65.813,
+          "priority": 98.7195,
           "whatToFix": "shorten_or_retie_at_chord_change (note): end or re-strike strings notes at the chord changes in Bridge"
         },
         {
@@ -1039,7 +1040,7 @@
         "fix first: 1. overhang_across_chord_change in Bridge (harmony, blocking); 2. section_note_copy in Chorus 3 (adversarial.copiedRepeat, major); 3. no_rests in Bridge (adversarial.machineMade, major)"
       ],
       "disagreementsKeptOpen": 0,
-      "agreements": 20
+      "agreements": 19
     }
   },
   "rankingOnTheCorpus": [
@@ -1353,14 +1354,15 @@
       "after": "gated",
       "direction": "promoted",
       "strongestControlBefore": "piano_one_note_per_bar",
-      "strongestControlAfter": "strip_bed_to_top_voice",
+      "strongestControlAfter": "arrival_thinned_below_its_setup",
       "nBefore": 7,
       "nAfter": 9,
       "gatingTransforms": [
+        "arrival_thinned_below_its_setup",
         "piano_one_note_per_bar",
         "strip_bed_to_top_voice"
       ],
-      "reason": "2 independent non-prepared transforms passed (piano_one_note_per_bar, strip_bed_to_top_voice) and no clean anchor is blocked"
+      "reason": "3 independent non-prepared transforms passed (arrival_thinned_below_its_setup, piano_one_note_per_bar, strip_bed_to_top_voice) and no clean anchor is blocked"
     },
     {
       "dimension": "transitions",
@@ -1382,9 +1384,11 @@
       "strongestControlBefore": "chorus_copy",
       "strongestControlAfter": "bar_copy_repetition@3",
       "nBefore": 5,
-      "nAfter": 32,
-      "gatingTransforms": [],
-      "reason": "0 of 2 independent non-prepared transforms pass; caught chorus_copy 5/5, chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)"
+      "nAfter": 18,
+      "gatingTransforms": [
+        "bar_copy_repetition@3"
+      ],
+      "reason": "1 of 2 independent non-prepared transforms pass; caught chorus_copy 5/5, chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)"
     },
     {
       "dimension": "sectionDevelopment",

@@ -67,6 +67,16 @@ export const CONTROL_HARNESS_VERSION = "B05C_CONTROLS_v3" as const;
  * than the reference bass, so voiceLeading scores it *higher*; harmony catches
  * the probe); groove claims the drum-fill erasure on its own and on the
  * prepared anchors; transitions claims the prepared erasure too.
+ *
+ * B-26 adds `arrival_thinned_below_its_setup` and claims it for **density
+ * only** — the dimension whose two arrival levers B-21 blunted and which this
+ * transform replaces (see `dimensions/anchors.thinArrivalsBelowSetup` for the
+ * measured cause). `arrival_thinned_and_softened` is claimed by three other
+ * dimensions as well and is deliberately left exactly where it is: adding a
+ * transform to a dimension's claimed set can promote its status, and the stream
+ * that would benefit should not take that decision (B-25's precedent on
+ * `voiceLeading`). Density is already gated by `piano_one_note_per_bar` +
+ * `strip_bed_to_top_voice`, so no gate is restored here.
  */
 export const CLAIMED_CONTROLS: Record<string, string[]> = {
   harmony: ["chord_tone_to_non_chord_tone@3", "pitch_shift_out_of_key@3", "cross_part_clash@3", "duration_overhang@3", "random_pitch", "parallel_perfect_motion"],
@@ -78,7 +88,7 @@ export const CLAIMED_CONTROLS: Record<string, string[]> = {
   orchestration: ["drums_only", "silence_planned_family", "tutti_everywhere"],
   idiomaticity: ["piano_wide_voicing", "brass_hold_forever", "density_doubling@3", "parallel_perfect_motion"],
   register: ["strings_up_two_octaves", "octave_displacement@3", "role_inversion@3", "top_line_into_vocal_register", "counterline_into_bed_register"],
-  density: ["piano_one_note_per_bar", "chorus_thinner_than_verse", "density_thinning@3", "tutti_everywhere", "arrival_thinned_and_softened", "strip_bed_to_top_voice"],
+  density: ["piano_one_note_per_bar", "chorus_thinner_than_verse", "density_thinning@3", "tutti_everywhere", "arrival_thinned_and_softened", "arrival_thinned_below_its_setup", "strip_bed_to_top_voice"],
   transitions: ["erase_boundary_events", "erase_boundary_events+realise_boundaries", "section_swap@3"],
   repetitionVsVariation: ["bar_copy_repetition@3", "chorus_copy", "chorus_copy+develop_chorus_2"],
   sectionDevelopment: ["chorus_copy+develop_chorus_2", "section_swap@3", "arrival_thinned_and_softened"],

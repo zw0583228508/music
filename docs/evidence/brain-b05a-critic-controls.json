@@ -1,6 +1,6 @@
 {
   "version": "B05C_CONTROLS_v3",
-  "generatedAt": "2026-09-10T23:03:18.536Z",
+  "generatedAt": "2026-09-11T00:37:48.011Z",
   "recalibratedAtMerge": "onto main with B-00 (shipped-notes score, composer split), B-01 (ArrangementArc: drums enter at the chorus, bass thinned in quiet sections, chorus 2 developed, keys in every section, ensemble/mix not a family) and B-03 (instrument profiles); see the PR-B05a tracker entry. Regenerated at the B-13 merge for three causes, each recorded in the PR-B13 tracker entry: (1) B-13's writers changed the anchors themselves - the beds read the groove plan's bed cell, the bass plays the plan's onsets with the full figure set, and the transition realisation writes the planned fills - so several controls now apply, or stop applying, where they did not before; (2) `tutti_everywhere` was fixed to cycle the source section's bars *that carry notes* instead of giving up on the ones the part rests in, so it produces the tutti it claims (dance-full's synth-pad reached only 0.900 active share against the 0.95 `continuous_tutti` asks for); (3) `functionFromNotes` no longer calls a sustained multi-voice chord an 'answer', which it did for any pitched part whose onsets fell outside the vocal phrases. Regenerated again at the second reconciliation with B-18, one cause and no change to any control: `writeBassLine` writes its approach tone on the last beat of the chord it leaves (where `realiseBassLine` writes its own) instead of on whichever groove onset happened to be last before the change, and takes its pitch from B-18's `approachToneChoice` instead of a copy of the pre-B-18 rule - so seven of the nine anchors' bass lines moved and the anchors were re-measured against them. `dimensions/controlLedger.ts` came out byte-identical: no control changed tier.",
   "method": "every critic dimension over every anchor x control; detected = score drop >= 1 and a located non-info observation new or upgraded on the damaged tracks; rate with exact Clopper-Pearson 95 % interval; a control whose damage leaves an anchor unchanged skips that anchor",
   "ledgerRule": "gated: strongest claimed control >= 0.90 with CI lower >= 0.60 and no blocking observation on a clean anchor; informing: >= 0.50; demoted: measured (n >= 5) and < 0.50; uncalibrated: no claimed control measurable",
@@ -11,7 +11,7 @@
   "seeds": [
     1
   ],
-  "runtimeSeconds": 55.9,
+  "runtimeSeconds": 22.2,
   "claimedControls": {
     "harmony": [
       "chord_tone_to_non_chord_tone@3",
@@ -74,6 +74,7 @@
       "density_thinning@3",
       "tutti_everywhere",
       "arrival_thinned_and_softened",
+      "arrival_thinned_below_its_setup",
       "strip_bed_to_top_voice"
     ],
     "transitions": [
@@ -372,6 +373,12 @@
       "control": "arrival_thinned_and_softened",
       "kind": "purpose_built",
       "description": "every arrival section (a section the plan makes louder than the one before it) keeps one of every three onset clusters, loses the top voice of what remains and is played 20 % softer: the arrival is smaller than its setup in onsets, voices and dynamics at once",
+      "prepare": null
+    },
+    {
+      "control": "arrival_thinned_below_its_setup",
+      "kind": "purpose_built",
+      "description": "every arrival section (a section the plan makes louder than the one before it, and which is not itself the setup of another arrival) is thinned until it carries at most half its setup's onsets per bar, loses the top voice of what remains and is played 20 % softer — the arrival is smaller than its setup in onsets, voices and dynamics at once, on any anchor",
       "prepare": null
     },
     {
@@ -689,7 +696,7 @@
     },
     "density": {
       "status": "gated",
-      "strongestControl": "strip_bed_to_top_voice",
+      "strongestControl": "arrival_thinned_below_its_setup",
       "detectionRate": 1,
       "ci95": [
         0.6637,
@@ -698,10 +705,11 @@
       "n": 9,
       "cleanAnchorBlockingRate": 0,
       "gatingTransforms": [
+        "arrival_thinned_below_its_setup",
         "piano_one_note_per_bar",
         "strip_bed_to_top_voice"
       ],
-      "reason": "2 independent non-prepared transforms passed (piano_one_note_per_bar, strip_bed_to_top_voice) and no clean anchor is blocked"
+      "reason": "3 independent non-prepared transforms passed (arrival_thinned_below_its_setup, piano_one_note_per_bar, strip_bed_to_top_voice) and no clean anchor is blocked"
     },
     "transitions": {
       "status": "informing",
@@ -719,15 +727,17 @@
     "repetitionVsVariation": {
       "status": "informing",
       "strongestControl": "bar_copy_repetition@3",
-      "detectionRate": 0.5313,
+      "detectionRate": 0.9444,
       "ci95": [
-        0.3474,
-        0.7091
+        0.7271,
+        0.9986
       ],
-      "n": 32,
+      "n": 18,
       "cleanAnchorBlockingRate": 0,
-      "gatingTransforms": [],
-      "reason": "0 of 2 independent non-prepared transforms pass; caught chorus_copy 5/5, chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)"
+      "gatingTransforms": [
+        "bar_copy_repetition@3"
+      ],
+      "reason": "1 of 2 independent non-prepared transforms pass; caught chorus_copy 5/5, chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)"
     },
     "sectionDevelopment": {
       "status": "demoted",
@@ -791,7 +801,7 @@
     }
   },
   "ledgerSummary": [
-    "density: gated (strip_bed_to_top_voice 100 % [0.6637, 1], n=9) gated by piano_one_note_per_bar + strip_bed_to_top_voice",
+    "density: gated (arrival_thinned_below_its_setup 100 % [0.6637, 1], n=9) gated by arrival_thinned_below_its_setup + piano_one_note_per_bar + strip_bed_to_top_voice",
     "emotionalArcAndTension: informing (swap_climax_with_quietest 100 % [0.6637, 1], n=9) gated by swap_climax_with_quietest",
     "groove: gated (unlock_bass_from_kick 100 % [0.6637, 1], n=9) gated by onset_jitter@3 + unlock_bass_from_kick",
     "harmony: gated (chord_tone_to_non_chord_tone@3 100 % [0.8456, 1], n=22) gated by chord_tone_to_non_chord_tone@3 + cross_part_clash@3 + parallel_perfect_motion + pitch_shift_out_of_key@3 + random_pitch",
@@ -802,7 +812,7 @@
     "performanceRealisation: gated (strip_cc_and_quantise 100 % [0.6637, 1], n=9) gated by strip_cc_and_quantise + velocity_flatten_all",
     "playability: gated (bass_roots_only_leaps 100 % [0.6637, 1], n=9) gated by bass_roots_only_leaps + piano_wide_voicing",
     "register: gated (role_inversion@3 100 % [0.6915, 1], n=10) gated by octave_displacement@3 + role_inversion@3 + strings_up_two_octaves",
-    "repetitionVsVariation: informing (bar_copy_repetition@3 53 % [0.3474, 0.7091], n=32) — 0 of 2 independent non-prepared transforms pass; caught chorus_copy 5/5, chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)",
+    "repetitionVsVariation: informing (bar_copy_repetition@3 94 % [0.7271, 0.9986], n=18) gated by bar_copy_repetition@3",
     "rhythmicInteraction: informing (parallel_doubling@3 100 % [0.8456, 1], n=22) gated by parallel_doubling@3",
     "sectionDevelopment: demoted (section_swap@3 4 % [0.0011, 0.2195], n=23) — strongest claimed transform section_swap@3 detected 4 % of 23 items, below 50 %; caught chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)",
     "transitions: informing (erase_boundary_events+realise_boundaries 100 % [0.6637, 1], n=9) — 0 of 2 independent non-prepared transforms pass (erase_boundary_events+realise_boundaries is prepared: it writes the gesture it then erases)",
@@ -956,14 +966,14 @@
       "dimension": "harmony",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
+      "n": 18,
       "detected": 11,
-      "rate": 0.3438,
+      "rate": 0.6111,
       "ci95": [
-        0.1857,
-        0.5319
+        0.3575,
+        0.827
       ],
-      "meanScoreDrop": 14.37
+      "meanScoreDrop": 25.54
     },
     {
       "dimension": "harmony",
@@ -1068,6 +1078,19 @@
         0.4825
       ],
       "meanScoreDrop": -1.42
+    },
+    {
+      "dimension": "harmony",
+      "control": "arrival_thinned_below_its_setup",
+      "claimed": false,
+      "n": 9,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.3363
+      ],
+      "meanScoreDrop": -2.15
     },
     {
       "dimension": "harmony",
@@ -1577,14 +1600,14 @@
       "dimension": "voiceLeading",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
+      "n": 18,
       "detected": 2,
-      "rate": 0.0625,
+      "rate": 0.1111,
       "ci95": [
-        0.0077,
-        0.2081
+        0.0138,
+        0.3471
       ],
-      "meanScoreDrop": -0.02
+      "meanScoreDrop": 0.41
     },
     {
       "dimension": "voiceLeading",
@@ -1689,6 +1712,19 @@
         0.4825
       ],
       "meanScoreDrop": -0.34
+    },
+    {
+      "dimension": "voiceLeading",
+      "control": "arrival_thinned_below_its_setup",
+      "claimed": false,
+      "n": 9,
+      "detected": 2,
+      "rate": 0.2222,
+      "ci95": [
+        0.0281,
+        0.6001
+      ],
+      "meanScoreDrop": -0.74
     },
     {
       "dimension": "voiceLeading",
@@ -2198,14 +2234,14 @@
       "dimension": "melodyAndCounterline",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
+      "n": 18,
       "detected": 2,
-      "rate": 0.0625,
+      "rate": 0.1111,
       "ci95": [
-        0.0077,
-        0.2081
+        0.0138,
+        0.3471
       ],
-      "meanScoreDrop": -0.4
+      "meanScoreDrop": -0.27
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2310,6 +2346,19 @@
         0.3363
       ],
       "meanScoreDrop": -3.57
+    },
+    {
+      "dimension": "melodyAndCounterline",
+      "control": "arrival_thinned_below_its_setup",
+      "claimed": false,
+      "n": 9,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.3363
+      ],
+      "meanScoreDrop": -6.41
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2819,14 +2868,14 @@
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
+      "n": 18,
       "detected": 5,
-      "rate": 0.1563,
+      "rate": 0.2778,
       "ci95": [
-        0.0528,
-        0.3279
+        0.0969,
+        0.5348
       ],
-      "meanScoreDrop": -2.35
+      "meanScoreDrop": -4.18
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
@@ -2931,6 +2980,19 @@
         0.6509
       ],
       "meanScoreDrop": -0.59
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "arrival_thinned_below_its_setup",
+      "claimed": false,
+      "n": 8,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.3694
+      ],
+      "meanScoreDrop": -8.28
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
@@ -3440,14 +3502,14 @@
       "dimension": "groove",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
+      "n": 18,
       "detected": 2,
-      "rate": 0.0625,
+      "rate": 0.1111,
       "ci95": [
-        0.0077,
-        0.2081
+        0.0138,
+        0.3471
       ],
-      "meanScoreDrop": -2.87
+      "meanScoreDrop": 0.09
     },
     {
       "dimension": "groove",
@@ -3552,6 +3614,19 @@
         0.863
       ],
       "meanScoreDrop": 2.84
+    },
+    {
+      "dimension": "groove",
+      "control": "arrival_thinned_below_its_setup",
+      "claimed": false,
+      "n": 9,
+      "detected": 3,
+      "rate": 0.3333,
+      "ci95": [
+        0.0749,
+        0.7007
+      ],
+      "meanScoreDrop": 0.4
     },
     {
       "dimension": "groove",
@@ -4064,14 +4139,14 @@
       "dimension": "rhythmicInteraction",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
+      "n": 18,
       "detected": 1,
-      "rate": 0.0313,
+      "rate": 0.0556,
       "ci95": [
-        0.0008,
-        0.1622
+        0.0014,
+        0.2729
       ],
-      "meanScoreDrop": -1.26
+      "meanScoreDrop": -1.16
     },
     {
       "dimension": "rhythmicInteraction",
@@ -4176,6 +4251,19 @@
         0.3363
       ],
       "meanScoreDrop": -1.26
+    },
+    {
+      "dimension": "rhythmicInteraction",
+      "control": "arrival_thinned_below_its_setup",
+      "claimed": false,
+      "n": 9,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.3363
+      ],
+      "meanScoreDrop": -1.79
     },
     {
       "dimension": "rhythmicInteraction",
@@ -4688,14 +4776,14 @@
       "dimension": "orchestration",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
-      "detected": 14,
-      "rate": 0.4375,
+      "n": 18,
+      "detected": 0,
+      "rate": 0,
       "ci95": [
-        0.2636,
-        0.6234
+        0,
+        0.1853
       ],
-      "meanScoreDrop": 15.92
+      "meanScoreDrop": 0
     },
     {
       "dimension": "orchestration",
@@ -4791,6 +4879,19 @@
     {
       "dimension": "orchestration",
       "control": "arrival_thinned_and_softened",
+      "claimed": false,
+      "n": 9,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.3363
+      ],
+      "meanScoreDrop": 0
+    },
+    {
+      "dimension": "orchestration",
+      "control": "arrival_thinned_below_its_setup",
       "claimed": false,
       "n": 9,
       "detected": 0,
@@ -5312,14 +5413,14 @@
       "dimension": "idiomaticity",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
+      "n": 18,
       "detected": 4,
-      "rate": 0.125,
+      "rate": 0.2222,
       "ci95": [
-        0.0351,
-        0.2899
+        0.0641,
+        0.4764
       ],
-      "meanScoreDrop": 0.65
+      "meanScoreDrop": 1.33
     },
     {
       "dimension": "idiomaticity",
@@ -5415,6 +5516,19 @@
     {
       "dimension": "idiomaticity",
       "control": "arrival_thinned_and_softened",
+      "claimed": false,
+      "n": 9,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.3363
+      ],
+      "meanScoreDrop": -0.35
+    },
+    {
+      "dimension": "idiomaticity",
+      "control": "arrival_thinned_below_its_setup",
       "claimed": false,
       "n": 9,
       "detected": 0,
@@ -5936,14 +6050,14 @@
       "dimension": "register",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
+      "n": 18,
       "detected": 7,
-      "rate": 0.2188,
+      "rate": 0.3889,
       "ci95": [
-        0.0928,
-        0.3997
+        0.173,
+        0.6425
       ],
-      "meanScoreDrop": 2.25
+      "meanScoreDrop": 3.99
     },
     {
       "dimension": "register",
@@ -6048,6 +6162,19 @@
         0.4825
       ],
       "meanScoreDrop": -3.72
+    },
+    {
+      "dimension": "register",
+      "control": "arrival_thinned_below_its_setup",
+      "claimed": false,
+      "n": 9,
+      "detected": 1,
+      "rate": 0.1111,
+      "ci95": [
+        0.0028,
+        0.4825
+      ],
+      "meanScoreDrop": -1.37
     },
     {
       "dimension": "register",
@@ -6557,14 +6684,14 @@
       "dimension": "density",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
+      "n": 18,
       "detected": 5,
-      "rate": 0.1563,
+      "rate": 0.2778,
       "ci95": [
-        0.0528,
-        0.3279
+        0.0969,
+        0.5348
       ],
-      "meanScoreDrop": -0.25
+      "meanScoreDrop": -0.63
     },
     {
       "dimension": "density",
@@ -6669,6 +6796,19 @@
         0.863
       ],
       "meanScoreDrop": 6.24
+    },
+    {
+      "dimension": "density",
+      "control": "arrival_thinned_below_its_setup",
+      "claimed": true,
+      "n": 9,
+      "detected": 9,
+      "rate": 1,
+      "ci95": [
+        0.6637,
+        1
+      ],
+      "meanScoreDrop": 30.52
     },
     {
       "dimension": "density",
@@ -7181,14 +7321,14 @@
       "dimension": "transitions",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
-      "detected": 16,
+      "n": 18,
+      "detected": 9,
       "rate": 0.5,
       "ci95": [
-        0.3189,
-        0.6811
+        0.2602,
+        0.7398
       ],
-      "meanScoreDrop": 3.01
+      "meanScoreDrop": 3.83
     },
     {
       "dimension": "transitions",
@@ -7293,6 +7433,19 @@
         0.9719
       ],
       "meanScoreDrop": 6.06
+    },
+    {
+      "dimension": "transitions",
+      "control": "arrival_thinned_below_its_setup",
+      "claimed": false,
+      "n": 9,
+      "detected": 7,
+      "rate": 0.7778,
+      "ci95": [
+        0.3999,
+        0.9719
+      ],
+      "meanScoreDrop": 5.43
     },
     {
       "dimension": "transitions",
@@ -7805,14 +7958,14 @@
       "dimension": "repetitionVsVariation",
       "control": "bar_copy_repetition@3",
       "claimed": true,
-      "n": 32,
+      "n": 18,
       "detected": 17,
-      "rate": 0.5313,
+      "rate": 0.9444,
       "ci95": [
-        0.3474,
-        0.7091
+        0.7271,
+        0.9986
       ],
-      "meanScoreDrop": 5.34
+      "meanScoreDrop": 9.49
     },
     {
       "dimension": "repetitionVsVariation",
@@ -7908,6 +8061,19 @@
     {
       "dimension": "repetitionVsVariation",
       "control": "arrival_thinned_and_softened",
+      "claimed": false,
+      "n": 9,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.3363
+      ],
+      "meanScoreDrop": 0
+    },
+    {
+      "dimension": "repetitionVsVariation",
+      "control": "arrival_thinned_below_its_setup",
       "claimed": false,
       "n": 9,
       "detected": 0,
@@ -8429,14 +8595,14 @@
       "dimension": "sectionDevelopment",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 23,
+      "n": 14,
       "detected": 1,
-      "rate": 0.0435,
+      "rate": 0.0714,
       "ci95": [
-        0.0011,
-        0.2195
+        0.0018,
+        0.3387
       ],
-      "meanScoreDrop": -1.19
+      "meanScoreDrop": -1.95
     },
     {
       "dimension": "sectionDevelopment",
@@ -8541,6 +8707,19 @@
         0.4096
       ],
       "meanScoreDrop": -0.47
+    },
+    {
+      "dimension": "sectionDevelopment",
+      "control": "arrival_thinned_below_its_setup",
+      "claimed": false,
+      "n": 7,
+      "detected": 3,
+      "rate": 0.4286,
+      "ci95": [
+        0.099,
+        0.8159
+      ],
+      "meanScoreDrop": 1.39
     },
     {
       "dimension": "sectionDevelopment",
@@ -9050,14 +9229,14 @@
       "dimension": "playability",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
+      "n": 18,
       "detected": 6,
-      "rate": 0.1875,
+      "rate": 0.3333,
       "ci95": [
-        0.0721,
-        0.3644
+        0.1334,
+        0.5901
       ],
-      "meanScoreDrop": 18.75
+      "meanScoreDrop": 33.33
     },
     {
       "dimension": "playability",
@@ -9153,6 +9332,19 @@
     {
       "dimension": "playability",
       "control": "arrival_thinned_and_softened",
+      "claimed": false,
+      "n": 9,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.3363
+      ],
+      "meanScoreDrop": 0
+    },
+    {
+      "dimension": "playability",
+      "control": "arrival_thinned_below_its_setup",
       "claimed": false,
       "n": 9,
       "detected": 0,
@@ -9674,14 +9866,14 @@
       "dimension": "performanceRealisation",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
+      "n": 18,
       "detected": 8,
-      "rate": 0.25,
+      "rate": 0.4444,
       "ci95": [
-        0.1146,
-        0.434
+        0.2153,
+        0.6924
       ],
-      "meanScoreDrop": 11.81
+      "meanScoreDrop": 21
     },
     {
       "dimension": "performanceRealisation",
@@ -9786,6 +9978,19 @@
         0.4825
       ],
       "meanScoreDrop": 0.8
+    },
+    {
+      "dimension": "performanceRealisation",
+      "control": "arrival_thinned_below_its_setup",
+      "claimed": false,
+      "n": 9,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.3363
+      ],
+      "meanScoreDrop": 0
     },
     {
       "dimension": "performanceRealisation",
@@ -10298,14 +10503,14 @@
       "dimension": "emotionalArcAndTension",
       "control": "bar_copy_repetition@3",
       "claimed": false,
-      "n": 32,
+      "n": 18,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.1089
+        0.1853
       ],
-      "meanScoreDrop": -0.61
+      "meanScoreDrop": -1.08
     },
     {
       "dimension": "emotionalArcAndTension",
@@ -10410,6 +10615,19 @@
         0.7007
       ],
       "meanScoreDrop": 2.83
+    },
+    {
+      "dimension": "emotionalArcAndTension",
+      "control": "arrival_thinned_below_its_setup",
+      "claimed": false,
+      "n": 9,
+      "detected": 9,
+      "rate": 1,
+      "ci95": [
+        0.6637,
+        1
+      ],
+      "meanScoreDrop": 7.14
     },
     {
       "dimension": "emotionalArcAndTension",
@@ -12391,7 +12609,7 @@
     }
   ],
   "itemsOmitted": {
-    "count": 709,
+    "count": 704,
     "reason": "per-item results are regenerated by the controls harness (B05A_WRITE_LEDGER=1); the detection table, ledger and anchor reports above are the record",
     "sample": [
       {
@@ -13512,119 +13730,12 @@
       {
         "control": "bar_copy_repetition@3",
         "anchorId": "pop-full",
-        "detail": "bar_copy_repetition@3 on drums-groove: 270 notes changed",
+        "detail": "bar_copy_repetition@3 on keys-harmonic_bed: 813 notes changed",
         "results": {
           "harmony": {
-            "detected": false,
+            "detected": true,
             "before": 81.28,
-            "after": 81.28,
-            "kinds": []
-          },
-          "voiceLeading": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "melodyAndCounterline": {
-            "detected": false,
-            "before": 84.4,
-            "after": 84.4,
-            "kinds": []
-          },
-          "motifRecurrenceAndDevelopment": {
-            "detected": false,
-            "before": 73.48,
-            "after": 73.48,
-            "kinds": []
-          },
-          "groove": {
-            "detected": false,
-            "before": 75.07,
-            "after": 93.76,
-            "kinds": []
-          },
-          "rhythmicInteraction": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "orchestration": {
-            "detected": true,
-            "before": 100,
-            "after": 40,
-            "kinds": [
-              "planned_family_silent"
-            ]
-          },
-          "idiomaticity": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "register": {
-            "detected": false,
-            "before": 66.58,
-            "after": 66.58,
-            "kinds": []
-          },
-          "density": {
-            "detected": false,
-            "before": 89.98,
-            "after": 89.08,
-            "kinds": []
-          },
-          "transitions": {
-            "detected": true,
-            "before": 78.82,
-            "after": 73.48,
-            "kinds": [
-              "planned_device_unrealised"
-            ]
-          },
-          "repetitionVsVariation": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "sectionDevelopment": {
-            "detected": false,
-            "before": 96.88,
-            "after": 96.88,
-            "kinds": []
-          },
-          "playability": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "performanceRealisation": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "emotionalArcAndTension": {
-            "detected": false,
-            "before": 96.88,
-            "after": 96.88,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "bar_copy_repetition@3",
-        "anchorId": "cinematic-midi",
-        "detail": "bar_copy_repetition@3 on keys-harmonic_bed: 270 notes changed",
-        "results": {
-          "harmony": {
-            "detected": true,
-            "before": 100,
-            "after": 96.7,
+            "after": 0,
             "kinds": [
               "clash_share"
             ]
@@ -13637,27 +13748,31 @@
           },
           "melodyAndCounterline": {
             "detected": false,
-            "before": 85.15,
+            "before": 84.4,
             "after": 100,
             "kinds": []
           },
           "motifRecurrenceAndDevelopment": {
-            "detected": false,
-            "before": 91.75,
-            "after": 100,
-            "kinds": []
+            "detected": true,
+            "before": 73.48,
+            "after": 69.16,
+            "kinds": [
+              "recurrence_is_copy_only"
+            ]
           },
           "groove": {
             "detected": false,
-            "before": 93.72,
-            "after": 93.72,
+            "before": 75.07,
+            "after": 81.31,
             "kinds": []
           },
           "rhythmicInteraction": {
-            "detected": false,
-            "before": 96.7,
-            "after": 96.7,
-            "kinds": []
+            "detected": true,
+            "before": 100,
+            "after": 96.88,
+            "kinds": [
+              "grid_saturation"
+            ]
           },
           "orchestration": {
             "detected": false,
@@ -13673,39 +13788,44 @@
           },
           "register": {
             "detected": true,
-            "before": 83.5,
-            "after": 67,
+            "before": 66.58,
+            "after": 48.76,
             "kinds": [
+              "top_line_above_comfortable_ceiling",
               "vocal_masking"
             ]
           },
           "density": {
             "detected": true,
-            "before": 90.1,
-            "after": 86.8,
+            "before": 89.98,
+            "after": 83.74,
             "kinds": [
-              "comping_below_role_floor"
+              "bed_thin_voicing"
             ]
           },
           "transitions": {
-            "detected": false,
-            "before": 82.32,
-            "after": 82.32,
-            "kinds": []
+            "detected": true,
+            "before": 78.82,
+            "after": 76.24,
+            "kinds": [
+              "planned_device_unrealised"
+            ]
           },
           "repetitionVsVariation": {
             "detected": true,
             "before": 100,
-            "after": 86.8,
+            "after": 87.52,
             "kinds": [
               "loop_without_variation"
             ]
           },
           "sectionDevelopment": {
             "detected": false,
-            "before": null,
-            "after": null,
-            "kinds": []
+            "before": 96.88,
+            "after": 96.88,
+            "kinds": [
+              "development_by_dynamics_only"
+            ]
           },
           "playability": {
             "detected": false,
@@ -13714,36 +13834,34 @@
             "kinds": []
           },
           "performanceRealisation": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 71.8,
-            "kinds": [
-              "dynamic_range_flat_per_section"
-            ]
+            "after": 100,
+            "kinds": []
           },
           "emotionalArcAndTension": {
             "detected": false,
-            "before": 96.7,
-            "after": 96.7,
+            "before": 96.88,
+            "after": 96.88,
             "kinds": []
           }
         }
       },
       {
         "control": "phrase_shift@3",
-        "anchorId": "jazz-full",
-        "detail": "phrase_shift@3 on drums-climax_layer: 427 notes changed",
+        "anchorId": "dance-full",
+        "detail": "phrase_shift@3 on drums-groove: 613 notes changed",
         "results": {
           "harmony": {
             "detected": false,
-            "before": 89.2,
-            "after": 89.2,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "voiceLeading": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 97.42,
+            "after": 97.42,
             "kinds": []
           },
           "melodyAndCounterline": {
@@ -13754,15 +13872,16 @@
           },
           "motifRecurrenceAndDevelopment": {
             "detected": false,
-            "before": 64,
-            "after": 64,
+            "before": 81.28,
+            "after": 81.28,
             "kinds": []
           },
           "groove": {
             "detected": true,
-            "before": 93.81,
-            "after": 57.81,
+            "before": 84.4,
+            "after": 34.48,
             "kinds": [
+              "anticipation_mismatch",
               "backbeat_displaced",
               "kick_bass_disagreement"
             ]
@@ -13781,8 +13900,8 @@
           },
           "idiomaticity": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 96.88,
+            "after": 96.88,
             "kinds": []
           },
           "register": {
@@ -13793,15 +13912,17 @@
           },
           "density": {
             "detected": false,
-            "before": 96.4,
-            "after": 96.4,
+            "before": 96.88,
+            "after": 96.88,
             "kinds": []
           },
           "transitions": {
-            "detected": false,
-            "before": 82.94,
-            "after": 82.94,
-            "kinds": []
+            "detected": true,
+            "before": 94.66,
+            "after": 91.99,
+            "kinds": [
+              "planned_device_unrealised"
+            ]
           },
           "repetitionVsVariation": {
             "detected": false,
@@ -13811,8 +13932,8 @@
           },
           "sectionDevelopment": {
             "detected": false,
-            "before": 96.4,
-            "after": 96.4,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "playability": {
@@ -13829,50 +13950,51 @@
           },
           "emotionalArcAndTension": {
             "detected": false,
-            "before": 93.4,
-            "after": 93.4,
+            "before": 96.88,
+            "after": 96.88,
             "kinds": []
           }
         }
       },
       {
-        "control": "cross_part_clash@3",
-        "anchorId": "pop-full",
-        "detail": "cross_part_clash@3 on keys-harmonic_bed: 197 notes changed",
+        "control": "motif_destruction@3",
+        "anchorId": "dance-full",
+        "detail": "motif_destruction@3 on bass-bass: 47 notes changed",
         "results": {
           "harmony": {
             "detected": true,
-            "before": 81.28,
-            "after": 0,
+            "before": 100,
+            "after": 40,
             "kinds": [
-              "clash_share",
-              "out_of_key_share"
+              "bass_leaves_chord",
+              "bass_rarely_states_root",
+              "clash_share"
             ]
           },
           "voiceLeading": {
+            "detected": false,
+            "before": 97.42,
+            "after": 97.42,
+            "kinds": []
+          },
+          "melodyAndCounterline": {
             "detected": false,
             "before": 100,
             "after": 100,
             "kinds": []
           },
-          "melodyAndCounterline": {
-            "detected": false,
-            "before": 84.4,
-            "after": 84.4,
-            "kinds": []
-          },
           "motifRecurrenceAndDevelopment": {
             "detected": true,
-            "before": 73.48,
-            "after": 46.3,
+            "before": 81.28,
+            "after": 76.6,
             "kinds": [
               "no_recurrence"
             ]
           },
           "groove": {
             "detected": false,
-            "before": 75.07,
-            "after": 75.07,
+            "before": 84.4,
+            "after": 84.4,
             "kinds": []
           },
           "rhythmicInteraction": {
@@ -13889,26 +14011,26 @@
           },
           "idiomaticity": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 96.88,
+            "after": 96.88,
             "kinds": []
           },
           "register": {
             "detected": false,
-            "before": 66.58,
-            "after": 69.7,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "density": {
             "detected": false,
-            "before": 89.98,
-            "after": 89.98,
+            "before": 96.88,
+            "after": 96.88,
             "kinds": []
           },
           "transitions": {
             "detected": false,
-            "before": 78.82,
-            "after": 78.82,
+            "before": 94.66,
+            "after": 94.66,
             "kinds": []
           },
           "repetitionVsVariation": {
@@ -13918,16 +14040,21 @@
             "kinds": []
           },
           "sectionDevelopment": {
-            "detected": false,
-            "before": 96.88,
+            "detected": true,
+            "before": 100,
             "after": 96.88,
-            "kinds": []
+            "kinds": [
+              "repeat_without_identity"
+            ]
           },
           "playability": {
-            "detected": false,
+            "detected": true,
             "before": 100,
-            "after": 100,
-            "kinds": []
+            "after": 91.19,
+            "kinds": [
+              "out_of_range",
+              "wide_leap"
+            ]
           },
           "performanceRealisation": {
             "detected": false,
@@ -13944,15 +14071,18 @@
         }
       },
       {
-        "control": "role_inversion@3",
+        "control": "cross_part_clash@3",
         "anchorId": "ethnic-vocal",
-        "detail": "role_inversion@3 on bass-bass: 31 notes changed",
+        "detail": "cross_part_clash@3 on bass-bass: 4 notes changed",
         "results": {
           "harmony": {
-            "detected": false,
+            "detected": true,
             "before": 92.8,
-            "after": 92.8,
-            "kinds": []
+            "after": 40,
+            "kinds": [
+              "bass_leaves_chord",
+              "clash_share"
+            ]
           },
           "voiceLeading": {
             "detected": false,
@@ -13997,13 +14127,10 @@
             "kinds": []
           },
           "register": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 46,
-            "kinds": [
-              "part_outside_comfortable_range",
-              "part_outside_planned_band"
-            ]
+            "after": 100,
+            "kinds": []
           },
           "density": {
             "detected": false,
@@ -14030,13 +14157,10 @@
             "kinds": []
           },
           "playability": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 0,
-            "kinds": [
-              "out_of_range",
-              "part_unplayable"
-            ]
+            "after": 100,
+            "kinds": []
           },
           "performanceRealisation": {
             "detected": false,
@@ -14054,326 +14178,8 @@
       },
       {
         "control": "section_swap@3",
-        "anchorId": "jazz-full",
-        "detail": "section_swap@3 on drums-climax_layer: 840 notes changed",
-        "results": {
-          "harmony": {
-            "detected": false,
-            "before": 89.2,
-            "after": 89.2,
-            "kinds": []
-          },
-          "voiceLeading": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "melodyAndCounterline": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "motifRecurrenceAndDevelopment": {
-            "detected": false,
-            "before": 64,
-            "after": 64,
-            "kinds": []
-          },
-          "groove": {
-            "detected": false,
-            "before": 93.81,
-            "after": 96.4,
-            "kinds": [
-              "kick_bass_disagreement"
-            ]
-          },
-          "rhythmicInteraction": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "orchestration": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "idiomaticity": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "register": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "density": {
-            "detected": true,
-            "before": 96.4,
-            "after": 87.4,
-            "kinds": [
-              "foundation_gaps"
-            ]
-          },
-          "transitions": {
-            "detected": false,
-            "before": 82.94,
-            "after": 89.5,
-            "kinds": []
-          },
-          "repetitionVsVariation": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "sectionDevelopment": {
-            "detected": false,
-            "before": 96.4,
-            "after": 96.4,
-            "kinds": []
-          },
-          "playability": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "performanceRealisation": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "emotionalArcAndTension": {
-            "detected": false,
-            "before": 93.4,
-            "after": 97,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "dynamics_flattening@3",
-        "anchorId": "ethnic-vocal",
-        "detail": "dynamics_flattening@3 on bass-bass: 31 notes changed",
-        "results": {
-          "harmony": {
-            "detected": false,
-            "before": 92.8,
-            "after": 92.8,
-            "kinds": []
-          },
-          "voiceLeading": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "melodyAndCounterline": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "motifRecurrenceAndDevelopment": {
-            "detected": false,
-            "before": 91,
-            "after": 91,
-            "kinds": []
-          },
-          "groove": {
-            "detected": false,
-            "before": 93.63,
-            "after": 93.63,
-            "kinds": []
-          },
-          "rhythmicInteraction": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "orchestration": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "idiomaticity": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "register": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "density": {
-            "detected": false,
-            "before": 89.2,
-            "after": 89.2,
-            "kinds": []
-          },
-          "transitions": {
-            "detected": false,
-            "before": 84.33,
-            "after": 84.33,
-            "kinds": []
-          },
-          "repetitionVsVariation": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "sectionDevelopment": {
-            "detected": false,
-            "before": 96.4,
-            "after": 96.4,
-            "kinds": []
-          },
-          "playability": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "performanceRealisation": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "emotionalArcAndTension": {
-            "detected": false,
-            "before": 96.4,
-            "after": 96.4,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "duration_overhang@3",
-        "anchorId": "jazz-full",
-        "detail": "duration_overhang@3 on bass-bass: 73 notes changed",
-        "results": {
-          "harmony": {
-            "detected": false,
-            "before": 89.2,
-            "after": 89.2,
-            "kinds": [
-              "overhang_across_chord_change"
-            ]
-          },
-          "voiceLeading": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "melodyAndCounterline": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "motifRecurrenceAndDevelopment": {
-            "detected": false,
-            "before": 64,
-            "after": 64,
-            "kinds": []
-          },
-          "groove": {
-            "detected": false,
-            "before": 93.81,
-            "after": 93.81,
-            "kinds": []
-          },
-          "rhythmicInteraction": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "orchestration": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "idiomaticity": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "register": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "density": {
-            "detected": false,
-            "before": 96.4,
-            "after": 96.4,
-            "kinds": []
-          },
-          "transitions": {
-            "detected": false,
-            "before": 82.94,
-            "after": 82.94,
-            "kinds": []
-          },
-          "repetitionVsVariation": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "sectionDevelopment": {
-            "detected": false,
-            "before": 96.4,
-            "after": 96.4,
-            "kinds": []
-          },
-          "playability": {
-            "detected": true,
-            "before": 100,
-            "after": 0,
-            "kinds": [
-              "excess_polyphony",
-              "part_unplayable"
-            ]
-          },
-          "performanceRealisation": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "emotionalArcAndTension": {
-            "detected": false,
-            "before": 93.4,
-            "after": 93.4,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "chorus_copy",
         "anchorId": "dance-full",
-        "detail": "Chorus -> Chorus 2 (8 bars)",
+        "detail": "section_swap@3 on drums-groove: 1214 notes changed",
         "results": {
           "harmony": {
             "detected": false,
@@ -14384,7 +14190,7 @@
           "voiceLeading": {
             "detected": false,
             "before": 97.42,
-            "after": 100,
+            "after": 97.42,
             "kinds": []
           },
           "melodyAndCounterline": {
@@ -14394,18 +14200,20 @@
             "kinds": []
           },
           "motifRecurrenceAndDevelopment": {
-            "detected": true,
+            "detected": false,
             "before": 81.28,
-            "after": 78.16,
-            "kinds": [
-              "recurrence_is_copy_only"
-            ]
+            "after": 81.28,
+            "kinds": []
           },
           "groove": {
-            "detected": false,
+            "detected": true,
             "before": 84.4,
-            "after": 84.4,
-            "kinds": []
+            "after": 66.34,
+            "kinds": [
+              "backbeat_missing",
+              "kick_bass_disagreement",
+              "planned_fill_missing"
+            ]
           },
           "rhythmicInteraction": {
             "detected": false,
@@ -14420,20 +14228,16 @@
             "kinds": []
           },
           "idiomaticity": {
-            "detected": true,
+            "detected": false,
             "before": 96.88,
-            "after": 93.76,
-            "kinds": [
-              "hand_span_exceeded"
-            ]
+            "after": 96.88,
+            "kinds": []
           },
           "register": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 96.88,
-            "kinds": [
-              "part_outside_planned_band"
-            ]
+            "after": 100,
+            "kinds": []
           },
           "density": {
             "detected": false,
@@ -14444,120 +14248,8 @@
           "transitions": {
             "detected": true,
             "before": 94.66,
-            "after": 86.86,
+            "after": 70.72,
             "kinds": [
-              "ending_cut"
-            ]
-          },
-          "repetitionVsVariation": {
-            "detected": true,
-            "before": 100,
-            "after": 96.88,
-            "kinds": [
-              "section_verbatim_copy"
-            ]
-          },
-          "sectionDevelopment": {
-            "detected": true,
-            "before": 100,
-            "after": 92.2,
-            "kinds": [
-              "repeat_without_development"
-            ]
-          },
-          "playability": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "performanceRealisation": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "emotionalArcAndTension": {
-            "detected": false,
-            "before": 96.88,
-            "after": 96.88,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "drums_only",
-        "anchorId": "jazz-full",
-        "detail": "pitched tracks removed",
-        "results": {
-          "harmony": {
-            "detected": false,
-            "before": 89.2,
-            "after": null,
-            "kinds": []
-          },
-          "voiceLeading": {
-            "detected": false,
-            "before": 100,
-            "after": null,
-            "kinds": []
-          },
-          "melodyAndCounterline": {
-            "detected": false,
-            "before": 100,
-            "after": null,
-            "kinds": []
-          },
-          "motifRecurrenceAndDevelopment": {
-            "detected": false,
-            "before": 64,
-            "after": null,
-            "kinds": []
-          },
-          "groove": {
-            "detected": false,
-            "before": 93.81,
-            "after": 93.81,
-            "kinds": []
-          },
-          "rhythmicInteraction": {
-            "detected": false,
-            "before": 100,
-            "after": null,
-            "kinds": []
-          },
-          "orchestration": {
-            "detected": true,
-            "before": 100,
-            "after": 0,
-            "kinds": [
-              "planned_family_silent"
-            ]
-          },
-          "idiomaticity": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "register": {
-            "detected": false,
-            "before": 100,
-            "after": null,
-            "kinds": []
-          },
-          "density": {
-            "detected": false,
-            "before": 96.4,
-            "after": 100,
-            "kinds": []
-          },
-          "transitions": {
-            "detected": false,
-            "before": 82.94,
-            "after": 82.86,
-            "kinds": [
-              "intro_empty",
               "planned_device_unrealised"
             ]
           },
@@ -14569,7 +14261,7 @@
           },
           "sectionDevelopment": {
             "detected": false,
-            "before": 96.4,
+            "before": 100,
             "after": 100,
             "kinds": []
           },
@@ -14578,231 +14270,6 @@
             "before": 100,
             "after": 100,
             "kinds": []
-          },
-          "performanceRealisation": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "emotionalArcAndTension": {
-            "detected": false,
-            "before": 93.4,
-            "after": 97,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "flatten_arc",
-        "anchorId": "jazz-full",
-        "detail": "velocities 67, climax thinned to Verse's parts",
-        "results": {
-          "harmony": {
-            "detected": false,
-            "before": 89.2,
-            "after": 89.2,
-            "kinds": []
-          },
-          "voiceLeading": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "melodyAndCounterline": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "motifRecurrenceAndDevelopment": {
-            "detected": false,
-            "before": 64,
-            "after": 64,
-            "kinds": []
-          },
-          "groove": {
-            "detected": false,
-            "before": 93.81,
-            "after": 100,
-            "kinds": []
-          },
-          "rhythmicInteraction": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "orchestration": {
-            "detected": true,
-            "before": 100,
-            "after": 91,
-            "kinds": [
-              "planned_family_silent"
-            ]
-          },
-          "idiomaticity": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "register": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "density": {
-            "detected": true,
-            "before": 96.4,
-            "after": 92.8,
-            "kinds": [
-              "quieter_section_denser"
-            ]
-          },
-          "transitions": {
-            "detected": false,
-            "before": 82.94,
-            "after": 82.94,
-            "kinds": []
-          },
-          "repetitionVsVariation": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "sectionDevelopment": {
-            "detected": false,
-            "before": 96.4,
-            "after": 96.4,
-            "kinds": []
-          },
-          "playability": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "performanceRealisation": {
-            "detected": true,
-            "before": 100,
-            "after": 0,
-            "kinds": [
-              "dynamic_range_flat_per_section",
-              "flat_dynamics",
-              "no_dynamic_contrast_between_sections",
-              "no_dynamics_anywhere"
-            ]
-          },
-          "emotionalArcAndTension": {
-            "detected": true,
-            "before": 93.4,
-            "after": 84.4,
-            "kinds": [
-              "climax_misplaced"
-            ]
-          }
-        }
-      },
-      {
-        "control": "piano_wide_voicing",
-        "anchorId": "pop-full",
-        "detail": "keys-harmonic_bed voices spread",
-        "results": {
-          "harmony": {
-            "detected": false,
-            "before": 81.28,
-            "after": 81.28,
-            "kinds": []
-          },
-          "voiceLeading": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "melodyAndCounterline": {
-            "detected": false,
-            "before": 84.4,
-            "after": 100,
-            "kinds": []
-          },
-          "motifRecurrenceAndDevelopment": {
-            "detected": false,
-            "before": 73.48,
-            "after": 73.48,
-            "kinds": []
-          },
-          "groove": {
-            "detected": false,
-            "before": 75.07,
-            "after": 75.07,
-            "kinds": []
-          },
-          "rhythmicInteraction": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "orchestration": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "idiomaticity": {
-            "detected": true,
-            "before": 100,
-            "after": 59.14,
-            "kinds": [
-              "hand_span_exceeded"
-            ]
-          },
-          "register": {
-            "detected": true,
-            "before": 66.58,
-            "after": 55,
-            "kinds": [
-              "top_line_above_comfortable_ceiling"
-            ]
-          },
-          "density": {
-            "detected": false,
-            "before": 89.98,
-            "after": 89.98,
-            "kinds": []
-          },
-          "transitions": {
-            "detected": false,
-            "before": 78.82,
-            "after": 78.82,
-            "kinds": []
-          },
-          "repetitionVsVariation": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "sectionDevelopment": {
-            "detected": false,
-            "before": 96.88,
-            "after": 96.88,
-            "kinds": []
-          },
-          "playability": {
-            "detected": true,
-            "before": 100,
-            "after": 0,
-            "kinds": [
-              "outside_comfortable_range",
-              "part_unplayable",
-              "unplayable_voicing"
-            ]
           },
           "performanceRealisation": {
             "detected": false,
@@ -14819,9 +14286,9 @@
         }
       },
       {
-        "control": "strings_up_two_octaves",
+        "control": "dynamics_flattening@3",
         "anchorId": "rock-full",
-        "detail": "guitar-harmonic_bed +24 semitones",
+        "detail": "dynamics_flattening@3 on drums-groove: 233 notes changed",
         "results": {
           "harmony": {
             "detected": false,
@@ -14832,13 +14299,13 @@
           "voiceLeading": {
             "detected": false,
             "before": 97.2,
-            "after": 100,
+            "after": 97.2,
             "kinds": []
           },
           "melodyAndCounterline": {
             "detected": false,
             "before": 73.2,
-            "after": 81.2,
+            "after": 73.2,
             "kinds": []
           },
           "motifRecurrenceAndDevelopment": {
@@ -14872,14 +14339,10 @@
             "kinds": []
           },
           "register": {
-            "detected": true,
+            "detected": false,
             "before": 85,
-            "after": 70.6,
-            "kinds": [
-              "part_outside_comfortable_range",
-              "part_outside_planned_band",
-              "top_line_above_comfortable_ceiling"
-            ]
+            "after": 85,
+            "kinds": []
           },
           "density": {
             "detected": false,
@@ -14906,12 +14369,118 @@
             "kinds": []
           },
           "playability": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "performanceRealisation": {
+            "detected": true,
+            "before": 100,
+            "after": 93.6,
+            "kinds": [
+              "accents_inverted"
+            ]
+          },
+          "emotionalArcAndTension": {
+            "detected": false,
+            "before": 96.8,
+            "after": 96.8,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "duration_overhang@3",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "duration_overhang@3 on keys-rhythmic_harmony: 173 notes changed",
+        "results": {
+          "harmony": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "voiceLeading": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "melodyAndCounterline": {
+            "detected": false,
+            "before": 80.71,
+            "after": 80.71,
+            "kinds": []
+          },
+          "motifRecurrenceAndDevelopment": {
+            "detected": false,
+            "before": 84.14,
+            "after": 84.14,
+            "kinds": []
+          },
+          "groove": {
+            "detected": false,
+            "before": 91.15,
+            "after": 91.15,
+            "kinds": []
+          },
+          "rhythmicInteraction": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "orchestration": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "idiomaticity": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "register": {
+            "detected": true,
+            "before": 92.71,
+            "after": 84.14,
+            "kinds": [
+              "vocal_masking"
+            ]
+          },
+          "density": {
+            "detected": false,
+            "before": 89.29,
+            "after": 89.29,
+            "kinds": []
+          },
+          "transitions": {
+            "detected": false,
+            "before": 82.15,
+            "after": 82.15,
+            "kinds": []
+          },
+          "repetitionVsVariation": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "sectionDevelopment": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "playability": {
             "detected": true,
             "before": 100,
             "after": 0,
             "kinds": [
-              "out_of_range",
-              "outside_comfortable_range",
+              "excess_polyphony",
               "part_unplayable"
             ]
           },
@@ -14923,52 +14492,51 @@
           },
           "emotionalArcAndTension": {
             "detected": false,
-            "before": 96.8,
-            "after": 96.8,
+            "before": 96.57,
+            "after": 96.57,
             "kinds": []
           }
         }
       },
       {
-        "control": "swap_climax_with_quietest",
-        "anchorId": "dance-full",
-        "detail": "Chorus 2 <-> Breakdown (8 bars)",
+        "control": "arrival_thinned_below_its_setup",
+        "anchorId": "pop-full",
+        "detail": "Chorus (setup Verse: 9.63/bar), Chorus 2 (setup Verse 2: 8.75/bar) thinned to at most 50 % of its setup's onsets per bar, unvoiced and softened 20 %",
         "results": {
           "harmony": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 81.28,
+            "after": 93.76,
             "kinds": []
           },
           "voiceLeading": {
-            "detected": false,
-            "before": 97.42,
-            "after": 97.42,
+            "detected": true,
+            "before": 100,
+            "after": 96.88,
             "kinds": [
-              "voice_crossing_between_parts"
+              "bass_leaps"
             ]
           },
           "melodyAndCounterline": {
             "detected": false,
-            "before": 100,
+            "before": 84.4,
             "after": 100,
             "kinds": []
           },
           "motifRecurrenceAndDevelopment": {
             "detected": false,
-            "before": 81.28,
-            "after": 81.28,
+            "before": 73.48,
+            "after": 74.38,
             "kinds": [
-              "recurrence_is_copy_only"
+              "no_recurrence"
             ]
           },
           "groove": {
             "detected": true,
-            "before": 84.4,
-            "after": 78.17,
+            "before": 75.07,
+            "after": 70.39,
             "kinds": [
-              "backbeat_missing",
-              "planned_fill_missing",
+              "kick_bass_disagreement",
               "subdivision_inconsistent"
             ]
           },
@@ -14979,41 +14547,39 @@
             "kinds": []
           },
           "orchestration": {
-            "detected": true,
-            "before": 100,
-            "after": 40,
-            "kinds": [
-              "planned_family_silent"
-            ]
-          },
-          "idiomaticity": {
-            "detected": false,
-            "before": 96.88,
-            "after": 96.88,
-            "kinds": []
-          },
-          "register": {
             "detected": false,
             "before": 100,
             "after": 100,
             "kinds": []
           },
+          "idiomaticity": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "register": {
+            "detected": false,
+            "before": 66.58,
+            "after": 74.38,
+            "kinds": [
+              "part_outside_planned_band"
+            ]
+          },
           "density": {
             "detected": true,
-            "before": 96.88,
-            "after": 81.28,
+            "before": 89.98,
+            "after": 71.62,
             "kinds": [
-              "arrival_thinner_than_setup",
-              "foundation_gaps",
-              "louder_section_thinner"
+              "louder_section_thinner",
+              "quieter_section_denser"
             ]
           },
           "transitions": {
             "detected": true,
-            "before": 94.66,
-            "after": 80.19,
+            "before": 78.82,
+            "after": 73.48,
             "kinds": [
-              "ending_cut",
               "planned_device_unrealised"
             ]
           },
@@ -15025,8 +14591,8 @@
           },
           "sectionDevelopment": {
             "detected": true,
-            "before": 100,
-            "after": 96.88,
+            "before": 96.88,
+            "after": 93.76,
             "kinds": [
               "repeat_without_identity"
             ]
@@ -15046,53 +14612,50 @@
           "emotionalArcAndTension": {
             "detected": true,
             "before": 96.88,
-            "after": 92.2,
+            "after": 86.32,
             "kinds": [
-              "climax_misplaced"
+              "climax_misplaced",
+              "no_release_after_climax"
             ]
           }
         }
       },
       {
-        "control": "tutti_everywhere",
-        "anchorId": "acoustic-demo",
-        "detail": "every resting bar filled",
+        "control": "chorus_thinner_than_verse",
+        "anchorId": "dance-full",
+        "detail": "2 chorus(es) thinned",
         "results": {
           "harmony": {
-            "detected": true,
-            "before": 93.4,
-            "after": 85.15,
-            "kinds": [
-              "bass_leaves_chord",
-              "clash_share"
-            ]
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
           },
           "voiceLeading": {
             "detected": false,
-            "before": 96.7,
-            "after": 96.7,
-            "kinds": []
+            "before": 97.42,
+            "after": 97.51,
+            "kinds": [
+              "voice_crossing_between_parts"
+            ]
           },
           "melodyAndCounterline": {
             "detected": false,
-            "before": 91.75,
-            "after": 91.75,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "motifRecurrenceAndDevelopment": {
             "detected": false,
-            "before": 67,
-            "after": 67,
+            "before": 81.28,
+            "after": 81.28,
             "kinds": []
           },
           "groove": {
-            "detected": true,
-            "before": 84.14,
-            "after": 72.59,
-            "kinds": [
-              "anticipation_mismatch",
-              "kick_bass_disagreement"
-            ]
+            "detected": false,
+            "before": 84.4,
+            "after": 96.88,
+            "kinds": []
           },
           "rhythmicInteraction": {
             "detected": false,
@@ -15101,16 +14664,14 @@
             "kinds": []
           },
           "orchestration": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 94,
-            "kinds": [
-              "continuous_tutti"
-            ]
+            "after": 100,
+            "kinds": []
           },
           "idiomaticity": {
             "detected": false,
-            "before": 100,
+            "before": 96.88,
             "after": 100,
             "kinds": []
           },
@@ -15121,18 +14682,20 @@
             "kinds": []
           },
           "density": {
-            "detected": false,
-            "before": 93.4,
-            "after": 93.4,
+            "detected": true,
+            "before": 96.88,
+            "after": 89.08,
             "kinds": [
-              "comping_below_role_floor"
+              "louder_section_thinner"
             ]
           },
           "transitions": {
-            "detected": false,
-            "before": 83.69,
-            "after": 86.31,
-            "kinds": []
+            "detected": true,
+            "before": 94.66,
+            "after": 86.86,
+            "kinds": [
+              "ending_cut"
+            ]
           },
           "repetitionVsVariation": {
             "detected": false,
@@ -15142,8 +14705,8 @@
           },
           "sectionDevelopment": {
             "detected": false,
-            "before": 93.4,
-            "after": 96.7,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "playability": {
@@ -15160,8 +14723,685 @@
           },
           "emotionalArcAndTension": {
             "detected": false,
+            "before": 96.88,
+            "after": 96.88,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "erase_boundary_events",
+        "anchorId": "dance-full",
+        "detail": "fills copied over, pickups deleted (drums-groove,bass-bass,keys-harmonic_bed changed)",
+        "results": {
+          "harmony": {
+            "detected": true,
+            "before": 100,
+            "after": 90.64,
+            "kinds": [
+              "bass_rarely_states_root"
+            ]
+          },
+          "voiceLeading": {
+            "detected": false,
+            "before": 97.42,
+            "after": 97.42,
+            "kinds": []
+          },
+          "melodyAndCounterline": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "motifRecurrenceAndDevelopment": {
+            "detected": false,
+            "before": 81.28,
+            "after": 81.28,
+            "kinds": []
+          },
+          "groove": {
+            "detected": false,
+            "before": 84.4,
+            "after": 87.52,
+            "kinds": []
+          },
+          "rhythmicInteraction": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "orchestration": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "idiomaticity": {
+            "detected": false,
+            "before": 96.88,
+            "after": 96.88,
+            "kinds": []
+          },
+          "register": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "density": {
+            "detected": false,
+            "before": 96.88,
+            "after": 96.88,
+            "kinds": []
+          },
+          "transitions": {
+            "detected": true,
+            "before": 94.66,
+            "after": 86.74,
+            "kinds": [
+              "planned_device_unrealised"
+            ]
+          },
+          "repetitionVsVariation": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "sectionDevelopment": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "playability": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "performanceRealisation": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "emotionalArcAndTension": {
+            "detected": false,
+            "before": 96.88,
+            "after": 96.88,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "homorhythm",
+        "anchorId": "dance-full",
+        "detail": "pitched parts on every eighth",
+        "results": {
+          "harmony": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "voiceLeading": {
+            "detected": true,
+            "before": 97.42,
+            "after": 92.65,
+            "kinds": [
+              "voice_crossing_between_parts"
+            ]
+          },
+          "melodyAndCounterline": {
+            "detected": true,
+            "before": 100,
+            "after": 93.76,
+            "kinds": [
+              "line_masks_vocal"
+            ]
+          },
+          "motifRecurrenceAndDevelopment": {
+            "detected": false,
+            "before": 81.28,
+            "after": 90.64,
+            "kinds": [
+              "recurrence_is_copy_only"
+            ]
+          },
+          "groove": {
+            "detected": false,
+            "before": 84.4,
+            "after": 96.88,
+            "kinds": []
+          },
+          "rhythmicInteraction": {
+            "detected": true,
+            "before": 100,
+            "after": 62.56,
+            "kinds": [
+              "grid_saturation",
+              "homorhythmic_texture",
+              "part_locked_to_part"
+            ]
+          },
+          "orchestration": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "idiomaticity": {
+            "detected": true,
+            "before": 96.88,
+            "after": 90.64,
+            "kinds": [
+              "pad_staccato"
+            ]
+          },
+          "register": {
+            "detected": true,
+            "before": 100,
+            "after": 76.6,
+            "kinds": [
+              "low_mid_pileup",
+              "vocal_masking"
+            ]
+          },
+          "density": {
+            "detected": false,
+            "before": 96.88,
+            "after": 96.88,
+            "kinds": []
+          },
+          "transitions": {
+            "detected": true,
+            "before": 94.66,
+            "after": 91.99,
+            "kinds": [
+              "planned_device_unrealised"
+            ]
+          },
+          "repetitionVsVariation": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "sectionDevelopment": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "playability": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "performanceRealisation": {
+            "detected": true,
+            "before": 100,
+            "after": 82,
+            "kinds": [
+              "mechanical_timing"
+            ]
+          },
+          "emotionalArcAndTension": {
+            "detected": false,
+            "before": 96.88,
+            "after": 96.88,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "piano_wide_voicing",
+        "anchorId": "ethnic-vocal",
+        "detail": "keys-harmonic_bed voices spread",
+        "results": {
+          "harmony": {
+            "detected": false,
+            "before": 92.8,
+            "after": 92.8,
+            "kinds": []
+          },
+          "voiceLeading": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "melodyAndCounterline": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "motifRecurrenceAndDevelopment": {
+            "detected": false,
+            "before": 91,
+            "after": 91,
+            "kinds": []
+          },
+          "groove": {
+            "detected": false,
+            "before": 93.63,
+            "after": 93.63,
+            "kinds": []
+          },
+          "rhythmicInteraction": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "orchestration": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "idiomaticity": {
+            "detected": true,
+            "before": 100,
+            "after": 73,
+            "kinds": [
+              "hand_span_exceeded"
+            ]
+          },
+          "register": {
+            "detected": true,
+            "before": 100,
+            "after": 73,
+            "kinds": [
+              "top_line_above_comfortable_ceiling"
+            ]
+          },
+          "density": {
+            "detected": false,
+            "before": 89.2,
+            "after": 89.2,
+            "kinds": []
+          },
+          "transitions": {
+            "detected": false,
+            "before": 84.33,
+            "after": 84.33,
+            "kinds": []
+          },
+          "repetitionVsVariation": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "sectionDevelopment": {
+            "detected": false,
+            "before": 96.4,
+            "after": 96.4,
+            "kinds": []
+          },
+          "playability": {
+            "detected": true,
+            "before": 100,
+            "after": 0,
+            "kinds": [
+              "outside_comfortable_range",
+              "part_unplayable",
+              "unplayable_voicing"
+            ]
+          },
+          "performanceRealisation": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "emotionalArcAndTension": {
+            "detected": false,
+            "before": 96.4,
+            "after": 96.4,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "strings_up_two_octaves",
+        "anchorId": "jazz-full",
+        "detail": "keys-harmonic_bed +24 semitones",
+        "results": {
+          "harmony": {
+            "detected": false,
+            "before": 89.2,
+            "after": 89.2,
+            "kinds": []
+          },
+          "voiceLeading": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "melodyAndCounterline": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "motifRecurrenceAndDevelopment": {
+            "detected": false,
+            "before": 64,
+            "after": 64,
+            "kinds": []
+          },
+          "groove": {
+            "detected": false,
+            "before": 93.81,
+            "after": 93.81,
+            "kinds": []
+          },
+          "rhythmicInteraction": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "orchestration": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "idiomaticity": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "register": {
+            "detected": true,
+            "before": 100,
+            "after": 35.2,
+            "kinds": [
+              "climax_all_treble",
+              "part_outside_planned_band",
+              "top_line_above_comfortable_ceiling",
+              "vocal_masking"
+            ]
+          },
+          "density": {
+            "detected": false,
+            "before": 96.4,
+            "after": 96.4,
+            "kinds": []
+          },
+          "transitions": {
+            "detected": false,
+            "before": 82.94,
+            "after": 82.94,
+            "kinds": []
+          },
+          "repetitionVsVariation": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "sectionDevelopment": {
+            "detected": false,
+            "before": 96.4,
+            "after": 96.4,
+            "kinds": []
+          },
+          "playability": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "performanceRealisation": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "emotionalArcAndTension": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "swap_climax_with_quietest",
+        "anchorId": "cinematic-midi",
+        "detail": "Chorus <-> Intro (8 bars)",
+        "results": {
+          "harmony": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "voiceLeading": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "melodyAndCounterline": {
+            "detected": false,
+            "before": 85.15,
+            "after": 85.15,
+            "kinds": [
+              "line_masks_vocal"
+            ]
+          },
+          "motifRecurrenceAndDevelopment": {
+            "detected": false,
+            "before": 91.75,
+            "after": 100,
+            "kinds": []
+          },
+          "groove": {
+            "detected": false,
+            "before": 93.72,
+            "after": 100,
+            "kinds": []
+          },
+          "rhythmicInteraction": {
+            "detected": false,
             "before": 96.7,
             "after": 96.7,
+            "kinds": [
+              "part_locked_to_part"
+            ]
+          },
+          "orchestration": {
+            "detected": true,
+            "before": 100,
+            "after": 23,
+            "kinds": [
+              "planned_family_silent"
+            ]
+          },
+          "idiomaticity": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "register": {
+            "detected": false,
+            "before": 83.5,
+            "after": 83.5,
+            "kinds": [
+              "vocal_masking"
+            ]
+          },
+          "density": {
+            "detected": false,
+            "before": 90.1,
+            "after": 90.1,
+            "kinds": []
+          },
+          "transitions": {
+            "detected": true,
+            "before": 82.32,
+            "after": 74.22,
+            "kinds": [
+              "planned_device_unrealised"
+            ]
+          },
+          "repetitionVsVariation": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "sectionDevelopment": {
+            "detected": false,
+            "before": null,
+            "after": null,
+            "kinds": []
+          },
+          "playability": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "performanceRealisation": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "emotionalArcAndTension": {
+            "detected": true,
+            "before": 96.7,
+            "after": 88.45,
+            "kinds": [
+              "climax_misplaced",
+              "no_release_after_climax"
+            ]
+          }
+        }
+      },
+      {
+        "control": "unlock_bass_from_kick",
+        "anchorId": "pop-full",
+        "detail": "111 bass onsets moved off the kick by an eighth",
+        "results": {
+          "harmony": {
+            "detected": false,
+            "before": 81.28,
+            "after": 81.28,
+            "kinds": [
+              "clash_share"
+            ]
+          },
+          "voiceLeading": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "melodyAndCounterline": {
+            "detected": false,
+            "before": 84.4,
+            "after": 84.4,
+            "kinds": []
+          },
+          "motifRecurrenceAndDevelopment": {
+            "detected": false,
+            "before": 73.48,
+            "after": 81.28,
+            "kinds": []
+          },
+          "groove": {
+            "detected": true,
+            "before": 75.07,
+            "after": 56.71,
+            "kinds": [
+              "kick_bass_disagreement"
+            ]
+          },
+          "rhythmicInteraction": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "orchestration": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "idiomaticity": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "register": {
+            "detected": false,
+            "before": 66.58,
+            "after": 66.58,
+            "kinds": []
+          },
+          "density": {
+            "detected": false,
+            "before": 89.98,
+            "after": 89.98,
+            "kinds": []
+          },
+          "transitions": {
+            "detected": true,
+            "before": 78.82,
+            "after": 76.24,
+            "kinds": [
+              "planned_device_unrealised"
+            ]
+          },
+          "repetitionVsVariation": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "sectionDevelopment": {
+            "detected": false,
+            "before": 96.88,
+            "after": 96.88,
+            "kinds": []
+          },
+          "playability": {
+            "detected": true,
+            "before": 100,
+            "after": 0,
+            "kinds": [
+              "excess_polyphony",
+              "hard_fingering",
+              "part_unplayable"
+            ]
+          },
+          "performanceRealisation": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "emotionalArcAndTension": {
+            "detected": false,
+            "before": 96.88,
+            "after": 96.88,
             "kinds": []
           }
         }

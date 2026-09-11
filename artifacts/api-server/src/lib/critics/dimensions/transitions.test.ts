@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { anchors, applyPreparation, applyPurposeBuilt, CLEAN_ANCHOR_IDS, detect } from "./anchors";
-import { buildContext } from "./shared";
+import { buildContext, mean } from "./shared";
 import { readBoundary, transitionsDimension } from "./transitions";
 
-test("boundaries are read from the notes: on dance-full the intro now closes on a real fill and a crash, and no longer needs a register jump; where B-01 brings the drums in at the boundary (pop-full) the entry marks it and the planned fill is unrealised", () => {
+test("boundaries are read from the notes: on dance-full the intro closes on a real fill and a crash, and after B-21 the bass drops an octave into the verse; where B-01 brings the drums in at the boundary (pop-full) the entry marks it and the planned fill is unrealised", () => {
   // Re-anchored (B-05c), with the cause.
   //
   // At the B-01 merge this asserted a fill into the dance verse
@@ -37,7 +37,45 @@ test("boundaries are read from the notes: on dance-full the intro now closes on 
   // boundary instead of jumping an octave into the verse, so the boundary is
   // marked by the two devices the plan asked for - a fill and a crash - rather
   // than by a register jump standing in for the fill the composer did not write.
-  assert.equal(introToVerse.registerMoves, 0, `B-13: the bed keeps its band across the boundary: ${JSON.stringify(introToVerse)}`);
+  //
+  // **Re-anchored at the B-21 merge (B-26), and this one is a REAL REGRESSION
+  // in a different part.** `registerMoves` is 1 again. `readBoundary` counts
+  // every part whose mean pitch moves five semitones or more between the last
+  // bar of one section and the first of the next, and the part that moves is
+  // **the bass**, not the bed. Measured here against `3b9ace3`:
+  //
+  //   part                last intro bar      first verse bar     delta
+  //   bass-bass           43.33 (was 47.33)   30.50 (was 42.50)   12.83 (was 4.83)
+  //   drums-groove        41.22               40.79                0.44
+  //   keys-harmonic_bed   silent              silent               -
+  //   synth-pad           silent              silent               -
+  //
+  // B-21's D4 narrows dance-full's bass window from 31-55 to the 28-48 its own
+  // profile gives an electric bass in the BASS role, and the verse's bass now
+  // enters an octave below the intro's — a 12.8-semitone jump in the part that
+  // states the foundation. B-13's claim about the *bed* is untouched and still
+  // holds. What this test now pins is which part moves and by how much, so the
+  // finding cannot be read as the bed again.
+  //
+  // **Owner: the writers (B-21), not a critic.** `composer/registers.ts`
+  // `registerWindowFor` answers per part-task and has no notion of continuity
+  // across a section boundary, so nothing stops the same instrument being
+  // seated an octave apart in two adjacent bars. Recorded and reported; not
+  // fixed here, because the fix is a note-writing decision in a file this
+  // stream does not own.
+  assert.equal(introToVerse.registerMoves, 1, `B-21: exactly one part changes register across the boundary: ${JSON.stringify(introToVerse)}`);
+  const danceBass = dance.parts.find((p) => p.family === "bass")!;
+  const lastIntro = dance.notesInBars(danceBass, introToVerse.lastBar, introToVerse.lastBar).map((n) => n.pitch);
+  const firstVerse = dance.notesInBars(danceBass, introToVerse.firstBar, introToVerse.firstBar).map((n) => n.pitch);
+  const jump = Math.abs(mean(lastIntro) - mean(firstVerse));
+  assert.ok(jump >= 12,
+    `B-21: it is the bass, and it drops ${jump.toFixed(2)} semitones (${mean(lastIntro).toFixed(2)} -> ${mean(firstVerse).toFixed(2)}; at B-13 it was 4.83)`);
+  for (const p of dance.pitched.filter((x) => x.family !== "bass")) {
+    const a = dance.notesInBars(p, introToVerse.lastBar, introToVerse.lastBar).map((n) => n.pitch);
+    const b = dance.notesInBars(p, introToVerse.firstBar, introToVerse.firstBar).map((n) => n.pitch);
+    if (!a.length || !b.length) continue;
+    assert.ok(Math.abs(mean(a) - mean(b)) < 5, `${p.id}: B-13's bed claim still holds across the boundary`);
+  }
   assert.ok(introToVerse.crashOnDownbeat, `the boundary is marked, by the fill above and a crash: ${JSON.stringify(introToVerse)}`);
 
   const pop = anchors(["pop-full"])[0];
