@@ -1,0 +1,2481 @@
+{
+  "title": "The melody of the owner's song - the separated-stem melody path run for the first time on the bytes the Song Model was built from (Arrangement & Orchestration Brain, stream B-22, PR-B22)",
+  "version": "1.0",
+  "ranAt": "2026-09-10T23:23:23.044Z",
+  "gitSha": "3b9ace38a1bfa75166c17340b482d7e85dd8c56b",
+  "principle": "A melody is the line a voice sang. The Song Model's refusal (`melody: not_available`, 1680 full-mix BASIC_PITCH events that are not a melodic line) stays correct; what changes is that the vocal stem is now separated and tracked, and the line that comes out is measured before anyone trusts it. Every rate is reported beside a null distribution; the identity of the runtime that produced it travels with it; UNKNOWN is a valid answer.",
+  "source": {
+    "what": "the FLAC proxy the analysis of project ab1833c8-0515-4521-bbc1-323866b7503a was built from",
+    "objectPath": "/objects/proxies/e3fa24b2-dbcc-43d1-b0b5-d6497b1745b5.flac",
+    "localPath": "artifacts/api-server/.local-object-store/local/private/proxies/e3fa24b2-dbcc-43d1-b0b5-d6497b1745b5.flac",
+    "sha256": "a77fef9a3e9305cb131a7cb31122fbc3cb967a0a3c465d2741276f0034e46013",
+    "bytes": 42060107,
+    "durationSeconds": 258.534,
+    "sampleRate": 44100,
+    "channels": 2,
+    "songModelAnalysisDurationSeconds": 257.940563,
+    "note": "The brief named `C:/Users/<owner>/Downloads/רחם נא.mp3`; no such file exists on this machine. The bytes used here are the platform's own proxy of that upload - the object the Song Model's `sourceStems` points at - which is strictly better provenance than a re-downloaded mix."
+  },
+  "runtime": {
+    "where": "this workstation, not the deployed image",
+    "identity": {
+      "healthy": false,
+      "runnable": true,
+      "identityMode": "unpinned_local",
+      "pinDeviations": [
+        "package:torch",
+        "package:torchaudio",
+        "package:librosa",
+        "package:resampy",
+        "build_time_smoke"
+      ],
+      "checks": [
+        {
+          "name": "package:torch",
+          "expected": "2.2.2",
+          "actual": "2.1.0+cu118",
+          "ok": false
+        },
+        {
+          "name": "package:torchaudio",
+          "expected": "2.2.2",
+          "actual": "2.1.0",
+          "ok": false
+        },
+        {
+          "name": "package:numpy",
+          "expected": "1.26.4",
+          "actual": "1.26.4",
+          "ok": true
+        },
+        {
+          "name": "package:librosa",
+          "expected": "0.10.2.post1",
+          "actual": "0.10.1",
+          "ok": false
+        },
+        {
+          "name": "package:soundfile",
+          "expected": "0.12.1",
+          "actual": "0.12.1",
+          "ok": true
+        },
+        {
+          "name": "package:demucs",
+          "expected": "4.0.1",
+          "actual": "4.0.1",
+          "ok": true
+        },
+        {
+          "name": "package:torchcrepe",
+          "expected": "0.0.24",
+          "actual": "0.0.24",
+          "ok": true
+        },
+        {
+          "name": "package:basic-pitch",
+          "expected": "0.4.0",
+          "actual": "0.4.0",
+          "ok": true
+        },
+        {
+          "name": "package:onnxruntime",
+          "expected": "1.17.3",
+          "actual": "1.17.3",
+          "ok": true
+        },
+        {
+          "name": "package:scipy",
+          "expected": "1.11.4",
+          "actual": "1.11.4",
+          "ok": true
+        },
+        {
+          "name": "package:resampy",
+          "expected": "0.4.3",
+          "actual": "0.4.2",
+          "ok": false
+        },
+        {
+          "name": "package:pretty_midi",
+          "expected": "0.2.10",
+          "actual": "0.2.10",
+          "ok": true
+        },
+        {
+          "name": "package:mir_eval",
+          "expected": "0.7",
+          "actual": "0.7",
+          "ok": true
+        },
+        {
+          "name": "demucs_checkpoint_sha256",
+          "expected": "8726e21a993978c7ba086d3872e7608d7d5bfca646ca4aca459ffda844faa8b4",
+          "actual": "8726e21a993978c7ba086d3872e7608d7d5bfca646ca4aca459ffda844faa8b4",
+          "ok": true
+        },
+        {
+          "name": "crepe_full_sha256",
+          "expected": "133225604dedd2e4005f8bbd1bd0a2ec073ba8b7a6cd31ff6d5edbbfa3539986",
+          "actual": "133225604dedd2e4005f8bbd1bd0a2ec073ba8b7a6cd31ff6d5edbbfa3539986",
+          "ok": true
+        },
+        {
+          "name": "crepe_tiny_sha256",
+          "expected": "d4993eea36ed1a0ad9ac549c740dae5265b049ce72004f00c2f59e01c0be8432",
+          "actual": "d4993eea36ed1a0ad9ac549c740dae5265b049ce72004f00c2f59e01c0be8432",
+          "ok": true
+        },
+        {
+          "name": "basic_pitch_onnx_sha256",
+          "expected": "2c3c1d144bfa61ad236e92e169c13535c880469a12a047d4e73451f2c059a0ec",
+          "actual": "2c3c1d144bfa61ad236e92e169c13535c880469a12a047d4e73451f2c059a0ec",
+          "ok": true
+        },
+        {
+          "name": "basic_pitch_backend_is_onnx",
+          "expected": true,
+          "actual": true,
+          "ok": true
+        },
+        {
+          "name": "build_time_smoke",
+          "expected": true,
+          "actual": false,
+          "ok": false
+        }
+      ],
+      "runtime": {
+        "device": "cpu",
+        "torch": "2.1.0+cu118",
+        "threads": 10,
+        "cpu_count": 12
+      }
+    },
+    "weightsVerified": [
+      [
+        "demucs_checkpoint_sha256",
+        true
+      ],
+      [
+        "crepe_full_sha256",
+        true
+      ],
+      [
+        "crepe_tiny_sha256",
+        true
+      ],
+      [
+        "basic_pitch_onnx_sha256",
+        true
+      ],
+      [
+        "basic_pitch_backend_is_onnx",
+        true
+      ]
+    ],
+    "honest": "`healthy` is false and stays false: torch 2.1.0+cu118 / torchaudio 2.1.0 / librosa 0.10.1 / resampy 0.4.2 differ from the manifest pins (2.2.2 / 2.2.2 / 0.10.2.post1 / 0.4.3), and the build-time smoke marker is refused because the smoke itself ran unpinned. Every weight digest matches the manifest exactly, which is why the run is allowed at all (`runnable: true`, mode `unpinned_local`), and the deviation is stamped on every result and carried into the provenance record as version `1.0.0+unpinned_local`.",
+    "smokeMarker": {
+      "passed": true,
+      "identityMode": "unpinned_local",
+      "pinDeviations": [
+        "package:torch",
+        "package:torchaudio",
+        "package:librosa",
+        "package:resampy"
+      ],
+      "demucs_checkpoint_sha256": "8726e21a993978c7ba086d3872e7608d7d5bfca646ca4aca459ffda844faa8b4",
+      "checks": {
+        "lead_pyin_a4_cents": 1.3,
+        "lead_pyin_e5_cents": 1.31,
+        "bass_pyin_a1_cents": 2.52,
+        "bass_pyin_e2_cents": 2.31,
+        "lead_crepe_a4_cents": 6.75,
+        "lead_crepe_e5_cents": 6.42,
+        "bass_crepe_a1_cents": 5.34,
+        "bass_crepe_e2_cents": 6.29,
+        "separated_bass_pyin_a1_cents": 2.52,
+        "mp3_download_pyin_a4_cents": 1.3
+      },
+      "leadBasicPitchNotes": 4,
+      "bassBasicPitchNotes": 11,
+      "separationSeconds": 31.843
+    }
+  },
+  "transportDefect": {
+    "what": "the melody stem path could not complete a real call from Node before this PR",
+    "firstRun": {
+      "wallClockSeconds": 311.436,
+      "provenance": {
+        "status": "failed",
+        "errorCode": "worker-error",
+        "errorMessage": "fetch failed"
+      },
+      "cause": "Node's global fetch (undici) aborts a request whose response headers have not arrived within 300 s, and no AbortSignal or fetch option raises that ceiling. The worker is silent while it separates and tracks; its own README measures the two-stem call at about fifty minutes. The deployed path survived only because Modal answers inside its own 150 s HTTP limit with a 303 self-redirect, which restarts undici's clock - a property of one deployment, not of the client.",
+      "secondDefect": "The client's own bound was `AbortSignal.timeout(25 * 60_000)`: 25 minutes, under the fifty the README documents."
+    },
+    "fix": "`longRunningFetch` (node:http/https, no idle timeout, fetch-shaped, follows 303/301/302 as GET the way fetch does so the Modal self-redirect still works, decodes gzip/deflate/br) is the default transport; `MELODY_BASS_DEFAULT_TIMEOUT_MS` is 55 minutes and `MELODY_BASS_TIMEOUT_MS` overrides it. `fetchImpl` injection is unchanged."
+  },
+  "positiveControl": {
+    "what": "a synthetic lead stem whose pitch is known exactly - four phrases in C minor at the song's own 130.43 BPM, harmonic-rich with 12-cent vibrato and rests - through the worker and the same `stemPathFromTrack` the owner's song goes through, scored against the truth.",
+    "truth": {
+      "noteCount": 22,
+      "durationSeconds": 17.4803
+    },
+    "worker": {
+      "version": "1.0.0",
+      "seconds": 158.843,
+      "identity": {
+        "healthy": false,
+        "mode": "unpinned_local",
+        "pinDeviations": [
+          "package:torch",
+          "package:torchaudio",
+          "package:librosa",
+          "package:resampy",
+          "build_time_smoke"
+        ]
+      },
+      "audio": {
+        "durationSeconds": 17.48,
+        "sampleRate": 44100,
+        "channels": 2
+      },
+      "rmsDbfs": -16.27
+    },
+    "variant": {
+      "anchorOrder": [
+        "basic_pitch",
+        "crepe",
+        "pyin"
+      ],
+      "onsetSplit": true
+    },
+    "perTracker": [
+      {
+        "tracker": "crepe",
+        "notes": 22,
+        "rawNotes": 22,
+        "octave": {
+          "folded": 0,
+          "repaired": 0,
+          "outOfRegister": 0
+        },
+        "onsetSplits": 0,
+        "seconds": 141.454,
+        "score": {
+          "truthNotes": 22,
+          "predictedNotes": 22,
+          "onset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.9909,
+            "recall": 0.9928,
+            "falseAlarm": 0.0164
+          },
+          "framePitchAccuracy": 0.9913,
+          "frameChromaAccuracy": 0.9913
+        }
+      },
+      {
+        "tracker": "pyin",
+        "notes": 22,
+        "rawNotes": 22,
+        "octave": {
+          "folded": 0,
+          "repaired": 0,
+          "outOfRegister": 0
+        },
+        "onsetSplits": 0,
+        "seconds": 14.031,
+        "score": {
+          "truthNotes": 22,
+          "predictedNotes": 22,
+          "onset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.9863,
+            "recall": 0.9921,
+            "falseAlarm": 0.0356
+          },
+          "framePitchAccuracy": 0.9668,
+          "frameChromaAccuracy": 0.9668
+        }
+      },
+      {
+        "tracker": "basic_pitch",
+        "notes": 22,
+        "rawNotes": 34,
+        "octave": {
+          "folded": 0,
+          "repaired": 0,
+          "outOfRegister": 0
+        },
+        "onsetSplits": 0,
+        "seconds": 2.812,
+        "score": {
+          "truthNotes": 22,
+          "predictedNotes": 22,
+          "onset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitch": {
+            "precision": 0.4545,
+            "recall": 0.4545,
+            "f1": 0.4545
+          },
+          "onsetPitchOffset": {
+            "precision": 0.4545,
+            "recall": 0.4545,
+            "f1": 0.4545
+          },
+          "octaveErrorRate": 0.5455,
+          "pitchErrorRate": 0.5455,
+          "voicing": {
+            "accuracy": 0.5254,
+            "recall": 0.4017,
+            "falseAlarm": 0.0055
+          },
+          "framePitchAccuracy": 0.3251,
+          "frameChromaAccuracy": 0.388
+        }
+      }
+    ],
+    "fused": {
+      "notes": 22,
+      "agreedNotes": 10,
+      "stats": {
+        "anchorNotes": 22,
+        "agreed": 10,
+        "disagreed": 12,
+        "unsupported": 0,
+        "agreementRate": 0.4545,
+        "trackersUsed": [
+          "basic_pitch",
+          "crepe",
+          "pyin"
+        ]
+      },
+      "confidence": 0.4545,
+      "score": {
+        "truthNotes": 22,
+        "predictedNotes": 22,
+        "onset": {
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        "onsetPitch": {
+          "precision": 0.4545,
+          "recall": 0.4545,
+          "f1": 0.4545
+        },
+        "onsetPitchOffset": {
+          "precision": 0.4545,
+          "recall": 0.4545,
+          "f1": 0.4545
+        },
+        "octaveErrorRate": 0.5455,
+        "pitchErrorRate": 0.5455,
+        "voicing": {
+          "accuracy": 0.5254,
+          "recall": 0.4017,
+          "falseAlarm": 0.0055
+        },
+        "framePitchAccuracy": 0.3251,
+        "frameChromaAccuracy": 0.388
+      },
+      "agreedScore": {
+        "truthNotes": 22,
+        "predictedNotes": 10,
+        "onset": {
+          "precision": 1,
+          "recall": 0.4545,
+          "f1": 0.625
+        },
+        "onsetPitch": {
+          "precision": 1,
+          "recall": 0.4545,
+          "f1": 0.625
+        },
+        "onsetPitchOffset": {
+          "precision": 1,
+          "recall": 0.4545,
+          "f1": 0.625
+        },
+        "octaveErrorRate": 0,
+        "pitchErrorRate": 0,
+        "voicing": {
+          "accuracy": 0.4706,
+          "recall": 0.3324,
+          "falseAlarm": 0.0055
+        },
+        "framePitchAccuracy": 0.3273,
+        "frameChromaAccuracy": 0.3273
+      }
+    },
+    "negativeControl": {
+      "what": "the same prediction scored against the truth transposed by +5 semitones",
+      "score": {
+        "truthNotes": 22,
+        "predictedNotes": 22,
+        "onset": {
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        "onsetPitch": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        "onsetPitchOffset": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        "octaveErrorRate": 0,
+        "pitchErrorRate": 1,
+        "voicing": {
+          "accuracy": 0.5254,
+          "recall": 0.4017,
+          "falseAlarm": 0.0055
+        },
+        "framePitchAccuracy": 0,
+        "frameChromaAccuracy": 0
+      }
+    },
+    "variantSweep": [
+      {
+        "anchorOrder": [
+          "basic_pitch",
+          "crepe",
+          "pyin"
+        ],
+        "onsetSplit": true,
+        "notes": 22,
+        "agreedNotes": 10,
+        "agreementRate": 0.4545,
+        "score": {
+          "truthNotes": 22,
+          "predictedNotes": 22,
+          "onset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitch": {
+            "precision": 0.4545,
+            "recall": 0.4545,
+            "f1": 0.4545
+          },
+          "onsetPitchOffset": {
+            "precision": 0.4545,
+            "recall": 0.4545,
+            "f1": 0.4545
+          },
+          "octaveErrorRate": 0.5455,
+          "pitchErrorRate": 0.5455,
+          "voicing": {
+            "accuracy": 0.5254,
+            "recall": 0.4017,
+            "falseAlarm": 0.0055
+          },
+          "framePitchAccuracy": 0.3251,
+          "frameChromaAccuracy": 0.388
+        },
+        "agreedScore": {
+          "truthNotes": 22,
+          "predictedNotes": 10,
+          "onset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.4706,
+            "recall": 0.3324,
+            "falseAlarm": 0.0055
+          },
+          "framePitchAccuracy": 0.3273,
+          "frameChromaAccuracy": 0.3273
+        }
+      },
+      {
+        "anchorOrder": [
+          "basic_pitch",
+          "crepe",
+          "pyin"
+        ],
+        "onsetSplit": false,
+        "notes": 22,
+        "agreedNotes": 10,
+        "agreementRate": 0.4545,
+        "score": {
+          "truthNotes": 22,
+          "predictedNotes": 22,
+          "onset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitch": {
+            "precision": 0.4545,
+            "recall": 0.4545,
+            "f1": 0.4545
+          },
+          "onsetPitchOffset": {
+            "precision": 0.4545,
+            "recall": 0.4545,
+            "f1": 0.4545
+          },
+          "octaveErrorRate": 0.5455,
+          "pitchErrorRate": 0.5455,
+          "voicing": {
+            "accuracy": 0.5254,
+            "recall": 0.4017,
+            "falseAlarm": 0.0055
+          },
+          "framePitchAccuracy": 0.3251,
+          "frameChromaAccuracy": 0.388
+        },
+        "agreedScore": {
+          "truthNotes": 22,
+          "predictedNotes": 10,
+          "onset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.4706,
+            "recall": 0.3324,
+            "falseAlarm": 0.0055
+          },
+          "framePitchAccuracy": 0.3273,
+          "frameChromaAccuracy": 0.3273
+        }
+      },
+      {
+        "anchorOrder": [
+          "crepe",
+          "basic_pitch",
+          "pyin"
+        ],
+        "onsetSplit": true,
+        "notes": 22,
+        "agreedNotes": 10,
+        "agreementRate": 0.4545,
+        "score": {
+          "truthNotes": 22,
+          "predictedNotes": 22,
+          "onset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.9909,
+            "recall": 0.9928,
+            "falseAlarm": 0.0164
+          },
+          "framePitchAccuracy": 0.9913,
+          "frameChromaAccuracy": 0.9913
+        },
+        "agreedScore": {
+          "truthNotes": 22,
+          "predictedNotes": 10,
+          "onset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.4688,
+            "recall": 0.3302,
+            "falseAlarm": 0.0055
+          },
+          "framePitchAccuracy": 0.3295,
+          "frameChromaAccuracy": 0.3295
+        }
+      },
+      {
+        "anchorOrder": [
+          "crepe",
+          "basic_pitch",
+          "pyin"
+        ],
+        "onsetSplit": false,
+        "notes": 22,
+        "agreedNotes": 10,
+        "agreementRate": 0.4545,
+        "score": {
+          "truthNotes": 22,
+          "predictedNotes": 22,
+          "onset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.9909,
+            "recall": 0.9928,
+            "falseAlarm": 0.0164
+          },
+          "framePitchAccuracy": 0.9913,
+          "frameChromaAccuracy": 0.9913
+        },
+        "agreedScore": {
+          "truthNotes": 22,
+          "predictedNotes": 10,
+          "onset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.4688,
+            "recall": 0.3302,
+            "falseAlarm": 0.0055
+          },
+          "framePitchAccuracy": 0.3295,
+          "frameChromaAccuracy": 0.3295
+        }
+      },
+      {
+        "anchorOrder": [
+          "crepe",
+          "pyin",
+          "basic_pitch"
+        ],
+        "onsetSplit": true,
+        "notes": 22,
+        "agreedNotes": 10,
+        "agreementRate": 0.4545,
+        "score": {
+          "truthNotes": 22,
+          "predictedNotes": 22,
+          "onset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.9909,
+            "recall": 0.9928,
+            "falseAlarm": 0.0164
+          },
+          "framePitchAccuracy": 0.9913,
+          "frameChromaAccuracy": 0.9913
+        },
+        "agreedScore": {
+          "truthNotes": 22,
+          "predictedNotes": 10,
+          "onset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.4688,
+            "recall": 0.3302,
+            "falseAlarm": 0.0055
+          },
+          "framePitchAccuracy": 0.3295,
+          "frameChromaAccuracy": 0.3295
+        }
+      },
+      {
+        "anchorOrder": [
+          "crepe",
+          "pyin",
+          "basic_pitch"
+        ],
+        "onsetSplit": false,
+        "notes": 22,
+        "agreedNotes": 10,
+        "agreementRate": 0.4545,
+        "score": {
+          "truthNotes": 22,
+          "predictedNotes": 22,
+          "onset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.9909,
+            "recall": 0.9928,
+            "falseAlarm": 0.0164
+          },
+          "framePitchAccuracy": 0.9913,
+          "frameChromaAccuracy": 0.9913
+        },
+        "agreedScore": {
+          "truthNotes": 22,
+          "predictedNotes": 10,
+          "onset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.4688,
+            "recall": 0.3302,
+            "falseAlarm": 0.0055
+          },
+          "framePitchAccuracy": 0.3295,
+          "frameChromaAccuracy": 0.3295
+        }
+      },
+      {
+        "anchorOrder": [
+          "pyin",
+          "crepe",
+          "basic_pitch"
+        ],
+        "onsetSplit": true,
+        "notes": 22,
+        "agreedNotes": 10,
+        "agreementRate": 0.4545,
+        "score": {
+          "truthNotes": 22,
+          "predictedNotes": 22,
+          "onset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.9863,
+            "recall": 0.9921,
+            "falseAlarm": 0.0356
+          },
+          "framePitchAccuracy": 0.9668,
+          "frameChromaAccuracy": 0.9668
+        },
+        "agreedScore": {
+          "truthNotes": 22,
+          "predictedNotes": 10,
+          "onset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.4717,
+            "recall": 0.3324,
+            "falseAlarm": 0
+          },
+          "framePitchAccuracy": 0.3179,
+          "frameChromaAccuracy": 0.3179
+        }
+      },
+      {
+        "anchorOrder": [
+          "pyin",
+          "crepe",
+          "basic_pitch"
+        ],
+        "onsetSplit": false,
+        "notes": 22,
+        "agreedNotes": 10,
+        "agreementRate": 0.4545,
+        "score": {
+          "truthNotes": 22,
+          "predictedNotes": 22,
+          "onset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 1,
+            "f1": 1
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.9863,
+            "recall": 0.9921,
+            "falseAlarm": 0.0356
+          },
+          "framePitchAccuracy": 0.9668,
+          "frameChromaAccuracy": 0.9668
+        },
+        "agreedScore": {
+          "truthNotes": 22,
+          "predictedNotes": 10,
+          "onset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitch": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "onsetPitchOffset": {
+            "precision": 1,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "octaveErrorRate": 0,
+          "pitchErrorRate": 0,
+          "voicing": {
+            "accuracy": 0.4717,
+            "recall": 0.3324,
+            "falseAlarm": 0
+          },
+          "framePitchAccuracy": 0.3179,
+          "frameChromaAccuracy": 0.3179
+        }
+      }
+    ],
+    "verdict": "CREPE and pYIN are exact on this lead (onset+pitch F1 1.000, no octave errors). Basic Pitch finds every onset (onset F1 1.000) and puts 12 of 22 notes an octave out (onset+pitch F1 0.4545, octave-error rate 0.5455). Anchored on Basic Pitch the fusion keeps the anchor's pitch and inherits the error; anchored on CREPE or pYIN it scores 1.000 with or without the onset split. The negative control (the same prediction against a truth transposed by five semitones) scores 0, so the scorer discriminates."
+  },
+  "ownersSong": {
+    "run": {
+      "wallClockSeconds": 3743.23,
+      "provenance": [
+        {
+          "capability": "melody",
+          "provider": "MELODY_STEM_PATH_V1",
+          "version": "1.0.0+unpinned_local",
+          "status": "ready",
+          "attempts": 1
+        }
+      ],
+      "provenanceVersion": "1.0.0+unpinned_local",
+      "melodyStem": "vocals",
+      "melodyStemChosenBy": "rule",
+      "worker": {
+        "version": "1.0.0",
+        "imageEvidence": null,
+        "separationSeconds": 680.187,
+        "seconds": 3721.031,
+        "calls": 1,
+        "stems": {
+          "drums": {
+            "rmsDbfs": -72.79
+          },
+          "bass": {
+            "rmsDbfs": -55.29
+          },
+          "other": {
+            "rmsDbfs": -25.66
+          },
+          "vocals": {
+            "rmsDbfs": -22.39
+          }
+        },
+        "identity": {
+          "healthy": false,
+          "mode": "unpinned_local",
+          "pinDeviations": [
+            "package:torch",
+            "package:torchaudio",
+            "package:librosa",
+            "package:resampy",
+            "build_time_smoke"
+          ]
+        }
+      },
+      "melody": {
+        "register": "melody",
+        "stem": "vocals",
+        "variant": {
+          "anchorOrder": [
+            "basic_pitch",
+            "crepe",
+            "pyin"
+          ],
+          "onsetSplit": true
+        },
+        "lines": [
+          {
+            "tracker": "crepe",
+            "notes": 941,
+            "rawNotes": 619,
+            "octave": {
+              "folded": 0,
+              "repaired": 0,
+              "outOfRegister": 0
+            },
+            "onsetSplits": 322,
+            "seconds": 1280.703
+          },
+          {
+            "tracker": "pyin",
+            "notes": 228,
+            "rawNotes": 200,
+            "octave": {
+              "folded": 0,
+              "repaired": 0,
+              "outOfRegister": 0
+            },
+            "onsetSplits": 28,
+            "seconds": 220.407
+          },
+          {
+            "tracker": "basic_pitch",
+            "notes": 758,
+            "rawNotes": 1080,
+            "octave": {
+              "folded": 0,
+              "repaired": 31,
+              "outOfRegister": 0
+            },
+            "onsetSplits": 0,
+            "seconds": 10.704
+          }
+        ],
+        "fusion": {
+          "stats": {
+            "anchorNotes": 758,
+            "agreed": 461,
+            "disagreed": 106,
+            "unsupported": 191,
+            "agreementRate": 0.6082,
+            "trackersUsed": [
+              "basic_pitch",
+              "crepe",
+              "pyin"
+            ]
+          },
+          "confidence": 0.6082,
+          "disagreements": 106
+        }
+      },
+      "bass": {
+        "variant": {
+          "anchorOrder": [
+            "crepe",
+            "pyin",
+            "basic_pitch"
+          ],
+          "onsetSplit": false
+        },
+        "lines": [
+          {
+            "tracker": "crepe",
+            "notes": 14,
+            "rawNotes": 14,
+            "octave": {
+              "folded": 0,
+              "repaired": 0,
+              "outOfRegister": 0
+            },
+            "onsetSplits": 0,
+            "seconds": 1337.5
+          },
+          {
+            "tracker": "pyin",
+            "notes": 8,
+            "rawNotes": 8,
+            "octave": {
+              "folded": 0,
+              "repaired": 0,
+              "outOfRegister": 0
+            },
+            "onsetSplits": 0,
+            "seconds": 155.656
+          },
+          {
+            "tracker": "basic_pitch",
+            "notes": 383,
+            "rawNotes": 570,
+            "octave": {
+              "folded": 57,
+              "repaired": 8,
+              "outOfRegister": 0
+            },
+            "onsetSplits": 0,
+            "seconds": 11.484
+          }
+        ],
+        "fusion": {
+          "stats": {
+            "anchorNotes": 14,
+            "agreed": 6,
+            "disagreed": 0,
+            "unsupported": 8,
+            "agreementRate": 0.4286,
+            "trackersUsed": [
+              "crepe",
+              "pyin",
+              "basic_pitch"
+            ]
+          },
+          "confidence": 0.4286,
+          "disagreements": 0
+        }
+      },
+      "transcription": {
+        "providerId": "MELODY_STEM_PATH_V1",
+        "version": "1.0.0",
+        "confidence": 0.6082,
+        "noteCount": 758
+      },
+      "bassEvidenceNotes": 6
+    },
+    "fullMixReconstruction": {
+      "what": "full-mix BASIC_PITCH reconstruction (worker mode=stem, stem=mix)",
+      "noteCount": 2268,
+      "params": {
+        "onsetThreshold": 0.5,
+        "frameThreshold": 0.3,
+        "minimumNoteLengthMs": 58,
+        "fmin": 80,
+        "fmax": 1100
+      },
+      "workerSeconds": 17.953,
+      "honest": "This is a reconstruction of what a full-mix BASIC_PITCH provider returns, run here with the same ICASSP-2022 ONNX checkpoint under the worker's melody register limits. It is NOT the 1680-event result the original analysis recorded (those events were never persisted: the Song Model's `pitchEvidence` is empty). It exists so the canonical two-provider gate can be exercised on real evidence."
+    },
+    "melodyLine": {
+      "provider": "MELODY_STEM_PATH_V1",
+      "resultConfidence": 0.6082,
+      "stem": "vocals",
+      "variant": {
+        "anchorOrder": [
+          "basic_pitch",
+          "crepe",
+          "pyin"
+        ],
+        "onsetSplit": true
+      },
+      "noteCount": 758
+    },
+    "judgement": {
+      "generatedAt": "2026-09-10T23:22:14.243Z",
+      "source": {
+        "model": "C:/Users/4928~1/AppData/Local/Temp/claude/C--Users-------/898d17e9-51b5-4a84-b3ba-bb97431b84fc/scratchpad/rachem/songmodel-v3.json",
+        "chords": 92,
+        "sections": 9,
+        "bpm": 130.43,
+        "analysisDurationSeconds": 257.940563
+      },
+      "shippedLine": {
+        "label": "shipped line (CREPE-anchored, the vocal-stem default after PR-B22)",
+        "noteCount": 941,
+        "pitchRange": {
+          "minMidi": 46,
+          "maxMidi": 61,
+          "minName": "Bb2",
+          "maxName": "C#4",
+          "semitones": 15
+        },
+        "coverage": {
+          "analysisDurationSeconds": 257.940563,
+          "soundingSeconds": 182.7,
+          "soundingShare": 0.7083,
+          "spanSeconds": 258.48,
+          "spanShare": 1.0021,
+          "firstOnset": 0.03,
+          "lastOffset": 258.51,
+          "notesPerSecondOverSpan": 3.6405,
+          "medianDurationSeconds": 0.1343
+        },
+        "confidence": {
+          "mean": 0.6139,
+          "median": 0.7651,
+          "atOrAbove0_5": 486,
+          "atOrAbove0_7": 486
+        },
+        "harmonicFit": {
+          "counts": {
+            "chordTone": 577,
+            "scaleTone": 264,
+            "chromatic": 85,
+            "noChord": 15
+          },
+          "chordToneRate": 0.6231,
+          "inKeyRate": 0.9082,
+          "nullChordToneRate": {
+            "permutedPitches": {
+              "mean": 0.4573,
+              "p95": 0.4773,
+              "max": 0.5
+            },
+            "uniformPitches": {
+              "mean": 0.2503,
+              "p95": 0.2743,
+              "max": 0.2862
+            },
+            "trials": 200
+          },
+          "beatsNullPermuted": true,
+          "beatsNullUniform": true
+        },
+        "phrases": {
+          "count": 19,
+          "withinOneSection": 13,
+          "withinOneSectionShare": 0.6842,
+          "medianNotes": 15
+        },
+        "perSection": [
+          {
+            "section": "Intro",
+            "seconds": 3.6801,
+            "notes": 15,
+            "notesPerSecond": 4.0759,
+            "pitchRange": [
+              48,
+              48
+            ],
+            "chordToneRate": 0
+          },
+          {
+            "section": "Verse 1",
+            "seconds": 40.4815,
+            "notes": 157,
+            "notesPerSecond": 3.8783,
+            "pitchRange": [
+              47,
+              60
+            ],
+            "chordToneRate": 0.6561
+          },
+          {
+            "section": "Verse 2",
+            "seconds": 29.4411,
+            "notes": 90,
+            "notesPerSecond": 3.057,
+            "pitchRange": [
+              47,
+              60
+            ],
+            "chordToneRate": 0.6444
+          },
+          {
+            "section": "Chorus",
+            "seconds": 29.4411,
+            "notes": 100,
+            "notesPerSecond": 3.3966,
+            "pitchRange": [
+              48,
+              60
+            ],
+            "chordToneRate": 0.67
+          },
+          {
+            "section": "Chorus 2",
+            "seconds": 29.4411,
+            "notes": 98,
+            "notesPerSecond": 3.3287,
+            "pitchRange": [
+              48,
+              56
+            ],
+            "chordToneRate": 0.6939
+          },
+          {
+            "section": "Verse 3",
+            "seconds": 44.1616,
+            "notes": 175,
+            "notesPerSecond": 3.9627,
+            "pitchRange": [
+              46,
+              60
+            ],
+            "chordToneRate": 0.6171
+          },
+          {
+            "section": "Bridge",
+            "seconds": 29.4411,
+            "notes": 117,
+            "notesPerSecond": 3.974,
+            "pitchRange": [
+              47,
+              61
+            ],
+            "chordToneRate": 0.5128
+          },
+          {
+            "section": "Chorus 3",
+            "seconds": 29.4411,
+            "notes": 122,
+            "notesPerSecond": 4.1439,
+            "pitchRange": [
+              46,
+              60
+            ],
+            "chordToneRate": 0.5574
+          },
+          {
+            "section": "Outro",
+            "seconds": 23.9209,
+            "notes": 67,
+            "notesPerSecond": 2.8009,
+            "pitchRange": [
+              46,
+              60
+            ],
+            "chordToneRate": 0.6716
+          }
+        ]
+      },
+      "shippedAgreedLine": {
+        "label": "shipped agreed line (confidence >= 0.5)",
+        "noteCount": 486,
+        "pitchRange": {
+          "minMidi": 46,
+          "maxMidi": 61,
+          "minName": "Bb2",
+          "maxName": "C#4",
+          "semitones": 15
+        },
+        "coverage": {
+          "analysisDurationSeconds": 257.940563,
+          "soundingSeconds": 105.4012,
+          "soundingShare": 0.4086,
+          "spanSeconds": 248.96,
+          "spanShare": 0.9652,
+          "firstOnset": 5.54,
+          "lastOffset": 254.5,
+          "notesPerSecondOverSpan": 1.9521,
+          "medianDurationSeconds": 0.1626
+        },
+        "confidence": {
+          "mean": 0.8527,
+          "median": 0.8573,
+          "atOrAbove0_5": 486,
+          "atOrAbove0_7": 486
+        },
+        "harmonicFit": {
+          "counts": {
+            "chordTone": 307,
+            "scaleTone": 152,
+            "chromatic": 27,
+            "noChord": 0
+          },
+          "chordToneRate": 0.6317,
+          "inKeyRate": 0.9444,
+          "nullChordToneRate": {
+            "permutedPitches": {
+              "mean": 0.4688,
+              "p95": 0.5,
+              "max": 0.5144
+            },
+            "uniformPitches": {
+              "mean": 0.25,
+              "p95": 0.2881,
+              "max": 0.3086
+            },
+            "trials": 200
+          },
+          "beatsNullPermuted": true,
+          "beatsNullUniform": true
+        },
+        "phrases": {
+          "count": 61,
+          "withinOneSection": 58,
+          "withinOneSectionShare": 0.9508,
+          "medianNotes": 3
+        },
+        "perSection": [
+          {
+            "section": "Intro",
+            "seconds": 3.6801,
+            "notes": 0,
+            "notesPerSecond": 0,
+            "pitchRange": null,
+            "chordToneRate": null
+          },
+          {
+            "section": "Verse 1",
+            "seconds": 40.4815,
+            "notes": 72,
+            "notesPerSecond": 1.7786,
+            "pitchRange": [
+              48,
+              60
+            ],
+            "chordToneRate": 0.5417
+          },
+          {
+            "section": "Verse 2",
+            "seconds": 29.4411,
+            "notes": 28,
+            "notesPerSecond": 0.9511,
+            "pitchRange": [
+              48,
+              60
+            ],
+            "chordToneRate": 0.75
+          },
+          {
+            "section": "Chorus",
+            "seconds": 29.4411,
+            "notes": 26,
+            "notesPerSecond": 0.8831,
+            "pitchRange": [
+              48,
+              56
+            ],
+            "chordToneRate": 0.6154
+          },
+          {
+            "section": "Chorus 2",
+            "seconds": 29.4411,
+            "notes": 22,
+            "notesPerSecond": 0.7473,
+            "pitchRange": [
+              48,
+              56
+            ],
+            "chordToneRate": 0.7273
+          },
+          {
+            "section": "Verse 3",
+            "seconds": 44.1616,
+            "notes": 127,
+            "notesPerSecond": 2.8758,
+            "pitchRange": [
+              48,
+              60
+            ],
+            "chordToneRate": 0.6693
+          },
+          {
+            "section": "Bridge",
+            "seconds": 29.4411,
+            "notes": 81,
+            "notesPerSecond": 2.7513,
+            "pitchRange": [
+              50,
+              61
+            ],
+            "chordToneRate": 0.5679
+          },
+          {
+            "section": "Chorus 3",
+            "seconds": 29.4411,
+            "notes": 88,
+            "notesPerSecond": 2.989,
+            "pitchRange": [
+              48,
+              60
+            ],
+            "chordToneRate": 0.6136
+          },
+          {
+            "section": "Outro",
+            "seconds": 23.9209,
+            "notes": 42,
+            "notesPerSecond": 1.7558,
+            "pitchRange": [
+              46,
+              60
+            ],
+            "chordToneRate": 0.7143
+          }
+        ]
+      },
+      "shippedCanonicalAcceptance": {
+        "canonicalNotes": 0,
+        "canonicalNotesWithFullMix": 212,
+        "melodyDetected": false,
+        "melodyDetectedWithFullMix": true,
+        "validatorErrors": [],
+        "validatorWarnings": [],
+        "validatorAccepts": true,
+        "rawLineValidatorErrors": [
+          "NOTE_OUTSIDE_AUDIO melody.940.end"
+        ]
+      },
+      "fusedLine": {
+        "label": "fused line (every note the path emitted)",
+        "noteCount": 758,
+        "pitchRange": {
+          "minMidi": 46,
+          "maxMidi": 84,
+          "minName": "Bb2",
+          "maxName": "C6",
+          "semitones": 38
+        },
+        "coverage": {
+          "analysisDurationSeconds": 257.940563,
+          "soundingSeconds": 148.2748,
+          "soundingShare": 0.5748,
+          "spanSeconds": 254.4809,
+          "spanShare": 0.9866,
+          "firstOnset": 0.0116,
+          "lastOffset": 254.4925,
+          "notesPerSecondOverSpan": 2.9786,
+          "medianDurationSeconds": 0.1509
+        },
+        "confidence": {
+          "mean": 0.5879,
+          "median": 0.8087,
+          "atOrAbove0_5": 461,
+          "atOrAbove0_7": 461
+        },
+        "harmonicFit": {
+          "counts": {
+            "chordTone": 441,
+            "scaleTone": 263,
+            "chromatic": 52,
+            "noChord": 2
+          },
+          "chordToneRate": 0.5833,
+          "inKeyRate": 0.9312,
+          "nullChordToneRate": {
+            "permutedPitches": {
+              "mean": 0.4467,
+              "p95": 0.4722,
+              "max": 0.4815
+            },
+            "uniformPitches": {
+              "mean": 0.2552,
+              "p95": 0.2791,
+              "max": 0.2989
+            },
+            "trials": 200
+          },
+          "beatsNullPermuted": true,
+          "beatsNullUniform": true
+        },
+        "phrases": {
+          "count": 44,
+          "withinOneSection": 38,
+          "withinOneSectionShare": 0.8636,
+          "medianNotes": 11
+        },
+        "perSection": [
+          {
+            "section": "Intro",
+            "seconds": 3.6801,
+            "notes": 2,
+            "notesPerSecond": 0.5435,
+            "pitchRange": [
+              67,
+              67
+            ],
+            "chordToneRate": 0
+          },
+          {
+            "section": "Verse 1",
+            "seconds": 40.4815,
+            "notes": 121,
+            "notesPerSecond": 2.989,
+            "pitchRange": [
+              48,
+              79
+            ],
+            "chordToneRate": 0.5868
+          },
+          {
+            "section": "Verse 2",
+            "seconds": 29.4411,
+            "notes": 87,
+            "notesPerSecond": 2.9551,
+            "pitchRange": [
+              48,
+              79
+            ],
+            "chordToneRate": 0.4598
+          },
+          {
+            "section": "Chorus",
+            "seconds": 29.4411,
+            "notes": 91,
+            "notesPerSecond": 3.0909,
+            "pitchRange": [
+              48,
+              79
+            ],
+            "chordToneRate": 0.7582
+          },
+          {
+            "section": "Chorus 2",
+            "seconds": 29.4411,
+            "notes": 74,
+            "notesPerSecond": 2.5135,
+            "pitchRange": [
+              48,
+              79
+            ],
+            "chordToneRate": 0.6622
+          },
+          {
+            "section": "Verse 3",
+            "seconds": 44.1616,
+            "notes": 140,
+            "notesPerSecond": 3.1702,
+            "pitchRange": [
+              48,
+              74
+            ],
+            "chordToneRate": 0.5929
+          },
+          {
+            "section": "Bridge",
+            "seconds": 29.4411,
+            "notes": 94,
+            "notesPerSecond": 3.1928,
+            "pitchRange": [
+              46,
+              84
+            ],
+            "chordToneRate": 0.4681
+          },
+          {
+            "section": "Chorus 3",
+            "seconds": 29.4411,
+            "notes": 99,
+            "notesPerSecond": 3.3626,
+            "pitchRange": [
+              48,
+              79
+            ],
+            "chordToneRate": 0.5657
+          },
+          {
+            "section": "Outro",
+            "seconds": 23.9209,
+            "notes": 50,
+            "notesPerSecond": 2.0902,
+            "pitchRange": [
+              46,
+              79
+            ],
+            "chordToneRate": 0.58
+          }
+        ]
+      },
+      "agreedLine": {
+        "label": "agreed line (confidence >= 0.5: at least two trackers heard the same note)",
+        "noteCount": 461,
+        "pitchRange": {
+          "minMidi": 46,
+          "maxMidi": 61,
+          "minName": "Bb2",
+          "maxName": "C#4",
+          "semitones": 15
+        },
+        "coverage": {
+          "analysisDurationSeconds": 257.940563,
+          "soundingSeconds": 96.6341,
+          "soundingShare": 0.3746,
+          "spanSeconds": 248.9288,
+          "spanShare": 0.9651,
+          "firstOnset": 5.5637,
+          "lastOffset": 254.4925,
+          "notesPerSecondOverSpan": 1.8519,
+          "medianDurationSeconds": 0.1625
+        },
+        "confidence": {
+          "mean": 0.8506,
+          "median": 0.8554,
+          "atOrAbove0_5": 461,
+          "atOrAbove0_7": 461
+        },
+        "harmonicFit": {
+          "counts": {
+            "chordTone": 287,
+            "scaleTone": 146,
+            "chromatic": 28,
+            "noChord": 0
+          },
+          "chordToneRate": 0.6226,
+          "inKeyRate": 0.9393,
+          "nullChordToneRate": {
+            "permutedPitches": {
+              "mean": 0.463,
+              "p95": 0.4989,
+              "max": 0.5184
+            },
+            "uniformPitches": {
+              "mean": 0.2488,
+              "p95": 0.2798,
+              "max": 0.295
+            },
+            "trials": 200
+          },
+          "beatsNullPermuted": true,
+          "beatsNullUniform": true
+        },
+        "phrases": {
+          "count": 57,
+          "withinOneSection": 54,
+          "withinOneSectionShare": 0.9474,
+          "medianNotes": 3
+        },
+        "perSection": [
+          {
+            "section": "Intro",
+            "seconds": 3.6801,
+            "notes": 0,
+            "notesPerSecond": 0,
+            "pitchRange": null,
+            "chordToneRate": null
+          },
+          {
+            "section": "Verse 1",
+            "seconds": 40.4815,
+            "notes": 72,
+            "notesPerSecond": 1.7786,
+            "pitchRange": [
+              48,
+              60
+            ],
+            "chordToneRate": 0.5417
+          },
+          {
+            "section": "Verse 2",
+            "seconds": 29.4411,
+            "notes": 28,
+            "notesPerSecond": 0.9511,
+            "pitchRange": [
+              48,
+              60
+            ],
+            "chordToneRate": 0.75
+          },
+          {
+            "section": "Chorus",
+            "seconds": 29.4411,
+            "notes": 26,
+            "notesPerSecond": 0.8831,
+            "pitchRange": [
+              48,
+              56
+            ],
+            "chordToneRate": 0.6154
+          },
+          {
+            "section": "Chorus 2",
+            "seconds": 29.4411,
+            "notes": 22,
+            "notesPerSecond": 0.7473,
+            "pitchRange": [
+              48,
+              56
+            ],
+            "chordToneRate": 0.7273
+          },
+          {
+            "section": "Verse 3",
+            "seconds": 44.1616,
+            "notes": 121,
+            "notesPerSecond": 2.7399,
+            "pitchRange": [
+              48,
+              60
+            ],
+            "chordToneRate": 0.6446
+          },
+          {
+            "section": "Bridge",
+            "seconds": 29.4411,
+            "notes": 72,
+            "notesPerSecond": 2.4456,
+            "pitchRange": [
+              50,
+              61
+            ],
+            "chordToneRate": 0.5556
+          },
+          {
+            "section": "Chorus 3",
+            "seconds": 29.4411,
+            "notes": 83,
+            "notesPerSecond": 2.8192,
+            "pitchRange": [
+              48,
+              60
+            ],
+            "chordToneRate": 0.6265
+          },
+          {
+            "section": "Outro",
+            "seconds": 23.9209,
+            "notes": 37,
+            "notesPerSecond": 1.5468,
+            "pitchRange": [
+              46,
+              60
+            ],
+            "chordToneRate": 0.6757
+          }
+        ]
+      },
+      "canonicalAcceptance": {
+        "sole": {
+          "canonicalNotes": 0,
+          "canonicalNotesWithFullMix": null,
+          "melodyDetected": false,
+          "melodyDetectedWithFullMix": null,
+          "validatorErrors": [],
+          "validatorWarnings": [],
+          "validatorAccepts": true,
+          "rawLineValidatorErrors": []
+        },
+        "besideFullMix": {
+          "canonicalNotes": 0,
+          "canonicalNotesWithFullMix": 251,
+          "melodyDetected": false,
+          "melodyDetectedWithFullMix": true,
+          "validatorErrors": [],
+          "validatorWarnings": [
+            "OCTAVE_JUMP melody.13",
+            "OCTAVE_JUMP melody.70",
+            "OCTAVE_JUMP melody.169"
+          ],
+          "validatorAccepts": true,
+          "rawLineValidatorErrors": []
+        },
+        "fullMixNotes": 2268
+      },
+      "variantSweep": [
+        {
+          "anchorOrder": [
+            "basic_pitch",
+            "crepe",
+            "pyin"
+          ],
+          "notes": 758,
+          "agreedNotes": 461,
+          "agreementRate": 0.6082,
+          "pitchRange": [
+            46,
+            84
+          ],
+          "agreedPitchRange": [
+            46,
+            61
+          ],
+          "chordToneRate": 0.5833,
+          "agreedChordToneRate": 0.6226,
+          "octaveJumpWarnings": 32,
+          "agreedOctaveJumpWarnings": 0,
+          "canonicalNotesWithFullMix": 251,
+          "canonicalOctaveJumpWarnings": 3
+        },
+        {
+          "anchorOrder": [
+            "crepe",
+            "basic_pitch",
+            "pyin"
+          ],
+          "notes": 941,
+          "agreedNotes": 486,
+          "agreementRate": 0.5165,
+          "pitchRange": [
+            46,
+            61
+          ],
+          "agreedPitchRange": [
+            46,
+            61
+          ],
+          "chordToneRate": 0.6231,
+          "agreedChordToneRate": 0.6317,
+          "octaveJumpWarnings": 0,
+          "agreedOctaveJumpWarnings": 0,
+          "canonicalNotesWithFullMix": 212,
+          "canonicalOctaveJumpWarnings": 0
+        },
+        {
+          "anchorOrder": [
+            "crepe",
+            "pyin",
+            "basic_pitch"
+          ],
+          "notes": 941,
+          "agreedNotes": 486,
+          "agreementRate": 0.5165,
+          "pitchRange": [
+            46,
+            61
+          ],
+          "agreedPitchRange": [
+            46,
+            61
+          ],
+          "chordToneRate": 0.6231,
+          "agreedChordToneRate": 0.6317,
+          "octaveJumpWarnings": 0,
+          "agreedOctaveJumpWarnings": 0,
+          "canonicalNotesWithFullMix": 212,
+          "canonicalOctaveJumpWarnings": 0
+        },
+        {
+          "anchorOrder": [
+            "pyin",
+            "crepe",
+            "basic_pitch"
+          ],
+          "notes": 228,
+          "agreedNotes": 112,
+          "agreementRate": 0.4912,
+          "pitchRange": [
+            48,
+            77
+          ],
+          "agreedPitchRange": [
+            48,
+            60
+          ],
+          "chordToneRate": 0.7456,
+          "agreedChordToneRate": 0.7232,
+          "octaveJumpWarnings": 0,
+          "agreedOctaveJumpWarnings": 0,
+          "canonicalNotesWithFullMix": 29,
+          "canonicalOctaveJumpWarnings": 0
+        }
+      ],
+      "motifLedger": {
+        "before": {
+          "status": "inferred",
+          "source": "harmonic_inference",
+          "reason": "no melody evidence: 8 cell(s) inferred from the chord-root motion of 9 section(s)",
+          "entries": 8,
+          "hookMotifId": "motif-6a9e5902",
+          "firstEntries": [
+            {
+              "id": "motif-6a9e5902",
+              "origin": "harmonic_inference",
+              "cellIntervals": [
+                -4,
+                4,
+                5,
+                -5
+              ],
+              "cellRhythm": [
+                1,
+                0.11,
+                0.54,
+                0.3
+              ],
+              "occurrences": 1
+            },
+            {
+              "id": "motif-5252a754",
+              "origin": "harmonic_inference",
+              "cellIntervals": [
+                5,
+                -5,
+                5,
+                -5
+              ],
+              "cellRhythm": [
+                1,
+                0.07,
+                0.52,
+                0.18
+              ],
+              "occurrences": 1
+            },
+            {
+              "id": "motif-d281a0ce",
+              "origin": "harmonic_inference",
+              "cellIntervals": [
+                5,
+                5,
+                2,
+                -2
+              ],
+              "cellRhythm": [
+                1,
+                6,
+                2.7,
+                1.1
+              ],
+              "occurrences": 1
+            },
+            {
+              "id": "motif-23c5e53e",
+              "origin": "harmonic_inference",
+              "cellIntervals": [
+                5,
+                5,
+                -2,
+                2
+              ],
+              "cellRhythm": [
+                1,
+                2,
+                5.32,
+                1.16
+              ],
+              "occurrences": 1
+            }
+          ]
+        },
+        "afterFusedLine": {
+          "status": "available",
+          "source": "melody_notes",
+          "reason": "30 motif(s) from 57 sung phrase(s) (461 melody notes at confidence >= 0.5)",
+          "entries": 30,
+          "hookMotifId": "motif-1c94adc3",
+          "firstEntries": [
+            {
+              "id": "motif-1c94adc3",
+              "origin": "source_phrase",
+              "cellIntervals": [
+                0,
+                0,
+                -2,
+                0
+              ],
+              "cellRhythm": [
+                1,
+                9.69,
+                8.51,
+                4
+              ],
+              "occurrences": 1
+            },
+            {
+              "id": "motif-b10e8ae3",
+              "origin": "source_phrase",
+              "cellIntervals": [
+                2,
+                2,
+                0,
+                0
+              ],
+              "cellRhythm": [
+                1,
+                0.5,
+                1.54,
+                1.23
+              ],
+              "occurrences": 1
+            },
+            {
+              "id": "motif-840d70ec",
+              "origin": "source_phrase",
+              "cellIntervals": [
+                0,
+                0,
+                0
+              ],
+              "cellRhythm": [
+                1,
+                1.44,
+                0.67
+              ],
+              "occurrences": 1
+            },
+            {
+              "id": "motif-102b1124",
+              "origin": "source_phrase",
+              "cellIntervals": [
+                12,
+                0,
+                -2,
+                0
+              ],
+              "cellRhythm": [
+                1,
+                0.19,
+                0.44,
+                0.19
+              ],
+              "occurrences": 1
+            }
+          ]
+        },
+        "afterAgreedLine": {
+          "status": "available",
+          "source": "melody_notes",
+          "reason": "30 motif(s) from 57 sung phrase(s) (461 melody notes at confidence >= 0.5)",
+          "entries": 30,
+          "hookMotifId": "motif-1c94adc3",
+          "firstEntries": [
+            {
+              "id": "motif-1c94adc3",
+              "origin": "source_phrase",
+              "cellIntervals": [
+                0,
+                0,
+                -2,
+                0
+              ],
+              "cellRhythm": [
+                1,
+                9.69,
+                8.51,
+                4
+              ],
+              "occurrences": 1
+            },
+            {
+              "id": "motif-b10e8ae3",
+              "origin": "source_phrase",
+              "cellIntervals": [
+                2,
+                2,
+                0,
+                0
+              ],
+              "cellRhythm": [
+                1,
+                0.5,
+                1.54,
+                1.23
+              ],
+              "occurrences": 1
+            },
+            {
+              "id": "motif-840d70ec",
+              "origin": "source_phrase",
+              "cellIntervals": [
+                0,
+                0,
+                0
+              ],
+              "cellRhythm": [
+                1,
+                1.44,
+                0.67
+              ],
+              "occurrences": 1
+            },
+            {
+              "id": "motif-102b1124",
+              "origin": "source_phrase",
+              "cellIntervals": [
+                12,
+                0,
+                -2,
+                0
+              ],
+              "cellRhythm": [
+                1,
+                0.19,
+                0.44,
+                0.19
+              ],
+              "occurrences": 1
+            }
+          ]
+        },
+        "afterShippedAgreedLine": {
+          "status": "available",
+          "source": "melody_notes",
+          "reason": "31 motif(s) from 61 sung phrase(s) (486 melody notes at confidence >= 0.5)",
+          "entries": 31,
+          "hookMotifId": "motif-40186d4c",
+          "firstEntries": [
+            {
+              "id": "motif-40186d4c",
+              "origin": "source_phrase",
+              "cellIntervals": [
+                0,
+                0,
+                -2,
+                0
+              ],
+              "cellRhythm": [
+                1,
+                11.04,
+                9.89,
+                4.36
+              ],
+              "occurrences": 1
+            },
+            {
+              "id": "motif-25cfd80a",
+              "origin": "source_phrase",
+              "cellIntervals": [
+                2,
+                2,
+                0,
+                0
+              ],
+              "cellRhythm": [
+                1,
+                0.5,
+                1.6,
+                1.37
+              ],
+              "occurrences": 1
+            },
+            {
+              "id": "motif-1b6308dd",
+              "origin": "source_phrase",
+              "cellIntervals": [
+                0,
+                -2,
+                0,
+                0
+              ],
+              "cellRhythm": [
+                1,
+                2.89,
+                1.3,
+                1.13
+              ],
+              "occurrences": 1
+            },
+            {
+              "id": "motif-840d70ec",
+              "origin": "source_phrase",
+              "cellIntervals": [
+                0,
+                0,
+                0
+              ],
+              "cellRhythm": [
+                1,
+                1.44,
+                0.67
+              ],
+              "occurrences": 1
+            }
+          ]
+        }
+      }
+    },
+    "canonicalAcceptance": {
+      "sole": {
+        "canonicalNotes": 0,
+        "canonicalNotesWithFullMix": null,
+        "melodyDetected": false,
+        "melodyDetectedWithFullMix": null,
+        "validatorErrors": [],
+        "validatorWarnings": [],
+        "validatorAccepts": true,
+        "rawLineValidatorErrors": []
+      },
+      "besideFullMix": {
+        "canonicalNotes": 0,
+        "canonicalNotesWithFullMix": 251,
+        "melodyDetected": false,
+        "melodyDetectedWithFullMix": true,
+        "validatorErrors": [],
+        "validatorWarnings": [
+          "OCTAVE_JUMP melody.13",
+          "OCTAVE_JUMP melody.70",
+          "OCTAVE_JUMP melody.169"
+        ],
+        "validatorAccepts": true,
+        "rawLineValidatorErrors": []
+      },
+      "fullMixNotes": 2268
+    },
+    "shippedLine": {
+      "what": "the melody the path ships for a vocal stem after PR-B22: the same worker evidence, fused in the CREPE-anchored order `variantFor(\"melody\", \"vocals\")` selects",
+      "variant": {
+        "anchorOrder": [
+          "crepe",
+          "pyin",
+          "basic_pitch"
+        ],
+        "onsetSplit": true
+      },
+      "resultConfidence": 0.5165,
+      "stats": {
+        "anchorNotes": 941,
+        "agreed": 486,
+        "disagreed": 113,
+        "unsupported": 342,
+        "agreementRate": 0.5165,
+        "trackersUsed": [
+          "crepe",
+          "pyin",
+          "basic_pitch"
+        ]
+      },
+      "noteCount": 941
+    },
+    "landing": {
+      "generatedAt": "2026-09-10T23:22:15.209Z",
+      "what": "the Song Model the melody would land in, built offline from v3; the owner's project was not written to",
+      "v3": {
+        "version": 3,
+        "melodyNotes": 0,
+        "melodyStatus": "not_available",
+        "melodyMessage": "1680 transcribed event(s) from BASIC_PITCH did not meet the canonical melody threshold; a single transcription provider on a full mix is not a melodic line. Separate a vocal or lead stem first, or configure a second transcription provider.",
+        "editedFields": [
+          "tempo",
+          "meter",
+          "key",
+          "harmony",
+          "sections"
+        ],
+        "correction": {
+          "correctedBy": "dev-local-user",
+          "correctedAt": "2026-09-10T00:50:51.165Z",
+          "fields": [
+            "sections"
+          ]
+        }
+      },
+      "fusionInputs": {
+        "stemPathNotes": 941,
+        "stemPathResultConfidence": 0.5165,
+        "fullMixNotes": 2268
+      },
+      "canonical": {
+        "notes": 212,
+        "meanConfidence": 0.53685,
+        "pitchRange": [
+          46,
+          60
+        ],
+        "firstOnset": 12.0124,
+        "lastOffset": 251.0418,
+        "validatorErrors": [],
+        "validatorWarnings": 0
+      },
+      "landedModel": {
+        "melodyStatus": "detected",
+        "validationStatus": "accepted",
+        "validationIssues": [],
+        "canonicalValidationOk": true,
+        "canonicalValidationIssues": [],
+        "arrangementEligibility": {
+          "eligible": true,
+          "code": null,
+          "message": null,
+          "trustVerdict": "trusted_automatically",
+          "fieldsToConfirm": []
+        },
+        "producerCorrectionsIntact": {
+          "tempoMap": true,
+          "keyMap": true,
+          "meterMap": true,
+          "sections": true,
+          "chords": true
+        },
+        "producerValuesIntact": {
+          "bpm": true,
+          "key": true,
+          "meter": true,
+          "sectionNames": true,
+          "chordSymbols": true
+        },
+        "editedFlagsIntact": {
+          "tempo": true,
+          "meter": true,
+          "key": true,
+          "melody": true,
+          "bass": true,
+          "harmony": true,
+          "sections": true,
+          "energy": true
+        },
+        "arrangementEligible": true
+      },
+      "honest": {
+        "whatThisIsNot": "A re-analysis does not produce this model. `analyzeProjectSource` writes a *fresh* model at version+1 with no `parentModelId` and no carry-forward of `correction`: tempo, meter, key, harmony and sections would come from the providers again, and the `edited: true` flags would be gone. This preview holds those fields at v3's corrected values on purpose, to show what the sanctioned two-step landing arrives at.",
+        "sanctionedPath": "1. re-analyse the source with MELODY_STEM_PATH_V1=1 -> v4 carries the melody and loses the corrections; 2. PATCH /projects/:projectId/song-model with baseVersion 4 and v3's confirmed bpm/key/meter/sections/chords -> v5. The correction route spreads the previous model (`correctedModelBase = { ...latest.model, ... }`, routes/studio.ts) so the melody survives step 2 untouched, sets `parentModelId` and `edited: true`, and inserts a new row - v3 and v4 are kept. The correction body (CorrectProjectSongModelBody) has no melody field, so step 1 cannot be skipped.",
+        "windowOfRisk": "Between step 1 and step 2 the project's *latest* model is v4, uncorrected, and that is the row the arrangement pipeline reads. This was not executed against the owner's live project for that reason."
+      }
+    },
+    "landingNegativeControl": {
+      "what": "the same landing pipeline with an empty stem-path line: it must reproduce the platform's own refusal, and does",
+      "canonicalNotes": 0,
+      "melodyStatus": "not_available",
+      "message": "1680 transcribed event(s) from BASIC_PITCH did not meet the canonical melody threshold; a single transcription provider on a full mix is not a melodic line. Separate a vocal or lead stem first, or configure a second transcription provider."
+    }
+  },
+  "savedForDelivery": {
+    "vocalStem": "<scratchpad>/b22/stems/vocals.flac",
+    "vocalStemBytes": 20697495,
+    "otherStems": [
+      "drums.flac",
+      "bass.flac",
+      "other.flac"
+    ],
+    "melodyJson": "<scratchpad>/rachem/b22/melody-notes.json",
+    "everyArtifact": [
+      "stem-path-outcome.json",
+      "melody-notes.json",
+      "melody-lines-per-tracker.json",
+      "bass-evidence.json",
+      "fullmix-basicpitch.json",
+      "canonical-acceptance.json",
+      "melody-judgement.json",
+      "positive-control.json"
+    ]
+  }
+}

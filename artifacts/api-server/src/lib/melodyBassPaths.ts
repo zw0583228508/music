@@ -23,6 +23,9 @@
  * confidence*, never averaged; nothing in this file promotes anything - the
  * evidence in `docs/evidence/melody-bass-paths-live.json` does the talking.
  */
+import { request as httpRequest, type IncomingHttpHeaders } from "node:http";
+import { request as httpsRequest } from "node:https";
+import { brotliDecompress, gunzip, inflate } from "node:zlib";
 import type { SongModelData } from "@workspace/db";
 import { fuseCanonicalNotes, type TranscriptionAnalysisResult } from "./analysisProviders";
 import { melodyValidationIssues } from "./songModelValidation";
@@ -604,6 +607,29 @@ export type WorkerTrack = {
   pyin?: { frames: PitchFrame[]; seconds: number; hopSeconds: number };
   crepe?: { frames: PitchFrame[]; seconds: number; hopSeconds: number };
   basic_pitch?: { notes: TrackedNote[]; seconds: number; params: Record<string, number> };
+  /**
+   * Trackers the worker was asked for and could not run, by name and reason
+   * (pYIN's FFT over a four-minute stem is the worker's largest allocation).
+   * An absent tracker is one fewer voice in the fusion, so this travels with
+   * the line: `fusion.stats.trackersUsed` says who spoke, this says who could
+   * not, and neither is inferred from the other.
+   */
+  trackerErrors?: Record<string, string>;
+};
+
+/**
+ * The identity the worker stamps on every result (`tracker.identity()`).
+ * `pinned` is the deployed image, where every package pin and every weight
+ * digest was re-verified in the container. `unpinned_local` is an operator-
+ * declared workstation (`MELODY_BASS_ALLOW_UNPINNED_RUNTIME=1`) whose weight
+ * digests all match but whose package versions differ from the manifest: the
+ * deviation is listed here and travels into the provenance record's `version`,
+ * so an unpinned run is never scored as if the pinned image had produced it.
+ */
+export type WorkerIdentity = {
+  healthy: boolean;
+  mode: "pinned" | "unpinned_local" | "unverified";
+  pinDeviations: string[];
 };
 
 export type WorkerResponse = {
@@ -617,7 +643,141 @@ export type WorkerResponse = {
   seconds: number;
   imageEvidence?: string | null;
   runtime?: Record<string, unknown>;
+  identity?: WorkerIdentity;
 };
+
+/**
+ * How long one `/transcribe` call may take. The worker's own README measures
+ * the cost it is bounded by: htdemucs about 0.5 s per second of audio and
+ * CREPE full about 2.3 s per second of audio **per stem** on CPU, which on the
+ * two stems this path asks for is "about 50 minutes end to end" for a
+ * four-minute song - and Modal's function timeout is 30 minutes per attempt
+ * with a 303 self-redirect bridging them.
+ *
+ * The first real run of this path found the client contradicting that: a
+ * hard-coded 25-minute `AbortSignal.timeout` aborted a call the same repo
+ * documents as taking about fifty. The bound now defaults to 55 minutes (the
+ * documented cost plus margin) and `MELODY_BASS_TIMEOUT_MS` overrides it, so a
+ * slower machine states its bound instead of failing halfway through a
+ * separation.
+ */
+export const MELODY_BASS_DEFAULT_TIMEOUT_MS = 55 * 60_000;
+
+export function melodyBassTimeoutMs(environment: NodeJS.ProcessEnv = process.env): number {
+  const raw = Number(environment.MELODY_BASS_TIMEOUT_MS?.trim());
+  return Number.isFinite(raw) && raw > 0 ? raw : MELODY_BASS_DEFAULT_TIMEOUT_MS;
+}
+
+// ---------------------------------------------------------------------------
+// 7a. A transport that can wait for a worker that thinks for an hour
+// ---------------------------------------------------------------------------
+
+/**
+ * Node's global `fetch` cannot make this call. Undici - the implementation
+ * behind it - aborts a request whose **response headers** have not arrived
+ * within 300 s, and no `AbortSignal` and no option on `fetch` raises that
+ * ceiling; only an undici `Agent` passed as a dispatcher can, and undici is not
+ * a dependency of this server. This worker is silent for as long as it
+ * separates and tracks: the first real run of this path against a local worker
+ * died at **311 s** with `TypeError: fetch failed`, a five-minute ceiling under
+ * an operation the worker's own README measures at about fifty minutes. (The
+ * deployed path survived only because Modal answers within its own 150 s HTTP
+ * limit with a 303 self-redirect, which restarts undici's clock on each hop -
+ * i.e. the client was relying on a property of one deployment, not on anything
+ * it guaranteed itself.)
+ *
+ * So the default transport is `node:http(s)`, where the socket may be idle for
+ * as long as the caller's `AbortSignal` allows. It is deliberately a `fetch`
+ * shape - same input, same `Response` out - so `fetchImpl` injection, and every
+ * test that uses it, is unchanged. Redirects are followed the way `fetch`
+ * follows them (a 303, or a 301/302 on a POST, becomes a GET), which keeps the
+ * Modal self-redirect working; gzip/deflate/br responses are decoded here
+ * because `node:http` does not decode them.
+ */
+export const MELODY_BASS_MAX_REDIRECTS = 10;
+
+type RawResponse = { status: number; statusText: string; headers: IncomingHttpHeaders; body: Buffer };
+
+function decodeBody(raw: Buffer, encoding: string): Promise<Buffer> {
+  const decoder = encoding.includes("br") ? brotliDecompress : encoding.includes("gzip") ? gunzip : encoding.includes("deflate") ? inflate : null;
+  if (!decoder || !raw.length) return Promise.resolve(raw);
+  return new Promise((resolve, reject) => decoder(raw, (error, result) => (error ? reject(error) : resolve(result))));
+}
+
+function abortError(): Error {
+  return Object.assign(new Error("The operation was aborted"), { name: "AbortError" });
+}
+
+function requestOnce(url: URL, method: string, headers: Record<string, string>, body: Buffer | undefined, signal: AbortSignal | null | undefined): Promise<RawResponse> {
+  return new Promise((resolve, reject) => {
+    const transport = url.protocol === "https:" ? httpsRequest : httpRequest;
+    const outgoing = transport({
+      protocol: url.protocol,
+      hostname: url.hostname,
+      port: url.port || undefined,
+      path: `${url.pathname}${url.search}`,
+      method,
+      headers,
+    }, (incoming) => {
+      const chunks: Buffer[] = [];
+      incoming.on("data", (chunk: Buffer) => chunks.push(chunk));
+      incoming.on("error", reject);
+      incoming.on("end", () => {
+        decodeBody(Buffer.concat(chunks), String(incoming.headers["content-encoding"] ?? ""))
+          .then((decoded) => resolve({ status: incoming.statusCode ?? 0, statusText: incoming.statusMessage ?? "", headers: incoming.headers, body: decoded }))
+          .catch(reject);
+      });
+    });
+    // No idle timeout: a worker that is separating a four-minute mix sends
+    // nothing for minutes at a time, and that is not a broken connection.
+    outgoing.setTimeout(0);
+    outgoing.on("error", reject);
+    if (signal) {
+      const onAbort = (): void => { outgoing.destroy(abortError()); };
+      if (signal.aborted) { outgoing.destroy(abortError()); return; }
+      signal.addEventListener("abort", onAbort, { once: true });
+      outgoing.on("close", () => signal.removeEventListener("abort", onAbort));
+    }
+    if (body) outgoing.write(body);
+    outgoing.end();
+  });
+}
+
+export async function longRunningFetch(input: string | URL, init: RequestInit = {}): Promise<Response> {
+  let url = new URL(String(input));
+  let method = (init.method ?? "GET").toUpperCase();
+  let body = init.body === undefined || init.body === null ? undefined : Buffer.from(String(init.body));
+  const headers: Record<string, string> = {};
+  new Headers(init.headers ?? {}).forEach((value, key) => { headers[key] = value; });
+  if (!headers["accept-encoding"]) headers["accept-encoding"] = "gzip, deflate";
+  if (body) headers["content-length"] = String(body.byteLength);
+  const signal = init.signal as AbortSignal | null | undefined;
+  for (let hop = 0; hop <= MELODY_BASS_MAX_REDIRECTS; hop += 1) {
+    const raw = await requestOnce(url, method, headers, body, signal);
+    const location = raw.headers.location;
+    if (location && [301, 302, 303, 307, 308].includes(raw.status)) {
+      url = new URL(location, url);
+      if (raw.status === 303 || ((raw.status === 301 || raw.status === 302) && method !== "GET" && method !== "HEAD")) {
+        method = "GET";
+        body = undefined;
+        delete headers["content-length"];
+        delete headers["content-type"];
+      }
+      continue;
+    }
+    const responseHeaders = new Headers();
+    for (const [key, value] of Object.entries(raw.headers)) {
+      // The body has already been decoded; carrying its encoding forward would
+      // describe bytes that are no longer there.
+      if (key === "content-encoding" || key === "content-length" || value === undefined) continue;
+      for (const item of Array.isArray(value) ? value : [value]) responseHeaders.append(key, item);
+    }
+    // 204/304 must not carry a body; everything else does.
+    const carriesBody = raw.status !== 204 && raw.status !== 304;
+    return new Response(carriesBody ? new Uint8Array(raw.body) : null, { status: raw.status, statusText: raw.statusText, headers: responseHeaders });
+  }
+  throw new Error(`melody-bass worker redirected more than ${MELODY_BASS_MAX_REDIRECTS} times`);
+}
 
 export function melodyBassEndpoint(environment: NodeJS.ProcessEnv = process.env): { url: string; token: string } | { refusal: string } {
   const url = environment.MELODY_BASS_API_URL?.trim();
@@ -639,7 +799,9 @@ export async function requestMelodyBassWorker(
 ): Promise<WorkerResponse> {
   const endpoint = melodyBassEndpoint(options.environment);
   if ("refusal" in endpoint) throw new Error(endpoint.refusal);
-  const doFetch = options.fetchImpl ?? fetch;
+  // Not `fetch`: see `longRunningFetch` - the global one cannot wait past 300 s
+  // for the first response header, and this worker routinely takes longer.
+  const doFetch = options.fetchImpl ?? longRunningFetch;
   const response = await doFetch(`${endpoint.url}/transcribe`, {
     method: "POST",
     headers: { "content-type": "application/json", authorization: `Bearer ${endpoint.token}` },
@@ -651,7 +813,7 @@ export async function requestMelodyBassWorker(
       ...(input.maxSeconds ? { maxSeconds: input.maxSeconds } : {}),
       ...(input.basicPitch ? { basicPitch: input.basicPitch } : {}),
     }),
-    signal: AbortSignal.timeout(options.timeoutMs ?? 25 * 60_000),
+    signal: AbortSignal.timeout(options.timeoutMs ?? melodyBassTimeoutMs(options.environment)),
   });
   if (!response.ok) {
     const text = await response.text().catch(() => "");
@@ -708,6 +870,8 @@ export type StemPathResult = {
   lines: TrackerLine[];
   fusion: FusionResult;
   variant: PathVariant;
+  /** Trackers the worker could not run on this stem, by name and reason. */
+  trackerErrors: Record<string, string>;
 };
 
 export type PathVariant = {
@@ -738,7 +902,46 @@ export const DEFAULT_VARIANTS: Record<Register, PathVariant> = {
   bass: { anchorOrder: ["crepe", "pyin", "basic_pitch"], onsetSplit: false },
 };
 
-/** @deprecated read `DEFAULT_VARIANTS[register].anchorOrder`; this is the melody order, kept for callers that only read it. */
+/**
+ * A **sung** lead is a different problem, and PR-B22 measured it: on a
+ * synthetic sung-like lead whose pitch is known exactly (harmonic-rich, 12-cent
+ * vibrato, four phrases at the owner's tempo) Basic Pitch put **12 of 22 notes
+ * an octave out** - onset F1 1.000 but onset+pitch F1 **0.4545**, octave-error
+ * rate **0.5455** - while CREPE and pYIN were exact (F1 **1.000**, no octave
+ * errors). Anchored on Basic Pitch the fusion keeps the anchor's pitch and
+ * inherits the error; anchored on CREPE it does not.
+ *
+ * The owner's real song says the same thing from the other side. Same worker
+ * call, same tracker lines, only the anchor changed:
+ *
+ * ```
+ * anchor        notes  agreed  pitch range   chord-tone  OCTAVE_JUMP  canonical
+ * basic_pitch     758     461  46-84 (38st)      0.583           32        251 (3 warnings)
+ * crepe           941     486  46-61 (15st)      0.623            0        212 (0 warnings)
+ * pyin            228     112  48-77             0.746            0         29
+ * ```
+ *
+ * Bb2-C#4 is one singer; Bb2-C6 is a singer plus that singer's octave errors.
+ * Those three surviving warnings are not cosmetic: `validation.status` becomes
+ * `flagged` and `evaluateArrangementEligibility` blocks arrangement generation
+ * with no field a producer can confirm to clear it.
+ *
+ * So the anchor follows the **stem**, and each half keeps the measurement that
+ * earned it: the `vocals` stem is a voice and CREPE anchors it; the `other`
+ * stem (an instrumental lead sharing a stem with everything that is not drums
+ * or bass) keeps Basic Pitch, which is what ANALYSIS_GOLD_V1's 21 instrumental
+ * works measured (0.717 vs 0.678 for a CREPE anchor). Nothing was tuned to
+ * make a number look better; the two cases are different and are measured
+ * separately.
+ */
+export const VOCAL_MELODY_VARIANT: PathVariant = { anchorOrder: ["crepe", "pyin", "basic_pitch"], onsetSplit: true };
+
+/** The measured default for this register on this stem. */
+export function variantFor(register: Register, stem: string): PathVariant {
+  return register === "melody" && stem === "vocals" ? VOCAL_MELODY_VARIANT : DEFAULT_VARIANTS[register];
+}
+
+/** @deprecated read `variantFor(register, stem).anchorOrder`; this is the instrumental melody order, kept for callers that only read it. */
 export const ANCHOR_ORDER: readonly TrackerId[] = DEFAULT_VARIANTS.melody.anchorOrder;
 
 export function stemPathFromTrack(
@@ -747,12 +950,12 @@ export function stemPathFromTrack(
   source: string,
   options: { anchorOrder?: readonly TrackerId[]; onsetSplit?: boolean; segmentation?: SegmentationOptions } = {},
 ): StemPathResult {
-  const defaults = DEFAULT_VARIANTS[register];
+  const defaults = variantFor(register, track.stem);
   const variant: PathVariant = { anchorOrder: options.anchorOrder ?? defaults.anchorOrder, onsetSplit: options.onsetSplit ?? defaults.onsetSplit };
   const lines = linesFromTrack(track, register, { segmentation: options.segmentation, onsetSplit: variant.onsetSplit });
   const ordered = variant.anchorOrder.map((tracker) => lines.find((line) => line.tracker === tracker)).filter((line): line is TrackerLine => Boolean(line));
   const fusion = fuseTrackers(ordered.map((line) => ({ tracker: line.tracker, notes: line.notes })), { source });
-  return { register, stem: track.stem, lines, fusion, variant };
+  return { register, stem: track.stem, lines, fusion, variant, trackerErrors: track.trackerErrors ?? {} };
 }
 
 export type MelodyStem = "vocals" | "other";
@@ -776,8 +979,28 @@ export type MelodyBassPathOutcome = {
   /** The stem the melody line came from, and whether the RMS rule or the caller chose it. */
   melodyStem: MelodyStem;
   melodyStemChosenBy: "rule" | "caller";
-  worker: { version: string; imageEvidence: string | null; separationSeconds: number | null; seconds: number; calls: number; stems: Record<string, { rmsDbfs: number }> };
+  worker: {
+    version: string;
+    imageEvidence: string | null;
+    separationSeconds: number | null;
+    seconds: number;
+    calls: number;
+    stems: Record<string, { rmsDbfs: number }>;
+    /** The identity the worker stamped on the result, or null from a worker too old to stamp one. */
+    identity: WorkerIdentity | null;
+  };
 };
+
+/**
+ * The version a provenance record carries for a result. A run whose worker was
+ * not the pinned image says so in the version itself, where no consumer can
+ * miss it: `1.0.0+unpinned_local`.
+ */
+export function provenanceVersion(identity: WorkerIdentity | null | undefined): string {
+  return !identity || identity.mode === "pinned"
+    ? MELODY_BASS_PATH_VERSION
+    : `${MELODY_BASS_PATH_VERSION}+${identity.mode}`;
+}
 
 /**
  * The whole path on one full mix: separate, track the melody stem in the
@@ -790,13 +1013,18 @@ export type MelodyBassPathOutcome = {
  */
 export async function runMelodyBassPath(
   sourceUrl: string,
-  options: { environment?: NodeJS.ProcessEnv; maxSeconds?: number; fetchImpl?: typeof fetch; melodyStem?: MelodyStem | "auto" } = {},
+  options: { environment?: NodeJS.ProcessEnv; maxSeconds?: number; fetchImpl?: typeof fetch; melodyStem?: MelodyStem | "auto"; timeoutMs?: number; trackers?: readonly TrackerId[] } = {},
 ): Promise<MelodyBassPathOutcome> {
   const requested = options.melodyStem ?? "auto";
-  const requestOptions = { environment: options.environment, fetchImpl: options.fetchImpl };
+  const requestOptions = { environment: options.environment, fetchImpl: options.fetchImpl, timeoutMs: options.timeoutMs };
+  // All three unless the caller names fewer. A tracker that a machine cannot
+  // run - pYIN's FFT over a four-minute stem is the largest allocation in the
+  // worker - is then an explicit, named subset whose absence shows up in
+  // `fusion.stats.trackersUsed`, never a silent degradation.
+  const trackers = options.trackers?.length ? [...options.trackers] : undefined;
   const firstStem: MelodyStem = requested === "other" ? "other" : "vocals";
   const first = await requestMelodyBassWorker(
-    { sourceUrl, mode: "mix", stems: [{ name: firstStem, register: "melody" }, { name: "bass", register: "bass" }], maxSeconds: options.maxSeconds },
+    { sourceUrl, mode: "mix", stems: [{ name: firstStem, register: "melody" }, { name: "bass", register: "bass" }], maxSeconds: options.maxSeconds, ...(trackers ? { trackers } : {}) },
     requestOptions,
   );
   let melodyStem = firstStem;
@@ -804,7 +1032,7 @@ export async function runMelodyBassPath(
   let second: WorkerResponse | null = null;
   if (requested === "auto" && chooseMelodyStem(first.separation?.stems) === "other") {
     second = await requestMelodyBassWorker(
-      { sourceUrl, mode: "mix", stems: [{ name: "other", register: "melody" }], maxSeconds: options.maxSeconds },
+      { sourceUrl, mode: "mix", stems: [{ name: "other", register: "melody" }], maxSeconds: options.maxSeconds, ...(trackers ? { trackers } : {}) },
       requestOptions,
     );
     melodyStem = "other";
@@ -823,6 +1051,9 @@ export async function runMelodyBassPath(
       seconds: round(first.seconds + (second?.seconds ?? 0), 3),
       calls: second ? 2 : 1,
       stems: first.separation?.stems ?? {},
+      // The stem the melody came from decides the identity that matters; when
+      // a second call fetched it, that call's identity is the one reported.
+      identity: (second ?? first).identity ?? null,
     },
   };
 }
@@ -885,7 +1116,7 @@ export const MELODY_STEM_PATH_MAX_SECONDS = 900;
  */
 export async function melodyStemPathForAnalysis(
   input: { sourceUrl: string | null; sourceType: string; durationSeconds?: number },
-  options: { environment?: NodeJS.ProcessEnv; fetchImpl?: typeof fetch } = {},
+  options: { environment?: NodeJS.ProcessEnv; fetchImpl?: typeof fetch; trackers?: readonly TrackerId[] } = {},
 ): Promise<MelodyStemPathForAnalysis> {
   const environment = options.environment ?? process.env;
   const none = (status: "unavailable" | "failed", errorCode: string, errorMessage: string): MelodyStemPathForAnalysis => ({
@@ -902,10 +1133,11 @@ export async function melodyStemPathForAnalysis(
   if ("refusal" in endpoint) return none("unavailable", "not-configured", endpoint.refusal);
   if (!input.sourceUrl) return none("unavailable", "source-unavailable", "a leased source URL could not be created");
   try {
-    const outcome = await runMelodyBassPath(input.sourceUrl, { environment, fetchImpl: options.fetchImpl, maxSeconds: MELODY_STEM_PATH_MAX_SECONDS });
+    const outcome = await runMelodyBassPath(input.sourceUrl, { environment, fetchImpl: options.fetchImpl, maxSeconds: MELODY_STEM_PATH_MAX_SECONDS, trackers: options.trackers });
     const transcription = melodyTranscriptionResult(outcome);
     const bassEvidence = bassEvidenceFromOutcome(outcome);
     const stats = outcome.melody?.fusion.stats;
+    const identity = outcome.worker.identity;
     return {
       transcription,
       bassEvidence,
@@ -913,7 +1145,9 @@ export async function melodyStemPathForAnalysis(
       provenance: [{
         capability: "melody",
         provider: MELODY_STEM_PATH_PROVIDER,
-        version: MELODY_BASS_PATH_VERSION,
+        // An unpinned worker is named as one here; nothing downstream can read
+        // this record as the attested image.
+        version: provenanceVersion(identity),
         status: transcription ? "ready" : "unavailable",
         attempts: outcome.worker.calls,
         ...(transcription ? {} : { errorCode: "no-line", errorMessage: `no melody line on the ${outcome.melodyStem} stem (trackers: ${stats?.trackersUsed.join(", ") || "none"})` }),

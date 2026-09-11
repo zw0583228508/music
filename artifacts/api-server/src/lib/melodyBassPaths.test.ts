@@ -1,11 +1,20 @@
 import assert from "node:assert/strict";
+import { createServer } from "node:http";
 import test from "node:test";
+import { gzipSync } from "node:zlib";
 import {
   ANCHOR_ORDER,
   DEFAULT_SEGMENTATION,
   DEFAULT_VARIANTS,
   splitAtOnsets,
+  MELODY_BASS_DEFAULT_TIMEOUT_MS,
+  MELODY_BASS_PATH_VERSION,
   MELODY_STEM_PATH_PROVIDER,
+  longRunningFetch,
+  melodyBassTimeoutMs,
+  provenanceVersion,
+  variantFor,
+  VOCAL_MELODY_VARIANT,
   REGISTER_RANGE,
   bassEvidenceFromOutcome,
   canonicalMelodyAcceptance,
@@ -27,6 +36,7 @@ import {
   stemPathFromTrack,
   type PitchFrame,
   type TrackedNote,
+  type WorkerIdentity,
   type WorkerTrack,
 } from "./melodyBassPaths";
 
@@ -290,9 +300,22 @@ test("linesFromTrack and stemPathFromTrack build one line per tracker and fuse i
   assert.equal(path.fusion.stats.disagreed, 0, "the repair happened before fusion, so nothing is contested");
   assert.equal(path.fusion.notes.length, 3);
   assert.equal(path.fusion.confidence, 1);
-  const defaults = stemPathFromTrack(track, "melody", MELODY_STEM_PATH_PROVIDER);
-  assert.deepEqual(defaults.fusion.stats.trackersUsed, ["basic_pitch", "crepe", "pyin"], "the melody default anchors on Basic Pitch");
-  assert.equal(defaults.fusion.stats.agreed, 3);
+  // PR-B22: the anchor follows the stem. A voice is anchored by CREPE (Basic
+  // Pitch was octave-wrong on 12 of 22 notes of a sung lead whose pitch was
+  // known); an instrumental lead in the `other` stem keeps the Basic Pitch
+  // anchor ANALYSIS_GOLD_V1's 21 works measured.
+  const sung = stemPathFromTrack(track, "melody", MELODY_STEM_PATH_PROVIDER);
+  assert.deepEqual(sung.fusion.stats.trackersUsed, ["crepe", "pyin", "basic_pitch"], "a vocal stem is anchored by CREPE");
+  assert.deepEqual(sung.variant, VOCAL_MELODY_VARIANT);
+  assert.equal(sung.fusion.stats.agreed, 3);
+  const instrumental = stemPathFromTrack({ ...track, stem: "other" }, "melody", MELODY_STEM_PATH_PROVIDER);
+  assert.deepEqual(instrumental.fusion.stats.trackersUsed, ["basic_pitch", "crepe", "pyin"], "an instrumental lead keeps the measured Basic Pitch anchor");
+  assert.deepEqual(instrumental.variant, DEFAULT_VARIANTS.melody);
+  assert.deepEqual(variantFor("melody", "vocals"), VOCAL_MELODY_VARIANT);
+  assert.deepEqual(variantFor("melody", "other"), DEFAULT_VARIANTS.melody);
+  assert.deepEqual(variantFor("bass", "bass"), DEFAULT_VARIANTS.bass);
+  // An explicit anchorOrder still wins over both.
+  assert.deepEqual(stemPathFromTrack(track, "melody", MELODY_STEM_PATH_PROVIDER, { anchorOrder: ["basic_pitch", "crepe"] }).fusion.stats.trackersUsed, ["basic_pitch", "crepe"]);
   assert.equal(ANCHOR_ORDER, DEFAULT_VARIANTS.melody.anchorOrder);
 });
 
@@ -307,7 +330,7 @@ test("melodyTranscriptionResult and bassEvidenceFromOutcome carry only what the 
     bass: stemPathFromTrack(bassTrack, "bass", "BASS_STEM_PATH_V1"),
     melodyStem: "vocals" as const,
     melodyStemChosenBy: "rule" as const,
-    worker: { version: "1.0.0", imageEvidence: null, separationSeconds: 1, seconds: 2, calls: 1, stems: {} },
+    worker: { version: "1.0.0", imageEvidence: null, separationSeconds: 1, seconds: 2, calls: 1, stems: {}, identity: null },
   };
   const transcription = melodyTranscriptionResult(outcome);
   assert.equal(transcription?.providerId, MELODY_STEM_PATH_PROVIDER);
@@ -440,4 +463,183 @@ test("melodyStemPathForAnalysis: off by default, a provenance record when it can
   assert.equal(canonicalMelodyAcceptance(ran.transcription!, { durationSeconds: 60 }).canonicalNotes, 0);
   const fullMix = { providerId: "BASIC_PITCH" as const, version: "0.4.0", confidence: 0.5, notes: ran.transcription!.notes.map((n) => ({ ...n, confidence: 0.6, source: "BASIC_PITCH" })) };
   assert.equal(canonicalMelodyAcceptance(ran.transcription!, { durationSeconds: 60, fullMix }).canonicalNotesWithFullMix, 2);
+});
+
+// ---------------------------------------------------------------------------
+// PR-B22: what the path met when it was first run on real bytes.
+// ---------------------------------------------------------------------------
+
+test("the call is bounded by the cost the worker documents, not by a number shorter than it", () => {
+  // services/melody-bass-worker/README.md: htdemucs ~0.5 s/s and CREPE full
+  // ~2.3 s/s *per stem* on CPU - "about 50 minutes end to end" for a song of
+  // this length. A 25-minute bound aborted the first real run of this path
+  // mid-separation; the default must not be shorter than the documented cost.
+  assert.ok(MELODY_BASS_DEFAULT_TIMEOUT_MS >= 50 * 60_000, `${MELODY_BASS_DEFAULT_TIMEOUT_MS} ms is under the documented cost`);
+  assert.equal(melodyBassTimeoutMs({}), MELODY_BASS_DEFAULT_TIMEOUT_MS);
+  assert.equal(melodyBassTimeoutMs({ MELODY_BASS_TIMEOUT_MS: "900000" }), 900_000);
+  assert.equal(melodyBassTimeoutMs({ MELODY_BASS_TIMEOUT_MS: " 60000 " }), 60_000);
+  assert.equal(melodyBassTimeoutMs({ MELODY_BASS_TIMEOUT_MS: "not-a-number" }), MELODY_BASS_DEFAULT_TIMEOUT_MS);
+  assert.equal(melodyBassTimeoutMs({ MELODY_BASS_TIMEOUT_MS: "-1" }), MELODY_BASS_DEFAULT_TIMEOUT_MS);
+});
+
+test("the configured bound is the signal the request actually carries", async () => {
+  const hanging = ((_url: string | URL | Request, init?: RequestInit) => new Promise<Response>((_resolve, reject) => {
+    init?.signal?.addEventListener("abort", () => reject(new Error("aborted by signal")));
+  })) as unknown as typeof fetch;
+  const environment = { MELODY_BASS_API_URL: "https://w.example", MELODY_BASS_API_TOKEN: "t", MELODY_BASS_TIMEOUT_MS: "5" };
+  await assert.rejects(
+    requestMelodyBassWorker({ sourceUrl: "https://lease.example/a/x", stems: [{ name: "vocals", register: "melody" }] }, { environment, fetchImpl: hanging }),
+    /aborted by signal/,
+  );
+  // An explicit timeoutMs still wins over the environment.
+  await assert.rejects(
+    requestMelodyBassWorker({ sourceUrl: "https://lease.example/a/x", stems: [{ name: "vocals", register: "melody" }] }, { environment: { ...environment, MELODY_BASS_TIMEOUT_MS: "600000" }, fetchImpl: hanging, timeoutMs: 5 }),
+    /aborted by signal/,
+  );
+});
+
+test("an unpinned worker is named as one in the provenance version and never passes for the pinned image", () => {
+  assert.equal(provenanceVersion(null), MELODY_BASS_PATH_VERSION);
+  assert.equal(provenanceVersion({ healthy: true, mode: "pinned", pinDeviations: [] }), MELODY_BASS_PATH_VERSION);
+  assert.equal(provenanceVersion({ healthy: false, mode: "unpinned_local", pinDeviations: ["package:torch"] }), `${MELODY_BASS_PATH_VERSION}+unpinned_local`);
+  assert.equal(provenanceVersion({ healthy: false, mode: "unverified", pinDeviations: ["demucs_checkpoint_sha256"] }), `${MELODY_BASS_PATH_VERSION}+unverified`);
+});
+
+/** The same worker as `fakeWorker`, with the identity stamp a real one returns. */
+function fakeWorkerWithIdentity(identity: WorkerIdentity | null): typeof fetch {
+  const log: string[][] = [];
+  const inner = fakeWorker(-22, log);
+  return (async (url: string | URL | Request, init?: RequestInit) => {
+    const response = await inner(url, init);
+    const payload = await response.json() as Record<string, unknown>;
+    if (identity) payload.identity = identity;
+    return new Response(JSON.stringify(payload), { status: 200 });
+  }) as unknown as typeof fetch;
+}
+
+test("the identity that produced a line travels with it into the outcome and the provenance record", async () => {
+  const environment = { MELODY_STEM_PATH_V1: "1", MELODY_BASS_API_URL: "https://w.example", MELODY_BASS_API_TOKEN: "t" };
+  const unpinned: WorkerIdentity = { healthy: false, mode: "unpinned_local", pinDeviations: ["package:torch", "build_time_smoke"] };
+  const local = await melodyStemPathForAnalysis({ sourceUrl: "https://lease.example/a/x", sourceType: "FULL_SONG", durationSeconds: 60 }, { environment, fetchImpl: fakeWorkerWithIdentity(unpinned) });
+  assert.deepEqual(local.outcome?.worker.identity, unpinned);
+  assert.equal(local.provenance[0].version, `${MELODY_BASS_PATH_VERSION}+unpinned_local`);
+  assert.equal(local.provenance[0].status, "ready", "an unpinned run still produced a line; it is labelled, not discarded");
+
+  const pinned = await melodyStemPathForAnalysis({ sourceUrl: "https://lease.example/a/x", sourceType: "FULL_SONG", durationSeconds: 60 }, { environment, fetchImpl: fakeWorkerWithIdentity({ healthy: true, mode: "pinned", pinDeviations: [] }) });
+  assert.equal(pinned.provenance[0].version, MELODY_BASS_PATH_VERSION);
+
+  const silent = await melodyStemPathForAnalysis({ sourceUrl: "https://lease.example/a/x", sourceType: "FULL_SONG", durationSeconds: 60 }, { environment, fetchImpl: fakeWorkerWithIdentity(null) });
+  assert.equal(silent.outcome?.worker.identity, null);
+  assert.equal(silent.provenance[0].version, MELODY_BASS_PATH_VERSION, "a worker too old to stamp an identity is not accused of being unpinned");
+});
+
+test("longRunningFetch is a fetch that can wait: real sockets, real redirects, real gzip", async () => {
+  const seen: Array<{ method: string; url: string; auth: string | undefined; body: string }> = [];
+  const server = createServer((request, response) => {
+    const chunks: Buffer[] = [];
+    request.on("data", (chunk: Buffer) => chunks.push(chunk));
+    request.on("end", () => {
+      seen.push({ method: request.method ?? "", url: request.url ?? "", auth: request.headers.authorization, body: Buffer.concat(chunks).toString("utf8") });
+      if (request.url === "/slow") {
+        // Headers withheld for well over a second: nothing in this transport
+        // may give up on a worker that is merely thinking.
+        setTimeout(() => { response.writeHead(200, { "content-type": "application/json" }); response.end(JSON.stringify({ waited: true })); }, 1_200);
+        return;
+      }
+      if (request.url === "/redirect") { response.writeHead(303, { location: "/after" }); response.end(); return; }
+      if (request.url === "/after") { response.writeHead(200, { "content-type": "application/json" }); response.end(JSON.stringify({ hop: "after" })); return; }
+      if (request.url === "/gzip") {
+        const body = gzipSync(Buffer.from(JSON.stringify({ compressed: true })));
+        response.writeHead(200, { "content-type": "application/json", "content-encoding": "gzip" });
+        response.end(body);
+        return;
+      }
+      if (request.url === "/refuse") { response.writeHead(503, { "content-type": "text/plain" }); response.end("worker identity is not verified"); return; }
+      if (request.url === "/forever") return; // never answers; only the signal ends it
+      response.writeHead(200, { "content-type": "application/json" });
+      response.end(JSON.stringify({ echoed: JSON.parse(Buffer.concat(chunks).toString("utf8") || "null") }));
+    });
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const port = (server.address() as { port: number }).port;
+  const base = `http://127.0.0.1:${port}`;
+  try {
+    const posted = await longRunningFetch(`${base}/echo`, { method: "POST", headers: { "content-type": "application/json", authorization: "Bearer t" }, body: JSON.stringify({ a: 1 }) });
+    assert.equal(posted.status, 200);
+    assert.deepEqual(await posted.json(), { echoed: { a: 1 } });
+    assert.equal(seen[0].method, "POST");
+    assert.equal(seen[0].auth, "Bearer t");
+
+    const slow = await longRunningFetch(`${base}/slow`, { method: "POST", body: "{}" });
+    assert.deepEqual(await slow.json(), { waited: true });
+
+    const redirected = await longRunningFetch(`${base}/redirect`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ a: 1 }) });
+    assert.deepEqual(await redirected.json(), { hop: "after" });
+    const afterHop = seen[seen.length - 1];
+    assert.equal(afterHop.method, "GET", "a 303 becomes a GET, as fetch does - this is how Modal bridges its own HTTP limit");
+    assert.equal(afterHop.body, "");
+
+    assert.deepEqual(await (await longRunningFetch(`${base}/gzip`)).json(), { compressed: true });
+
+    const refused = await longRunningFetch(`${base}/refuse`);
+    assert.equal(refused.ok, false);
+    assert.equal(refused.status, 503);
+    assert.match(await refused.text(), /identity is not verified/);
+
+    await assert.rejects(
+      longRunningFetch(`${base}/forever`, { method: "POST", body: "{}", signal: AbortSignal.timeout(150) }),
+      (error: Error) => error.name === "AbortError",
+    );
+  } finally {
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+  }
+});
+
+test("requestMelodyBassWorker uses the waiting transport by default", async () => {
+  // The regression this guards: the default was the global fetch, whose 300 s
+  // header ceiling aborted the first real run of this path at 311 s.
+  const server = createServer((request, response) => {
+    const chunks: Buffer[] = [];
+    request.on("data", (chunk: Buffer) => chunks.push(chunk));
+    request.on("end", () => {
+      const body = JSON.parse(Buffer.concat(chunks).toString("utf8")) as { stems: unknown };
+      response.writeHead(200, { "content-type": "application/json" });
+      response.end(JSON.stringify({
+        contractVersion: "1.0", provider: "MELODY_BASS_WORKER", version: "1.0.0", mode: "mix",
+        audio: { durationSeconds: 1, sampleRate: 44100, channels: 2 }, separation: null, tracks: {}, seconds: 1,
+        identity: { healthy: true, mode: "pinned", pinDeviations: [] }, echoedStems: body.stems,
+      }));
+    });
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const port = (server.address() as { port: number }).port;
+  try {
+    const payload = await requestMelodyBassWorker(
+      { sourceUrl: "http://127.0.0.1/lease", stems: [{ name: "vocals", register: "melody" }] },
+      { environment: { MELODY_BASS_API_URL: `http://127.0.0.1:${port}`, MELODY_BASS_API_TOKEN: "t" } },
+    );
+    assert.equal(payload.provider, "MELODY_BASS_WORKER");
+    assert.deepEqual(payload.identity, { healthy: true, mode: "pinned", pinDeviations: [] });
+  } finally {
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+  }
+});
+
+test("a tracker the worker could not run is named, and the line is built from the ones that did", () => {
+  const track: WorkerTrack = {
+    stem: "vocals", register: "melody", rmsDbfs: -17, durationSeconds: 1,
+    crepe: { frames: framesFor([[67, 0.5], [69, 0.5]], 1), seconds: 1, hopSeconds: 0.01 },
+    basic_pitch: { notes: notesOf([[0, 0.5, 67, 1], [0.5, 1, 69, 1]]), seconds: 1, params: {} },
+    trackerErrors: { pyin: "MemoryError" },
+  };
+  const path = stemPathFromTrack(track, "melody", MELODY_STEM_PATH_PROVIDER);
+  assert.deepEqual(path.trackerErrors, { pyin: "MemoryError" });
+  assert.deepEqual(path.fusion.stats.trackersUsed, ["crepe", "basic_pitch"], "the fusion says who spoke, in the vocal stem's anchor order");
+  assert.equal(path.fusion.notes.length, 2);
+  // Two of three still corroborate each other; the result is not scored as if
+  // three had agreed - `trackersUsed` is the record of that.
+  assert.equal(path.fusion.stats.agreed, 2);
+  // A worker that reports nothing has nothing to report - an empty record, not
+  // a missing one, so a reader never has to guess which it is.
+  assert.deepEqual(stemPathFromTrack({ ...track, trackerErrors: undefined }, "melody", MELODY_STEM_PATH_PROVIDER).trackerErrors, {});
 });
