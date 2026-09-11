@@ -10910,6 +10910,20 @@ unchanged, and now has operations that can fire. *Note-level operators* —
   `unknown` where it cannot compare — which is correct, and less than B-05c
   intended. **Finding for B-05a/B-05c: `buildOwner` does not capture every part
   task.**
+- **Two property suites are red, and they were red before this stream** —
+  isolated by a control rather than assumed: `invariants/harmony.property`
+  and `invariants/wiring.property` were run from a detached checkout of the
+  base commit `3b9ace3` and fail there with the *same* messages, seeds and
+  counts (harmony: pass 3 / fail 3 / todo 3, the same `seed 1409` and `seed
+  1412` slash findings and the same “4,572 exact of 15,252” transposition
+  table; wiring: pass 1 / fail 1 / todo 2, the same `selection_respects_selectable`
+  and `composer_receives_its_context` lines). They name `harmonyPlan/bassLine.ts`,
+  `harmonyPlan/voicings.ts`, `candidateRanking.ts` and the orchestrator's
+  default compose lambda — none of which this stream touches. Every other
+  group is green: 15 of 16 focused groups pass in full (`arrangement-brain`
+  19/19, `brain-invariants` 13/13 including determinism, scope preservation,
+  playability, fuzz and the B-12 golden), and `brain-invariants-b12b` is 8/10
+  with exactly those two.
 - **No benchmark comparison against the frozen baseline was run** (R-1a P1-5's
   24 kHz render defect is still unfixed and would dominate the audio half).
 - **The judge still refuses the owner's arrangement.** One blocking finding
