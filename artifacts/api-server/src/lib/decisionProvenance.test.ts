@@ -107,7 +107,11 @@ test("the composer contract: a composing layer registers a decision, tags its no
   const provenance = candidateProvenance(candidate, run);
   const harmony = provenance.decisions.filter((d) => d.layer === "harmony" && d.kind === "voicing");
   assert.ok(harmony.length > 0, "the composer's harmony decisions are in the candidate's registry");
-  const bedTrack = candidate.trackModels.find((t) => t.notes.some((n) => n.decisionId));
+  // The track this test is about is the one the *composer* tagged. Since B-20
+  // an accepted note-repair pass also tags the notes it moved
+  // (`compose:note_repair:…`), so "the first track with any tagged note" is no
+  // longer the same thing as "the bed the test composer voiced".
+  const bedTrack = candidate.trackModels.find((t) => t.notes.some((n) => n.decisionId?.startsWith("harmony:voicing:")));
   assert.ok(bedTrack, "tagged notes survive performance and playability repair");
   const trackProvenance = provenance.byTrack[bedTrack!.id];
   assert.ok(trackProvenance.ranges.some((r) => r.decisionIds.some((id) => id.startsWith("harmony:voicing:"))), "the tagged decision is a range of the track");

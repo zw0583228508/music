@@ -64,6 +64,7 @@ import { checkArrangementConstraints } from "./musicalConstraints";
 import { critiqueArrangement } from "./musicCritic";
 import { applyPlanRepairs, runBacktrackingRepairLoop, runCriticRepairLoop, type RepairApplier, type RepairExecution } from "./criticRepairLoop";
 import {
+  applyNoteRepairOperation,
   applyRepairOperationToPlan,
   familiesSilencedByPass,
   mergeDecisionRegistries,
@@ -836,6 +837,41 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
         notesAreFreshFromPlan: true,
         initialExtra: { findings: composition.findings, parts: composition.parts, decisions: composition.decisions },
         execute: (operation, state, pass, extra): RepairExecution<RepairExtra> => {
+          // B-20: a `compose.<critic operation>` operation edits the notes the
+          // composer wrote, in one part and one bar window, rather than
+          // reopening a plan layer and recomposing. It is the only operation
+          // shape that can move a note whose cause is not a plan decision —
+          // and the judge's `whatToFix` names exactly these. Everything else
+          // below is unchanged.
+          const noteEdit = applyNoteRepairOperation(
+            operation,
+            { songModel, plan: state.plan, timing: { tempoBpm, meter } },
+            state.trackModels,
+          );
+          if (noteEdit) {
+            if ("rejected" in noteEdit) return noteEdit;
+            const previous = extra ?? { findings: composition.findings, parts: composition.parts, decisions: composition.decisions };
+            // No task was recomposed, so findings and part telemetry stand; the
+            // registry gains the operator's own decision and the changed notes
+            // carry its id (B-11: the finer grain wins).
+            const registry = new DecisionRegistry();
+            for (const record of previous.decisions.decisions()) registry.register({ ...record });
+            for (const instrument of new Set(state.trackModels.map((t) => t.instrument))) {
+              for (const range of previous.decisions.rangesFor(instrument)) registry.attach(instrument, range.startBar, range.endBar, range.decisionIds);
+            }
+            const decision = registry.register(noteEdit.decision);
+            registry.attach(noteEdit.instrument, operation.scope.startBar, operation.scope.endBar, [decision.id]);
+            const measured = Object.entries(noteEdit.measured).map(([k, v]) => `${k}=${v}`).join(", ");
+            return {
+              plan: state.plan,
+              trackModels: noteEdit.trackModels,
+              changed: { plan: false, notes: true },
+              scope: { ...operation.scope, instruments: [noteEdit.instrument], trackIds: [noteEdit.trackId] },
+              note: `${noteEdit.note} [${measured}]`,
+              decisionIdsChanged: [decision.id],
+              extra: { findings: previous.findings, parts: previous.parts, decisions: registry },
+            };
+          }
           const currentLayers = layersOf(state.plan) ?? baseLayers;
           const currentPartPlan = state.plan.partComposerPlan ?? partPlan;
           const edit = applyRepairOperationToPlan(operation, executorContext, currentLayers, currentPartPlan);

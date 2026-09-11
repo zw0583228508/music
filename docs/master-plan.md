@@ -10676,6 +10676,261 @@ counts too, and those still move — the cause is isolated and named below.
   - **Nine anchors and one song.** "Detected on every anchor" means nine
     synthetic benchmark cases; the exact 95 % interval at 9/9 is [0.66, 1].
 
+### PR-B20 — Brain B-20: repair that changes the notes
+
+The repair stage can now perform the repairs the critics **name**. Every
+note-level critic writes a `recommendedRepair.operation` — `revoice_to_chord_tones`,
+`requantise_part`, `lower_top_voice_to_ceiling` and thirty more — and until now
+nothing read that field: the repair planner had its own table of *plan-layer*
+operations and there was no member in common between the two vocabularies. So a
+defect whose cause is not a plan decision had no operation that could touch it.
+On the owner's v7a arrangement the judge's one **blocking** finding —
+`harmony:clash_share`, the Outro string bed, 8 of 18 notes clashing, 48.6 % of
+the part's sounding time, `whatToFix: revoice_to_chord_tones` — was planned as
+`harmony.resolve_voicings` with `leverAvailable: false` ("recompose the part
+from the plan it already has"), the deterministic composer wrote the same notes,
+and pass 1 of the shipped run records the result in its own words: *"the
+operation changed neither the plan nor the notes"*.
+
+**The diagnosis, measured before anything was changed.** `repair-diagnose-entry.ts`
+ran the production planner over the owner's saved candidate and printed, per
+observation the judge calls out, what the planner did with it: the critics named
+**33** distinct repair operations, the planner offered **8**, and *no operation
+appeared in both lists*. That is charter rule 6 — two sources of truth for one
+concept, here "what should be done about this observation" — in its second form.
+B-06's private kind→code map was already gone (`failureCodeOf` delegates to
+`codeForKind`); this was the next one, and it was not a map, it was a missing
+join.
+
+**The join.** `src/lib/repair/noteOperators.ts` (new) registers an operator
+under **the critic's own operation string** and declares the observation kinds
+whose critic writes it. `repairPlanner.ts` drafts `compose.<that string>` from
+the observation itself — one part, that observation's own bars — and a group one
+of whose observations an operator answers now always reaches the composer's
+layer, whoever the critics voted for (the vote says where a defect came *from*;
+the operator says what can be done about the notes that are *there*, and on a
+plan layer with no lever those are not the same question). An operation whose
+layer has no lever no longer outranks one that can move the notes: it becomes
+the fallback, keeping its record of the missing lever. `repairExecutor.ts` gains
+`applyNoteRepairOperation`, which runs the operator, verifies the window with
+the same byte-equality check B-06 used (`notesOutsideScopePreserved`) and hands
+back the decision to register; the orchestrator's `execute` closure tries it
+first and falls through to the plan path unchanged. A registered name that no
+critic emits fails a test, so the two vocabularies cannot drift apart again.
+
+**The three operators.** Each changes the notes of one part inside one bar
+window, leaves everything else byte-identical, refuses rather than leave the
+part breaking a playability rule it did not already break (`checkPlayabilityRules`
+— B-13's single truth, imported), and stamps every note it moved with its own
+decision id (`compose:note_repair:<operation>/<trackId>/<bars>`) so
+`decisionTrace` can answer "why did *this* note change". The measurements they
+work from are the critics' own: the clash set is `readPartHarmony`, the grid is
+`gridProfile` / `gridDeviation`, the ceiling is `comfortableCeilingFor` (the
+register critic's reading of `instrumentProfile.ts`). Nothing re-derives a
+threshold.
+
+- **`revoice_to_chord_tones`** moves the notes the harmony critic counted as
+  *clashes* — not its passing tones, neighbours, suspensions, anticipations or
+  appoggiaturas — onto a tone of the chord sounding under them: nearest first,
+  downward on a tie, at most a minor third, never onto a pitch the part is
+  already sounding, never outside the playable range.
+- **`requantise_part`** pulls onsets onto the nearest line of *the grid the
+  groove critic measured them against* (its own sixteenth/triplet choice). The
+  note moves whole — its duration is the composer's decision, and a quantise
+  that shortened notes to reach a grid line was measured breaking `min_duration`
+  on three of six parts of the owner's song. Two rules keep it inside its
+  contract: the release follows the onset (a note this operator may touch is
+  released where the next attack lands, at `LEGATO_TOLERANCE_SECONDS`), and an
+  onset is never pulled *under* a note whose onset lies outside the repaired
+  bars, because nothing here is allowed to release that note. Without those two
+  the owner's Verse 2 string bed went from four sounding voices to seven against
+  a ceiling of four and the whole edit was (rightly) refused.
+- **`lower_top_voice_to_ceiling`** opens the voicing downward: whatever is the
+  top voice of an onset cluster while it sits above the ceiling the part's own
+  profile gives it *in the role it holds* is dropped by whole octaves until it
+  is under that ceiling — never below the instrument's comfortable floor, never
+  onto a pitch the part is already sounding.
+
+**One acceptance rule changed, and only one.** B-06 kept a pass only when every
+targeted observation had *disappeared*. That is right for a plan operation and
+wrong for an operator working against a measured share: the revoicing takes the
+owner's Outro clash share from **0.4857 to 0.1302** and its chord-tone share
+from **0.416 to 0.8698** — the judge's blocking count falls 2 → 1 and its burden
+602.7 → 482.1 — and the finding survives as **minor**, because 13 % is still over
+the harmony critic's 8 % minor threshold. Under B-06's rule that repair is
+thrown away and the blocking finding ships. So a target counts as remaining only
+while a finding of the same kind, at the same place, is still **at least as
+severe** (`observationStillAsBad`, `repairPlanner.ts`); `verdictWorsened` is
+untouched and still refuses any pass whose blocking count or summed priority
+burden rose at all.
+
+**Validated on the owner's song** (the v7a shipped notes; the production planner
+and the production acceptance rules, note operators live, plan-layer operations
+refused by the file harness because it runs no composer — stated, not hidden):
+
+| | blocking | major | minor | observations | judge burden |
+|---|---|---|---|---|---|
+| before | 2 | 25 | 66 | 93 | 602.72 |
+| after (4 accepted passes) | **1** | **22** | 69 | 92 | **423.73** |
+
+The accepted passes: `compose.revoice_to_chord_tones` on the Outro string bed
+(7 of 8 clashing notes moved; 1 had no free chord tone within three semitones
+and was left), `compose.requantise_part` on the Verse 3 bass (off-grid share
+0.357 → 0.000), on the Verse 2 string bed (0.317 → 0.000, 24 notes released
+where the next attack moved under them) and on the Chorus string bed (0.323 →
+0.000, 3 onsets blocked by a note outside the repaired bars). Per operator, run
+in isolation on every observation of its kind in that arrangement:
+`revoice_to_chord_tones` 4 offered / 3 cleared / 1 reduced to minor,
+`requantise_part` 8 offered / 8 cleared, `lower_top_voice_to_ceiling` 7 offered
+/ 6 cleared / 1 refused (the piano's two-hand span). No isolated run left the
+judge worse.
+
+**The seeded corpus, through the production orchestrator.** B-06's eight defects
+(`__fixtures__/b06DefectCorpus.ts`, `orchestrateArrangement` with the stage on
+and off): **8 of 8 now accept at least one pass**, **7 of 8** are attributed
+to the layer that caused them (B-06 recorded 4 of 8 — the note-seeded defects
+now reach the composer's layer, which is the layer that caused them), the
+judge's burden falls on **every** row and rises on none — `bed_two_octaves_up`
+660.3 → 489.3, `bed_single_voice` 412.7 → 342.6, `owner_bed_single_voice` 411.0
+→ 345.8, `arrival_thinner_than_setup` 357.9 → 325.3, `tutti_everywhere` 373.1 →
+313.2, `repeat_no_development` 435.5 → 395.3, `climax_planned_thin` 363.5 →
+323.3, and the negative control `off_grid_harmony` 389.3 → 349.4 with the seeded
+defect still **not** claimed repaired. Defects whose own observations fully
+resolve: still 1 of 8 (`arrival_thinner_than_setup`, the number B-06 recorded),
+plus 4 of 7 on `bed_two_octaves_up` — the operators reduce, they do not always
+finish. How many passes the *base* stage accepted on this corpus is not
+recorded anywhere, so it is not claimed here; what B-06 recorded is 1 of 8
+repaired and 4 of 8 attributed, and those are the two numbers compared.
+
+**Tests** (`src/lib/repair/noteOperators.test.ts`, 13, registered as
+`brain-b20`). A positive control per operator: the defect is seeded with the
+shared corruption engine (`chord_tone_to_non_chord_tone`, `onset_jitter`, the
+part lifted an octave), the critic that owns it is shown to catch it, the
+operator repairs it, and the same critic is asked again — the measured share
+must fall and the finding must be gone or less severe. Plus: every registered
+operator's name is a name a critic actually emits (the join, asserted); the
+planner offers a note operation on notes fresh from the plan; the notes outside
+the window and every other part are byte-identical; every changed note carries
+the operator's decision id; a revoicing changes pitch and never time and a
+requantise changes time and never pitch; the operator refuses rather than break
+the playability contract; **the loop refuses a note pass whose verdict got worse
+and leaves the candidate byte-identical**; determinism; and a part or a bar range
+that is not there is refused with the reason. `brainB06Repair` (20) and the
+whole `arrangement-brain` group (19 bundles) stay green.
+
+**Evidence.** `docs/evidence/brain-b20-note-repair.json`
+(`scripts/brain-b20-evidence.mjs`): the two vocabularies with the operations
+still unimplemented listed by name, a positive-control row per operator per
+anchor with the judge's burden and blocking count before and after, the seeded
+corpus table, and the owner's-song block.
+
+**Capability ladder.** *Repair that changes notes and names the origin layer* —
+IMPLEMENTED ✓ INTEGRATED ✓ (the production repair stage of every orchestrated
+candidate) TESTED ✓ (13 tests, a positive control per operator, a refusal test
+per failure mode) BENCHMARKED ✓ (the seeded corpus and the golden fixture, both
+measured and named) VALIDATED ON OUTPUT — *symbolically* ✓ on the owner's song
+(the numbers above); **not** rendered or listened to. *Backtracking* —
+unchanged, and now has operations that can fire. *Note-level operators* —
+3 of the 33 the critics name.
+
+**Honest limits.**
+- **Nothing was rendered or listened to.** VALIDATED ON OUTPUT is claimed for
+  the symbolic measurement only.
+- **Three of thirty-three.** `compose_missing_part`, `add_rests`,
+  `fill_foundation_gaps`, `write_top_line`, `separate_registers`, `vary_rhythm`,
+  `shape_dynamics` and the rest are still unimplemented; the planner still sends
+  those groups to a plan layer or defers them. The full list is in the evidence.
+- **The owner's-song validation runs off files.** The plan-layer operations are
+  refused there because the harness has no composer; the production path is
+  covered by the seeded corpus, where both kinds of pass run. A full v8
+  arrangement through the API was not generated.
+- **The pass budget still decides what gets fixed.** Three by default, five at
+  most, dealt round-robin over operation shape. On the owner's song two register
+  findings clear in isolation (burden 602.7 → 586.1 and → 586.4) and the loop
+  never reaches them.
+- **`lower_top_voice_to_ceiling` cannot re-space a piano voicing.** Dropping the
+  top note an octave widens the chord past two hands, and the playability
+  contract refuses the whole edit (measured on the owner's keys in Chorus 3). A
+  drop-2 that moves an inner voice instead is the fix and is not implemented.
+- **`requantise_part` cannot cross its own window.** An onset that would move
+  under a note whose onset lies outside the repaired bars keeps its place (3 of
+  34 on the owner's Chorus string bed), because releasing that note is outside
+  the pass's scope. A bounded form of `playabilityRepair`'s polyphony release
+  would close it.
+- **The golden fixture was re-pinned, and the cause is this stream.** Every
+  *composer* digest is byte-identical on all nine benchmark cases — nothing in
+  the writers changed — and the *shipped-note* digests moved on seven of nine
+  (rock-full and ethnic-vocal are byte-identical). Note counts are unchanged
+  wherever a note operator did the work; four changed because the loop now
+  reaches plan-layer passes that used to sit behind a guaranteed no-op. The
+  cause is written into `referencePartComposer.golden.test.ts` as that file
+  requires.
+- **The critics' anchors are now built with the repair stage off**
+  (`critics/dimensions/anchors.ts`, `buildAnchor` and `buildOwner`, **and**
+  `critics/adversarial/anchors.ts`, which is a second, independent anchor
+  builder for the same corpus), and that is a change in files this stream does
+  not own. The reason is a coupling nobody
+  had noticed: an anchor is the subject a critic's control ledger and every
+  positive control are stated against, the repair stage is driven by those same
+  critics, so with the stage on every improvement in repair silently
+  recalibrates every critic control. It was not hypothetical — three of B-05c's
+  pinned numbers were measured *after* a repair: jazz-full's `vocal_masking`
+  count is 3, not 1 (B-06's `register.shift_section_band` was clearing two of
+  them); the owner anchor's `off_grid` findings are 12, of which **one** (not
+  two) is attributable to the performance stage; and the groove dimension scores
+  6.31 on the owner's song rather than exactly 0. Each is re-pinned with its
+  cause in the test that carries it. `dimensions/controlLedger.ts` was
+  regenerated with `B05A_WRITE_LEDGER=1` as its own test instructs: one
+  entry moved and no dimension changed status — `playability` gates on three
+  independent transforms instead of four (`octave_displacement@3` no longer
+  passes on the repair-free anchors); `docs/evidence/brain-b05a-critic-controls.json`
+  is the same regeneration and carries that number plus the anchors' own
+  note counts (jazz-full 1330 → 1389 without the repair stage). **There are two anchor builders for
+  one corpus** (`critics/dimensions/anchors.ts` and
+  `critics/adversarial/anchors.ts`), which is itself a second source of
+  truth worth unifying — a finding for B-05a/B-05b, not fixed here.
+- **One of B-05c's claims no longer holds, and it is flagged rather than
+  quietly relaxed.** `b05cEvidence.test.ts` asserted that the empty two-bar
+  intro no longer outranks the off-grid harmony. On the repair-free anchor it
+  does: four `top_line_above_comfortable_ceiling` refusals on the keys, which
+  B-06's stage had been clearing, now rank between them. R-1b P0-5's actual
+  claim — the two silent bars no longer *lead* the ordering — still holds (the
+  single-voice bed is #1, the intro #3). **B-05c's owner should decide whether
+  the other half is worth restoring another way.**
+- **`ownerComposedAnchor` has a hole, and it is not this stream's to fix.** The
+  composed capture in `anchors.ts buildOwner` misses the keys in Chorus, Verse 3
+  and the last chorus, the drums and percussion in the last chorus and the
+  strings in the Bridge and the last chorus — four of nine sections have no
+  composed notes for four of five parts. With the repair stage on, its
+  recompositions were *filling* that gap (and double-counting elsewhere: the
+  Verse 2 bass captured 40 composed notes for 20 shipped, the strings 128 for
+  60), so the isolating control that decides `compose` vs `perform` for
+  `off_grid` was partly reading the repair stage's own output as "the composed
+  notes". With the stage off the gap is visible and the dimension says
+  `unknown` where it cannot compare — which is correct, and less than B-05c
+  intended. **Finding for B-05a/B-05c: `buildOwner` does not capture every part
+  task.**
+- **Two property suites are red, and they were red before this stream** —
+  isolated by a control rather than assumed: `invariants/harmony.property`
+  and `invariants/wiring.property` were run from a detached checkout of the
+  base commit `3b9ace3` and fail there with the *same* messages, seeds and
+  counts (harmony: pass 3 / fail 3 / todo 3, the same `seed 1409` and `seed
+  1412` slash findings and the same “4,572 exact of 15,252” transposition
+  table; wiring: pass 1 / fail 1 / todo 2, the same `selection_respects_selectable`
+  and `composer_receives_its_context` lines). They name `harmonyPlan/bassLine.ts`,
+  `harmonyPlan/voicings.ts`, `candidateRanking.ts` and the orchestrator's
+  default compose lambda — none of which this stream touches. Every other
+  group is green: 15 of 16 focused groups pass in full (`arrangement-brain`
+  19/19, `brain-invariants` 13/13 including determinism, scope preservation,
+  playability, fuzz and the B-12 golden), and `brain-invariants-b12b` is 8/10
+  with exactly those two.
+- **No benchmark comparison against the frozen baseline was run** (R-1a P1-5's
+  24 kHz render defect is still unfixed and would dominate the audio half).
+- **The judge still refuses the owner's arrangement.** One blocking finding
+  remains (`orchestration:planned_family_silent` on the two-bar intro) and 22
+  majors. This stream removes one blocking finding and 3 majors; it does not
+  make the song releasable.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

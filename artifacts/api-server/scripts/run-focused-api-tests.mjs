@@ -842,6 +842,15 @@ const suites = {
       ["src/lib/brainB06Repair.test.ts", "brain-b06-repair.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  // B-20: the note-level repair operators — the operations the critics name in
+  // `recommendedRepair.operation`, implemented under those names, with a
+  // positive control each (seed the defect, the critic catches it, the operator
+  // repairs it, the critic is asked again).
+  "brain-b20": {
+    bundles: [
+      ["src/lib/repair/noteOperators.test.ts", "brain-b20-note-operators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-b11": {
     bundles: [
       ["src/lib/arrangementOrchestrator.b11.test.ts", "arrangement-orchestrator.b11.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],

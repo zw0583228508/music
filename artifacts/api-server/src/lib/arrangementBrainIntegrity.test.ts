@@ -104,14 +104,30 @@ test("probe 2: a pass that changes nothing is never a repair; a pass that change
   const plain = orchestrateArrangement({ songModel, candidateCount: 1, render: false, now: NOW });
   const candidate = plain.candidates[0];
   assert.ok(candidate.repair, "the loop ran a pass");
-  assert.equal(candidate.repair!.appliedPasses, 0);
-  assert.equal(candidate.repairApplied, false);
-  assert.ok(candidate.repair!.passes.every((p) => p.planChanged === false && p.notesChanged === false));
-  assert.equal(candidate.repair!.plan, plain.plan, "an unapplied loop returns the plan it was given");
   const repairStage = plain.stages.find((s) => s.stage === "repair")!;
-  assert.equal(repairStage.status, "skipped");
-  assert.match(repairStage.detail, /none changed the plan or the notes, so nothing was repaired/);
-  assert.equal(candidate.compositionCritique, candidate.initialCritique, "no recomposition: the composition critique is the initial one");
+  // B-20: this probe used to assert `appliedPasses === 0` on this corpus case,
+  // because in B-06 every operation the planner could name reopened a plan
+  // layer with no lever and the deterministic composer wrote the same notes
+  // back. That was the defect, not the invariant. The invariant is the one
+  // R-1a P1-4 asked for and it holds in both directions: a pass counts as a
+  // repair exactly when it changed the plan or the notes, and the stage's own
+  // record says which.
+  for (const pass of candidate.repair!.passes) {
+    if (pass.accepted) assert.ok(pass.planChanged || pass.notesChanged, `accepted pass ${pass.pass} changed nothing`);
+    else assert.ok(pass.planChanged === false && pass.notesChanged === false, `rejected pass ${pass.pass} left a change behind`);
+  }
+  const accepted = candidate.repair!.passes.filter((p) => p.accepted).length;
+  assert.equal(candidate.repair!.appliedPasses, accepted, "appliedPasses counts the accepted passes and nothing else");
+  assert.equal(candidate.repairApplied, accepted > 0);
+  if (accepted === 0) {
+    assert.equal(candidate.repair!.plan, plain.plan, "an unapplied loop returns the plan it was given");
+    assert.equal(repairStage.status, "skipped");
+    assert.match(repairStage.detail, /none changed the plan or the notes, so nothing was repaired/);
+    assert.equal(candidate.compositionCritique, candidate.initialCritique, "no recomposition: the composition critique is the initial one");
+  } else {
+    assert.equal(repairStage.status, "ok");
+    assert.notEqual(candidate.compositionCritique, candidate.initialCritique, "a repaired candidate's composition critique is of the repaired notes");
+  }
 
   // Positive control: an applier that adds strings to the chorus. The
   // orchestrator must recompose from that plan, so the strings exist.

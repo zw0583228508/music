@@ -64,7 +64,21 @@ test("performance telemetry measures every composed note, not only the engine's 
 
 test("the composer registry is per composition and empty for the reference composer; context passes are on the result", () => {
   const run = orchestrateArrangement({ songModel: buildBenchmarkSongModel(BENCHMARK_CORPUS[0]), candidateCount: 1, render: false, now: NOW });
-  assert.equal(run.candidates[0].composerDecisions?.size(), 0, "REFERENCE_PART_COMPOSER_V1 registers no decisions (harmony / groove are B-02 / B-04)");
+  // REFERENCE_PART_COMPOSER_V1 registers no decisions of its own (harmony /
+  // groove are B-02 / B-04). B-20: an accepted note-repair pass does register
+  // one, on the same `compose` layer, so the trace can say why a note moved —
+  // so the assertion is that nothing *else* is in the registry, not that it is
+  // empty.
+  const composerDecisions = run.candidates[0].composerDecisions?.decisions() ?? [];
+  assert.deepEqual(
+    composerDecisions.filter((d) => !d.kind.startsWith("note_repair_") && d.kind !== "repair_reopened").map((d) => d.id),
+    [],
+    "REFERENCE_PART_COMPOSER_V1 registers no decisions (harmony / groove are B-02 / B-04)",
+  );
+  for (const decision of composerDecisions) {
+    assert.equal(decision.layer, "compose");
+    assert.ok(decision.reason.length > 20, `${decision.id} must say why`);
+  }
   assert.deepEqual(run.contextPasses, [], "the context-aware path was off");
   const contextual = orchestrateArrangement({ songModel: buildBenchmarkSongModel(BENCHMARK_CORPUS[0]), candidateCount: 1, render: false, now: NOW, contextAware: true });
   assert.ok(Array.isArray(contextual.contextPasses));

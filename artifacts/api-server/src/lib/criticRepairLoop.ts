@@ -38,7 +38,7 @@ import type { CriticDimensionReport, CriticInput, CriticObservation } from "./cr
 import { evaluateAllDimensions } from "./critics/dimensions";
 import { runAdversarialCritics, type ControlLedger } from "./critics/adversarial";
 import { judge, judgeContextFromInput, type JudgeVerdict } from "./critics/judge";
-import { buildRepairPlan, observationPersists, DEFAULT_EXCLUDED_DIMENSIONS, DEFAULT_MAX_REPAIR_PASSES, type SeededRepairTarget } from "./repairPlanner";
+import { buildRepairPlan, observationPersists, observationStillAsBad, DEFAULT_EXCLUDED_DIMENSIONS, DEFAULT_MAX_REPAIR_PASSES, type SeededRepairTarget } from "./repairPlanner";
 
 export const MAX_CRITIC_REPAIR_PASSES = 3;
 const METHOD = "critic-repair-loop/v1";
@@ -610,7 +610,12 @@ export function runBacktrackingRepairLoop<TExtra>(input: BacktrackingRepairInput
     const targets = operation.expectedEffect
       .map((id) => before.observations.find((o) => o.id === id))
       .filter((o): o is CriticObservation => !!o);
-    const remaining = targets.filter((t) => observationPersists(t, after.observations)).map((t) => t.id);
+    // B-20: a target counts as remaining only while a finding of the same kind
+    // at the same place is still *at least as severe*. A blocking clash the
+    // pass reduced to a minor one is a repair that worked and did not finish,
+    // not a pass to throw away; `verdictWorsened` below is unchanged and still
+    // refuses a pass that bought it anywhere else. See `observationStillAsBad`.
+    const remaining = targets.filter((t) => observationStillAsBad(t, after.observations)).map((t) => t.id);
     const worse = verdictWorsened(before.summary, after.summary);
     const attempted = { planChanged: result.changed.plan, notesChanged: result.changed.notes };
     counted += 1;

@@ -153,7 +153,8 @@ test("control A — remove the performance timing: it now answers 'neither layer
 
   const performed = a.filter((o) => o.suspectedOrigin === "perform").length;
   const written = b.filter((o) => o.suspectedOrigin === "compose").length;
-  assert.equal(performed, 17, `displaced after composition -> ${performed}/22 attributed to \`perform\``);
+    // B-20 merge: the anchors no longer run the repair stage, so 16 of 22 displaced findings attribute to `perform` where 17 did. The repair pass had been moving one of them.
+  assert.equal(performed, 16, `displaced after composition -> ${performed}/22 attributed to \`perform\``);
   assert.equal(written, 18, `displaced in the writing -> ${written}/22 attributed to \`compose\``);
   // And the evidence behind the attribution is the control itself, not the
   // size of the deviation: where only the shipped notes moved, every attributed
@@ -162,7 +163,17 @@ test("control A — remove the performance timing: it now answers 'neither layer
   assert.equal(a.filter((o) => o.evidence.composedOnGrid === false).length, 0);
   assert.equal(Math.max(0, ...a.map((o) => (o.evidence.composedOffGridShare as number) ?? 0)), 0,
     "the composed notes are exactly on the grid in the performance-stage case");
-  assert.ok(b.filter((o) => o.evidence.composedOnGrid === false).length >= 14, "…and off it in the writing case");
+  // 12 of 22 at the B-20 merge, where the threshold was >= 14 before it. The
+  // anchors no longer run the repair stage, so the composed notes this control
+  // looks at are the composer's own rather than a repair pass's output, and
+  // two fewer of them are off the grid. The claim the control makes is the
+  // *contrast* between the two cases — none off the grid when only the
+  // performance moved, a clear majority off it when the writing moved — and
+  // that contrast is intact and now asserted as such.
+  const writtenOffGrid = b.filter((o) => o.evidence.composedOnGrid === false).length;
+  assert.ok(writtenOffGrid >= 12, `…and off it in the writing case: ${writtenOffGrid} of ${b.length}`);
+  assert.ok(writtenOffGrid > a.filter((o) => o.evidence.composedOnGrid === false).length,
+    "the writing case puts more composed notes off the grid than the performance case");
 });
 
 test("control B — quantise to the composer's grid: there is nothing left to remove on the owner's song, and the control still removes exactly the right thing on a constructed case", () => {
@@ -293,7 +304,8 @@ test("the string bed the brief asked for no longer ships as one voice — and th
   // that section the finding stands on the shipped notes alone: major, and
   // attributed to the composer.
   const located = found.filter((o) => o.evidence.lostAfterCompose === true);
-  assert.equal(located.length, 7, `${located.length} of ${found.length} sections have the composed notes in view (B-13: >= 4)`);
+    // B-20 merge: six sections, not seven. B-26 measured that `ownerComposedAnchor` counts every compose call and the repair stage's recompositions were filling this gap; with the stage off the count is what the composer actually wrote.
+  assert.equal(located.length, 6, `${located.length} of ${found.length} sections have the composed notes in view (B-13: >= 4)`);
   for (const o of located) {
     assert.equal(o.suspectedOrigin, "perform");
     assert.equal(o.severity, "blocking");

@@ -23,7 +23,15 @@ export function anchorFor(caseId: string): Anchor {
   const spec = BENCHMARK_CORPUS.find((c) => c.id === caseId);
   if (!spec) throw new Error(`unknown benchmark case ${caseId}`);
   const songModel = buildBenchmarkSongModel(spec);
-  const result = orchestrateArrangement({ songModel, candidateCount: 1, render: false, now: ANCHOR_NOW });
+  // B-20: the repair stage is off, for the reason written out in
+  // `critics/dimensions/anchors.ts buildAnchor` — an anchor is what a critic is
+  // calibrated against, the repair stage is driven by those same critics, and
+  // with the stage on every repair improvement silently recalibrates every
+  // control. Measured here: with the stage on, jazz-full's texture-density
+  // disagreement is repaired away and *no* anchor of the evidence set produces
+  // a recorded disagreement at all, which is the one thing B-05b's evidence
+  // test asserts about the judge keeping disagreement open.
+  const result = orchestrateArrangement({ songModel, candidateCount: 1, render: false, now: ANCHOR_NOW, repairMaxPasses: 0 });
   const candidate = result.candidates[0];
   if (!candidate) throw new Error(`the orchestrator produced no candidate for ${caseId}`);
   const anchor: Anchor = {

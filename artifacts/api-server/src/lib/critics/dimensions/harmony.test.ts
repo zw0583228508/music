@@ -198,7 +198,13 @@ test("null control: no blocking harmony observation on any clean anchor, and eve
     "acoustic-demo": { minScore: 93, kinds: { bass_rarely_states_root: 1, clash_share: 1 }, majors: 0 },
     "orchestral-midi": { minScore: 96, kinds: { clash_share: 1 }, majors: 0 },
     "ethnic-vocal": { minScore: 92, kinds: { bass_rarely_states_root: 1, clash_share: 1 }, majors: 0 },
-    "jazz-full": { minScore: 89, kinds: { bass_rarely_states_root: 2, clash_share: 1 }, majors: 0 },
+    // Re-measured at the B-20 merge: the anchors no longer run the repair
+    // stage (`repairMaxPasses: 0`), so what they carry is what the composer
+    // wrote rather than what a repair pass left. jazz-full keeps one more
+    // `bass_rarely_states_root` (2 -> 3) and scores 89.2 -> 85.6; the corpus
+    // total goes 8 -> 9. B-20's own branch pinned the same numbers before
+    // B-25 and B-26 rewrote this file.
+    "jazz-full": { minScore: 85, kinds: { bass_rarely_states_root: 3, clash_share: 1 }, majors: 0 },
     "cinematic-midi": { minScore: 100, kinds: {}, majors: 0 },
   };
   let rootRarely = 0;
@@ -237,5 +243,5 @@ test("null control: no blocking harmony observation on any clean anchor, and eve
   // onsets from chord starts, so the bass is present at the change and states
   // its root there. The number is still asserted exactly, because it is the
   // one this suite exists to watch.
-  assert.equal(rootRarely, 8, `bass_rarely_states_root across the clean anchors: ${rootRarely} (B-05c measured 1; B-13 alone 20; B-13+B-18 19; the Wave 3 merge 8)`);
+  assert.equal(rootRarely, 9, `bass_rarely_states_root across the clean anchors: ${rootRarely} (B-05c measured 1; B-13 alone 20; B-13+B-18 19; the Wave 3 merge 8; repair-free anchors 9)`);
 });

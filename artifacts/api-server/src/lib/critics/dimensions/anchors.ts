@@ -72,6 +72,21 @@ export function buildAnchor(spec: BenchmarkCase, options: { composeParts?: PartC
   const songModel = buildBenchmarkSongModel(spec);
   const result = orchestrateArrangement({
     songModel, candidateCount: 1, render: false, now: NOW,
+    // B-20: **the repair stage is off in every anchor.** An anchor is the
+    // subject a critic is calibrated against — its detection table, its
+    // control ledger and every positive control are stated as "this defect,
+    // seeded into this arrangement, is caught". The repair stage is driven by
+    // those same critics, so leaving it on makes the subject a function of the
+    // repair stage: every improvement in repair silently recalibrates every
+    // critic control, and a control that used to isolate a cause stops
+    // isolating it. Measured when B-20's note operators landed, without a
+    // single critic changing: with the stage on the owner anchor carries 9
+    // `off_grid` findings and the groove dimension scores 19.2; with it off,
+    // 12 and 6.3 — and B-05c's controls A and B, which are about *which layer*
+    // put those onsets off the grid, lost their subject. The repaired
+    // arrangement is measured where it belongs — in the repair stage's own
+    // corpus (`__fixtures__/b06DefectCorpus.ts`) and in B-20's evidence.
+    repairMaxPasses: 0,
     composeParts: options.composeParts, composerName: options.composerName,
   });
   const candidate = result.candidates[0];
@@ -187,6 +202,10 @@ function buildOwner(): OwnerBuild {
   };
   const result = orchestrateArrangement({
     songModel, candidateCount: 1, render: false, now, plannerHints,
+    // The repair stage is off here for the same reason as in `buildAnchor`:
+    // the owner anchor is what B-05c's isolating controls measure against, and
+    // a subject the repair stage rewrites is not a control.
+    repairMaxPasses: 0,
     composeParts, composerName: "REFERENCE_PART_COMPOSER_V1",
   });
   const candidate = result.candidates[0];
