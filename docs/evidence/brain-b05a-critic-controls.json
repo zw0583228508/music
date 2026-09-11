@@ -1,6 +1,6 @@
 {
   "version": "B05C_CONTROLS_v3",
-  "generatedAt": "2026-09-10T18:08:27.544Z",
+  "generatedAt": "2026-09-11T00:51:15.552Z",
   "recalibratedAtMerge": "onto main with B-00 (shipped-notes score, composer split), B-01 (ArrangementArc: drums enter at the chorus, bass thinned in quiet sections, chorus 2 developed, keys in every section, ensemble/mix not a family) and B-03 (instrument profiles); see the PR-B05a tracker entry. Regenerated at the B-13 merge for three causes, each recorded in the PR-B13 tracker entry: (1) B-13's writers changed the anchors themselves - the beds read the groove plan's bed cell, the bass plays the plan's onsets with the full figure set, and the transition realisation writes the planned fills - so several controls now apply, or stop applying, where they did not before; (2) `tutti_everywhere` was fixed to cycle the source section's bars *that carry notes* instead of giving up on the ones the part rests in, so it produces the tutti it claims (dance-full's synth-pad reached only 0.900 active share against the 0.95 `continuous_tutti` asks for); (3) `functionFromNotes` no longer calls a sustained multi-voice chord an 'answer', which it did for any pitched part whose onsets fell outside the vocal phrases. Regenerated again at the second reconciliation with B-18, one cause and no change to any control: `writeBassLine` writes its approach tone on the last beat of the chord it leaves (where `realiseBassLine` writes its own) instead of on whichever groove onset happened to be last before the change, and takes its pitch from B-18's `approachToneChoice` instead of a copy of the pre-B-18 rule - so seven of the nine anchors' bass lines moved and the anchors were re-measured against them. `dimensions/controlLedger.ts` came out byte-identical: no control changed tier.",
   "method": "every critic dimension over every anchor x control; detected = score drop >= 1 and a located non-info observation new or upgraded on the damaged tracks; rate with exact Clopper-Pearson 95 % interval; a control whose damage leaves an anchor unchanged skips that anchor",
   "ledgerRule": "gated: strongest claimed control >= 0.90 with CI lower >= 0.60 and no blocking observation on a clean anchor; informing: >= 0.50; demoted: measured (n >= 5) and < 0.50; uncalibrated: no claimed control measurable",
@@ -11,7 +11,7 @@
   "seeds": [
     1
   ],
-  "runtimeSeconds": 26.3,
+  "runtimeSeconds": 18.4,
   "claimedControls": {
     "harmony": [
       "chord_tone_to_non_chord_tone@3",
@@ -150,7 +150,7 @@
         "keys-rhythmic_harmony",
         "guitar-harmonic_bed"
       ],
-      "notes": 793,
+      "notes": 794,
       "clean": true,
       "purposeBuilt": true,
       "defectReason": null,
@@ -595,17 +595,17 @@
       "reason": "1 of 2 independent non-prepared transforms pass"
     },
     "motifRecurrenceAndDevelopment": {
-      "status": "informing",
-      "strongestControl": "random_pitch",
-      "detectionRate": 0.5,
+      "status": "demoted",
+      "strongestControl": "motif_destruction@3",
+      "detectionRate": 0.4667,
       "ci95": [
-        0.157,
-        0.843
+        0.2127,
+        0.7341
       ],
-      "n": 8,
+      "n": 15,
       "cleanAnchorBlockingRate": 0,
       "gatingTransforms": [],
-      "reason": "0 of 2 independent non-prepared transforms pass"
+      "reason": "strongest claimed transform motif_destruction@3 detected 47 % of 15 items, below 50 %"
     },
     "groove": {
       "status": "gated",
@@ -731,15 +731,15 @@
     "sectionDevelopment": {
       "status": "demoted",
       "strongestControl": "section_swap@3",
-      "detectionRate": 0.087,
+      "detectionRate": 0.1739,
       "ci95": [
-        0.0107,
-        0.2804
+        0.0495,
+        0.3878
       ],
       "n": 23,
       "cleanAnchorBlockingRate": 0,
       "gatingTransforms": [],
-      "reason": "strongest claimed transform section_swap@3 detected 9 % of 23 items, below 50 %; caught chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)"
+      "reason": "strongest claimed transform section_swap@3 detected 17 % of 23 items, below 50 %; caught chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)"
     },
     "playability": {
       "status": "gated",
@@ -796,14 +796,14 @@
     "harmony: gated (chord_tone_to_non_chord_tone@3 100 % [0.8456, 1], n=22) gated by chord_tone_to_non_chord_tone@3 + cross_part_clash@3 + parallel_perfect_motion + pitch_shift_out_of_key@3 + random_pitch",
     "idiomaticity: informing (piano_wide_voicing 100 % [0.6306, 1], n=8) gated by piano_wide_voicing",
     "melodyAndCounterline: informing (top_line_erratic 100 % [0.6637, 1], n=9) gated by top_line_erratic",
-    "motifRecurrenceAndDevelopment: informing (random_pitch 50 % [0.157, 0.843], n=8) — 0 of 2 independent non-prepared transforms pass",
+    "motifRecurrenceAndDevelopment: demoted (motif_destruction@3 47 % [0.2127, 0.7341], n=15) — strongest claimed transform motif_destruction@3 detected 47 % of 15 items, below 50 %",
     "orchestration: gated (drums_only 100 % [0.6637, 1], n=9) gated by drums_only + silence_planned_family + tutti_everywhere",
     "performanceRealisation: gated (strip_cc_and_quantise 100 % [0.6637, 1], n=9) gated by strip_cc_and_quantise + velocity_flatten_all",
     "playability: gated (bass_roots_only_leaps 100 % [0.6637, 1], n=9) gated by bass_roots_only_leaps + octave_displacement@3 + piano_wide_voicing + strings_up_two_octaves",
     "register: gated (strings_up_two_octaves 100 % [0.6637, 1], n=9) gated by role_inversion@3 + strings_up_two_octaves",
     "repetitionVsVariation: informing (bar_copy_repetition@3 53 % [0.3474, 0.7091], n=32) — 0 of 2 independent non-prepared transforms pass; caught chorus_copy 5/5, chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)",
     "rhythmicInteraction: informing (parallel_doubling@3 100 % [0.8456, 1], n=22) gated by parallel_doubling@3",
-    "sectionDevelopment: demoted (section_swap@3 9 % [0.0107, 0.2804], n=23) — strongest claimed transform section_swap@3 detected 9 % of 23 items, below 50 %; caught chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)",
+    "sectionDevelopment: demoted (section_swap@3 17 % [0.0495, 0.3878], n=23) — strongest claimed transform section_swap@3 detected 17 % of 23 items, below 50 %; caught chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)",
     "transitions: informing (erase_boundary_events+realise_boundaries 100 % [0.6637, 1], n=9) — 0 of 2 independent non-prepared transforms pass (erase_boundary_events+realise_boundaries is prepared: it writes the gesture it then erases)",
     "voiceLeading: gated (bass_roots_only_leaps 100 % [0.6637, 1], n=9) gated by bass_roots_only_leaps + parallel_perfect_motion"
   ],
@@ -819,7 +819,7 @@
         0.8456,
         1
       ],
-      "meanScoreDrop": 40.94
+      "meanScoreDrop": 40.79
     },
     {
       "dimension": "harmony",
@@ -832,7 +832,7 @@
         0.8456,
         1
       ],
-      "meanScoreDrop": 68.11
+      "meanScoreDrop": 68.93
     },
     {
       "dimension": "harmony",
@@ -845,7 +845,7 @@
         0.8456,
         1
       ],
-      "meanScoreDrop": 63.63
+      "meanScoreDrop": 64.19
     },
     {
       "dimension": "harmony",
@@ -884,20 +884,20 @@
         0.1386,
         0.5487
       ],
-      "meanScoreDrop": -0.85
+      "meanScoreDrop": -0.71
     },
     {
       "dimension": "harmony",
       "control": "onset_jitter@3",
       "claimed": false,
       "n": 32,
-      "detected": 1,
-      "rate": 0.0313,
+      "detected": 2,
+      "rate": 0.0625,
       "ci95": [
-        0.0008,
-        0.1622
+        0.0077,
+        0.2081
       ],
-      "meanScoreDrop": -0.67
+      "meanScoreDrop": -0.57
     },
     {
       "dimension": "harmony",
@@ -910,33 +910,33 @@
         0.0198,
         0.2502
       ],
-      "meanScoreDrop": -1.21
+      "meanScoreDrop": -1.11
     },
     {
       "dimension": "harmony",
       "control": "syncopation_removal@3",
       "claimed": false,
       "n": 24,
-      "detected": 6,
-      "rate": 0.25,
+      "detected": 5,
+      "rate": 0.2083,
       "ci95": [
-        0.0977,
-        0.4671
+        0.0713,
+        0.4215
       ],
-      "meanScoreDrop": 1.71
+      "meanScoreDrop": 2.23
     },
     {
       "dimension": "harmony",
       "control": "density_thinning@3",
       "claimed": false,
       "n": 32,
-      "detected": 1,
-      "rate": 0.0313,
+      "detected": 2,
+      "rate": 0.0625,
       "ci95": [
-        0.0008,
-        0.1622
+        0.0077,
+        0.2081
       ],
-      "meanScoreDrop": -0.58
+      "meanScoreDrop": -0.37
     },
     {
       "dimension": "harmony",
@@ -949,7 +949,7 @@
         0.0079,
         0.2142
       ],
-      "meanScoreDrop": -1.64
+      "meanScoreDrop": -1.54
     },
     {
       "dimension": "harmony",
@@ -962,7 +962,7 @@
         0.1375,
         0.4675
       ],
-      "meanScoreDrop": 7.77
+      "meanScoreDrop": 7.87
     },
     {
       "dimension": "harmony",
@@ -975,7 +975,7 @@
         0.3189,
         0.6811
       ],
-      "meanScoreDrop": 6.51
+      "meanScoreDrop": 6.61
     },
     {
       "dimension": "harmony",
@@ -988,7 +988,7 @@
         0.6686,
         0.987
       ],
-      "meanScoreDrop": 25.29
+      "meanScoreDrop": 25.04
     },
     {
       "dimension": "harmony",
@@ -1001,7 +1001,7 @@
         0.8456,
         1
       ],
-      "meanScoreDrop": 52.52
+      "meanScoreDrop": 50.59
     },
     {
       "dimension": "harmony",
@@ -1027,7 +1027,7 @@
         0.4999,
         0.8388
       ],
-      "meanScoreDrop": 37.69
+      "meanScoreDrop": 37.88
     },
     {
       "dimension": "harmony",
@@ -1053,7 +1053,7 @@
         0.2439,
         0.6779
       ],
-      "meanScoreDrop": 1.31
+      "meanScoreDrop": 1.48
     },
     {
       "dimension": "harmony",
@@ -1079,7 +1079,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -12.24
+      "meanScoreDrop": -11.89
     },
     {
       "dimension": "harmony",
@@ -1099,13 +1099,13 @@
       "control": "chorus_copy",
       "claimed": false,
       "n": 5,
-      "detected": 1,
-      "rate": 0.2,
+      "detected": 2,
+      "rate": 0.4,
       "ci95": [
-        0.0051,
-        0.7164
+        0.0527,
+        0.8534
       ],
-      "meanScoreDrop": 11.34
+      "meanScoreDrop": 11.98
     },
     {
       "dimension": "harmony",
@@ -1161,13 +1161,13 @@
       "control": "erase_boundary_events",
       "claimed": false,
       "n": 9,
-      "detected": 0,
-      "rate": 0,
+      "detected": 1,
+      "rate": 0.1111,
       "ci95": [
-        0,
-        0.3363
+        0.0028,
+        0.4825
       ],
-      "meanScoreDrop": -2.18
+      "meanScoreDrop": -1.22
     },
     {
       "dimension": "harmony",
@@ -1187,13 +1187,13 @@
       "control": "erase_pickups",
       "claimed": false,
       "n": 9,
-      "detected": 0,
-      "rate": 0,
+      "detected": 1,
+      "rate": 0.1111,
       "ci95": [
-        0,
-        0.3363
+        0.0028,
+        0.4825
       ],
-      "meanScoreDrop": -2.18
+      "meanScoreDrop": -1.22
     },
     {
       "dimension": "harmony",
@@ -1219,7 +1219,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -12.71
+      "meanScoreDrop": -12.35
     },
     {
       "dimension": "harmony",
@@ -1232,20 +1232,20 @@
         0.6637,
         1
       ],
-      "meanScoreDrop": 18.16
+      "meanScoreDrop": 18.4
     },
     {
       "dimension": "harmony",
       "control": "piano_one_note_per_bar",
       "claimed": false,
       "n": 8,
-      "detected": 0,
-      "rate": 0,
+      "detected": 1,
+      "rate": 0.125,
       "ci95": [
-        0,
-        0.3694
+        0.0032,
+        0.5265
       ],
-      "meanScoreDrop": 0
+      "meanScoreDrop": 0.45
     },
     {
       "dimension": "harmony",
@@ -1271,7 +1271,7 @@
         0.6637,
         1
       ],
-      "meanScoreDrop": 86.56
+      "meanScoreDrop": 86.91
     },
     {
       "dimension": "harmony",
@@ -1304,26 +1304,26 @@
       "control": "strip_bed_to_top_voice",
       "claimed": false,
       "n": 9,
-      "detected": 0,
-      "rate": 0,
-      "ci95": [
-        0,
-        0.3363
-      ],
-      "meanScoreDrop": 0
-    },
-    {
-      "dimension": "harmony",
-      "control": "strip_cc_and_quantise",
-      "claimed": false,
-      "n": 9,
       "detected": 1,
       "rate": 0.1111,
       "ci95": [
         0.0028,
         0.4825
       ],
-      "meanScoreDrop": -1.58
+      "meanScoreDrop": 0.37
+    },
+    {
+      "dimension": "harmony",
+      "control": "strip_cc_and_quantise",
+      "claimed": false,
+      "n": 9,
+      "detected": 2,
+      "rate": 0.2222,
+      "ci95": [
+        0.0281,
+        0.6001
+      ],
+      "meanScoreDrop": -1.22
     },
     {
       "dimension": "harmony",
@@ -1336,7 +1336,7 @@
         0.0749,
         0.7007
       ],
-      "meanScoreDrop": 27.85
+      "meanScoreDrop": 28.2
     },
     {
       "dimension": "harmony",
@@ -1362,33 +1362,33 @@
         0.5175,
         0.9972
       ],
-      "meanScoreDrop": 29.05
+      "meanScoreDrop": 32.11
     },
     {
       "dimension": "harmony",
       "control": "tutti_everywhere",
       "claimed": false,
       "n": 9,
-      "detected": 8,
-      "rate": 0.8889,
+      "detected": 9,
+      "rate": 1,
       "ci95": [
-        0.5175,
-        0.9972
+        0.6637,
+        1
       ],
-      "meanScoreDrop": 45.74
+      "meanScoreDrop": 46.7
     },
     {
       "dimension": "harmony",
       "control": "unlock_bass_from_kick",
       "claimed": false,
       "n": 9,
-      "detected": 5,
-      "rate": 0.5556,
+      "detected": 4,
+      "rate": 0.4444,
       "ci95": [
-        0.212,
-        0.863
+        0.137,
+        0.788
       ],
-      "meanScoreDrop": 6.82
+      "meanScoreDrop": 5.7
     },
     {
       "dimension": "harmony",
@@ -1408,13 +1408,13 @@
       "control": "chorus_copy+develop_chorus_2",
       "claimed": false,
       "n": 5,
-      "detected": 1,
-      "rate": 0.2,
+      "detected": 2,
+      "rate": 0.4,
       "ci95": [
-        0.0051,
-        0.7164
+        0.0527,
+        0.8534
       ],
-      "meanScoreDrop": 11.34
+      "meanScoreDrop": 11.98
     },
     {
       "dimension": "harmony",
@@ -1427,7 +1427,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -5.33
+      "meanScoreDrop": -4.73
     },
     {
       "dimension": "voiceLeading",
@@ -1460,13 +1460,13 @@
       "control": "chord_tone_to_non_chord_tone@3",
       "claimed": false,
       "n": 22,
-      "detected": 1,
-      "rate": 0.0455,
+      "detected": 2,
+      "rate": 0.0909,
       "ci95": [
-        0.0012,
-        0.2284
+        0.0112,
+        0.2916
       ],
-      "meanScoreDrop": 0.14
+      "meanScoreDrop": 0.31
     },
     {
       "dimension": "voiceLeading",
@@ -1479,7 +1479,7 @@
         0.5463,
         0.9218
       ],
-      "meanScoreDrop": 3.3
+      "meanScoreDrop": 3.26
     },
     {
       "dimension": "voiceLeading",
@@ -1505,7 +1505,7 @@
         0.3221,
         0.7561
       ],
-      "meanScoreDrop": 4.95
+      "meanScoreDrop": 4.9
     },
     {
       "dimension": "voiceLeading",
@@ -1518,7 +1518,7 @@
         0.1612,
         0.5001
       ],
-      "meanScoreDrop": 2.89
+      "meanScoreDrop": 2.86
     },
     {
       "dimension": "voiceLeading",
@@ -1531,20 +1531,20 @@
         0,
         0.1089
       ],
-      "meanScoreDrop": -0.04
+      "meanScoreDrop": -0.07
     },
     {
       "dimension": "voiceLeading",
       "control": "syncopation_removal@3",
       "claimed": false,
       "n": 24,
-      "detected": 2,
-      "rate": 0.0833,
+      "detected": 1,
+      "rate": 0.0417,
       "ci95": [
-        0.0103,
-        0.27
+        0.0011,
+        0.2112
       ],
-      "meanScoreDrop": 0.12
+      "meanScoreDrop": -0.16
     },
     {
       "dimension": "voiceLeading",
@@ -1557,7 +1557,7 @@
         0.1146,
         0.434
       ],
-      "meanScoreDrop": 0.58
+      "meanScoreDrop": 0.55
     },
     {
       "dimension": "voiceLeading",
@@ -1583,7 +1583,7 @@
         0.0008,
         0.1622
       ],
-      "meanScoreDrop": -0.72
+      "meanScoreDrop": -0.75
     },
     {
       "dimension": "voiceLeading",
@@ -1596,7 +1596,7 @@
         0.0008,
         0.1622
       ],
-      "meanScoreDrop": 0.13
+      "meanScoreDrop": 0.1
     },
     {
       "dimension": "voiceLeading",
@@ -1609,20 +1609,20 @@
         0.0915,
         0.512
       ],
-      "meanScoreDrop": 1.74
+      "meanScoreDrop": 1.77
     },
     {
       "dimension": "voiceLeading",
       "control": "cross_part_clash@3",
       "claimed": false,
       "n": 22,
-      "detected": 4,
-      "rate": 0.1818,
+      "detected": 5,
+      "rate": 0.2273,
       "ci95": [
-        0.0519,
-        0.4028
+        0.0782,
+        0.4537
       ],
-      "meanScoreDrop": 0.65
+      "meanScoreDrop": 0.76
     },
     {
       "dimension": "voiceLeading",
@@ -1648,7 +1648,7 @@
         0.0528,
         0.3279
       ],
-      "meanScoreDrop": 0.94
+      "meanScoreDrop": 0.9
     },
     {
       "dimension": "voiceLeading",
@@ -1668,13 +1668,13 @@
       "control": "duration_overhang@3",
       "claimed": false,
       "n": 22,
-      "detected": 3,
-      "rate": 0.1364,
+      "detected": 4,
+      "rate": 0.1818,
       "ci95": [
-        0.0291,
-        0.3491
+        0.0519,
+        0.4028
       ],
-      "meanScoreDrop": 0.46
+      "meanScoreDrop": 0.64
     },
     {
       "dimension": "voiceLeading",
@@ -1687,7 +1687,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -2.19
+      "meanScoreDrop": -1.84
     },
     {
       "dimension": "voiceLeading",
@@ -1700,7 +1700,7 @@
         0.6637,
         1
       ],
-      "meanScoreDrop": 37.13
+      "meanScoreDrop": 37.53
     },
     {
       "dimension": "voiceLeading",
@@ -1726,7 +1726,7 @@
         0,
         0.5218
       ],
-      "meanScoreDrop": -1.25
+      "meanScoreDrop": -1.3
     },
     {
       "dimension": "voiceLeading",
@@ -1739,7 +1739,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -1.91
+      "meanScoreDrop": -1.57
     },
     {
       "dimension": "voiceLeading",
@@ -1752,7 +1752,7 @@
         0.0943,
         0.9916
       ],
-      "meanScoreDrop": 3.04
+      "meanScoreDrop": 2.96
     },
     {
       "dimension": "voiceLeading",
@@ -1788,7 +1788,7 @@
         0.0028,
         0.4825
       ],
-      "meanScoreDrop": 0
+      "meanScoreDrop": 0.4
     },
     {
       "dimension": "voiceLeading",
@@ -1814,7 +1814,7 @@
         0.0028,
         0.4825
       ],
-      "meanScoreDrop": 0
+      "meanScoreDrop": 0.4
     },
     {
       "dimension": "voiceLeading",
@@ -1827,7 +1827,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -1.09
+      "meanScoreDrop": -0.72
     },
     {
       "dimension": "voiceLeading",
@@ -1840,7 +1840,7 @@
         0.0749,
         0.7007
       ],
-      "meanScoreDrop": -0.2
+      "meanScoreDrop": -0.14
     },
     {
       "dimension": "voiceLeading",
@@ -1853,7 +1853,7 @@
         0.6637,
         1
       ],
-      "meanScoreDrop": 8.62
+      "meanScoreDrop": 8.57
     },
     {
       "dimension": "voiceLeading",
@@ -1866,7 +1866,7 @@
         0.0032,
         0.5265
       ],
-      "meanScoreDrop": -0.56
+      "meanScoreDrop": -0.59
     },
     {
       "dimension": "voiceLeading",
@@ -1879,20 +1879,20 @@
         0.0032,
         0.5265
       ],
-      "meanScoreDrop": 0.48
+      "meanScoreDrop": 0.42
     },
     {
       "dimension": "voiceLeading",
       "control": "random_pitch",
       "claimed": false,
       "n": 9,
-      "detected": 9,
-      "rate": 1,
+      "detected": 8,
+      "rate": 0.8889,
       "ci95": [
-        0.6637,
-        1
+        0.5175,
+        0.9972
       ],
-      "meanScoreDrop": 9.75
+      "meanScoreDrop": 9.33
     },
     {
       "dimension": "voiceLeading",
@@ -1905,7 +1905,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -1.79
+      "meanScoreDrop": -1.44
     },
     {
       "dimension": "voiceLeading",
@@ -1918,7 +1918,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -2.36
+      "meanScoreDrop": -2.41
     },
     {
       "dimension": "voiceLeading",
@@ -1931,7 +1931,7 @@
         0.0028,
         0.4825
       ],
-      "meanScoreDrop": -1.63
+      "meanScoreDrop": -1.68
     },
     {
       "dimension": "voiceLeading",
@@ -1944,7 +1944,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -0.35
+      "meanScoreDrop": 0
     },
     {
       "dimension": "voiceLeading",
@@ -1957,7 +1957,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -0.37
+      "meanScoreDrop": 0.01
     },
     {
       "dimension": "voiceLeading",
@@ -1970,7 +1970,7 @@
         0.6637,
         1
       ],
-      "meanScoreDrop": 79.68
+      "meanScoreDrop": 80.02
     },
     {
       "dimension": "voiceLeading",
@@ -1983,7 +1983,7 @@
         0.2993,
         0.9251
       ],
-      "meanScoreDrop": 21.07
+      "meanScoreDrop": 21.45
     },
     {
       "dimension": "voiceLeading",
@@ -1996,7 +1996,7 @@
         0.0749,
         0.7007
       ],
-      "meanScoreDrop": 1.08
+      "meanScoreDrop": 1.03
     },
     {
       "dimension": "voiceLeading",
@@ -2048,7 +2048,7 @@
         0.0028,
         0.4825
       ],
-      "meanScoreDrop": 0
+      "meanScoreDrop": 0.4
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2087,7 +2087,7 @@
         0.0291,
         0.3491
       ],
-      "meanScoreDrop": 0.81
+      "meanScoreDrop": 0.72
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2100,7 +2100,7 @@
         0.0012,
         0.2284
       ],
-      "meanScoreDrop": 0.06
+      "meanScoreDrop": 0.2
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2159,26 +2159,26 @@
       "control": "syncopation_removal@3",
       "claimed": false,
       "n": 24,
-      "detected": 2,
-      "rate": 0.0833,
+      "detected": 3,
+      "rate": 0.125,
       "ci95": [
-        0.0103,
-        0.27
+        0.0266,
+        0.3236
       ],
-      "meanScoreDrop": 0.48
+      "meanScoreDrop": 0.42
     },
     {
       "dimension": "melodyAndCounterline",
       "control": "density_thinning@3",
       "claimed": false,
       "n": 32,
-      "detected": 6,
-      "rate": 0.1875,
+      "detected": 4,
+      "rate": 0.125,
       "ci95": [
-        0.0721,
-        0.3644
+        0.0351,
+        0.2899
       ],
-      "meanScoreDrop": 0.61
+      "meanScoreDrop": 0.2
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2211,26 +2211,26 @@
       "control": "phrase_shift@3",
       "claimed": false,
       "n": 32,
-      "detected": 6,
-      "rate": 0.1875,
+      "detected": 7,
+      "rate": 0.2188,
       "ci95": [
-        0.0721,
-        0.3644
+        0.0928,
+        0.3997
       ],
-      "meanScoreDrop": 1.23
+      "meanScoreDrop": 1.25
     },
     {
       "dimension": "melodyAndCounterline",
       "control": "motif_destruction@3",
       "claimed": false,
       "n": 19,
-      "detected": 6,
-      "rate": 0.3158,
+      "detected": 5,
+      "rate": 0.2632,
       "ci95": [
-        0.1258,
-        0.5655
+        0.0915,
+        0.512
       ],
-      "meanScoreDrop": 1.93
+      "meanScoreDrop": 1.9
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2243,7 +2243,7 @@
         0.0291,
         0.3491
       ],
-      "meanScoreDrop": 0.96
+      "meanScoreDrop": 0.57
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2263,13 +2263,13 @@
       "control": "section_swap@3",
       "claimed": false,
       "n": 32,
-      "detected": 3,
-      "rate": 0.0938,
+      "detected": 2,
+      "rate": 0.0625,
       "ci95": [
-        0.0198,
-        0.2502
+        0.0077,
+        0.2081
       ],
-      "meanScoreDrop": 0.49
+      "meanScoreDrop": 0.56
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2308,7 +2308,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -1
+      "meanScoreDrop": -0.4
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2360,7 +2360,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -1
+      "meanScoreDrop": -0.4
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2448,20 +2448,20 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -1
+      "meanScoreDrop": -0.4
     },
     {
       "dimension": "melodyAndCounterline",
       "control": "homorhythm",
       "claimed": false,
       "n": 9,
-      "detected": 2,
-      "rate": 0.2222,
+      "detected": 0,
+      "rate": 0,
       "ci95": [
-        0.0281,
-        0.6001
+        0,
+        0.3363
       ],
-      "meanScoreDrop": -0.67
+      "meanScoreDrop": -0.37
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2494,13 +2494,13 @@
       "control": "piano_wide_voicing",
       "claimed": false,
       "n": 8,
-      "detected": 1,
-      "rate": 0.125,
+      "detected": 0,
+      "rate": 0,
       "ci95": [
-        0.0032,
-        0.5265
+        0,
+        0.3694
       ],
-      "meanScoreDrop": -0.42
+      "meanScoreDrop": -0.82
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2513,7 +2513,7 @@
         0.212,
         0.863
       ],
-      "meanScoreDrop": 3.18
+      "meanScoreDrop": 3.38
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2526,7 +2526,7 @@
         0,
         0.6024
       ],
-      "meanScoreDrop": -2.25
+      "meanScoreDrop": -0.9
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2565,7 +2565,7 @@
         0.0028,
         0.4825
       ],
-      "meanScoreDrop": -0.23
+      "meanScoreDrop": 0.37
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2578,7 +2578,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -1
+      "meanScoreDrop": -0.4
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2604,20 +2604,20 @@
         0.3999,
         0.9719
       ],
-      "meanScoreDrop": 27.86
+      "meanScoreDrop": 28.46
     },
     {
       "dimension": "melodyAndCounterline",
       "control": "tutti_everywhere",
       "claimed": false,
       "n": 9,
-      "detected": 1,
-      "rate": 0.1111,
+      "detected": 0,
+      "rate": 0,
       "ci95": [
-        0.0028,
-        0.4825
+        0,
+        0.3363
       ],
-      "meanScoreDrop": 0.47
+      "meanScoreDrop": 0
     },
     {
       "dimension": "melodyAndCounterline",
@@ -2675,175 +2675,6 @@
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "pitch_shift_in_key@3",
       "claimed": false,
-      "n": 19,
-      "detected": 7,
-      "rate": 0.3684,
-      "ci95": [
-        0.1629,
-        0.6164
-      ],
-      "meanScoreDrop": 4.27
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "pitch_shift_out_of_key@3",
-      "claimed": false,
-      "n": 19,
-      "detected": 3,
-      "rate": 0.1579,
-      "ci95": [
-        0.0338,
-        0.3958
-      ],
-      "meanScoreDrop": 1.35
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "chord_tone_to_non_chord_tone@3",
-      "claimed": false,
-      "n": 19,
-      "detected": 7,
-      "rate": 0.3684,
-      "ci95": [
-        0.1629,
-        0.6164
-      ],
-      "meanScoreDrop": 4.27
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "octave_displacement@3",
-      "claimed": false,
-      "n": 19,
-      "detected": 0,
-      "rate": 0,
-      "ci95": [
-        0,
-        0.1765
-      ],
-      "meanScoreDrop": -0.19
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "leap_injection@3",
-      "claimed": false,
-      "n": 15,
-      "detected": 1,
-      "rate": 0.0667,
-      "ci95": [
-        0.0017,
-        0.3195
-      ],
-      "meanScoreDrop": 0.6
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "parallel_doubling@3",
-      "claimed": false,
-      "n": 15,
-      "detected": 7,
-      "rate": 0.4667,
-      "ci95": [
-        0.2127,
-        0.7341
-      ],
-      "meanScoreDrop": 4.22
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "onset_jitter@3",
-      "claimed": false,
-      "n": 26,
-      "detected": 9,
-      "rate": 0.3462,
-      "ci95": [
-        0.1721,
-        0.5567
-      ],
-      "meanScoreDrop": 5.74
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "quantisation_coarsening@3",
-      "claimed": false,
-      "n": 23,
-      "detected": 0,
-      "rate": 0,
-      "ci95": [
-        0,
-        0.1482
-      ],
-      "meanScoreDrop": -2.74
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "syncopation_removal@3",
-      "claimed": false,
-      "n": 24,
-      "detected": 4,
-      "rate": 0.1667,
-      "ci95": [
-        0.0474,
-        0.3738
-      ],
-      "meanScoreDrop": 0.64
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "density_thinning@3",
-      "claimed": false,
-      "n": 26,
-      "detected": 3,
-      "rate": 0.1154,
-      "ci95": [
-        0.0245,
-        0.3015
-      ],
-      "meanScoreDrop": -1.19
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "density_doubling@3",
-      "claimed": false,
-      "n": 27,
-      "detected": 2,
-      "rate": 0.0741,
-      "ci95": [
-        0.0091,
-        0.2429
-      ],
-      "meanScoreDrop": -2.59
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "bar_copy_repetition@3",
-      "claimed": false,
-      "n": 24,
-      "detected": 7,
-      "rate": 0.2917,
-      "ci95": [
-        0.1262,
-        0.5109
-      ],
-      "meanScoreDrop": 1.63
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "phrase_shift@3",
-      "claimed": false,
-      "n": 27,
-      "detected": 2,
-      "rate": 0.0741,
-      "ci95": [
-        0.0091,
-        0.2429
-      ],
-      "meanScoreDrop": -0.31
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "motif_destruction@3",
-      "claimed": true,
       "n": 17,
       "detected": 7,
       "rate": 0.4118,
@@ -2855,27 +2686,196 @@
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
+      "control": "pitch_shift_out_of_key@3",
+      "claimed": false,
+      "n": 17,
+      "detected": 3,
+      "rate": 0.1765,
+      "ci95": [
+        0.038,
+        0.4343
+      ],
+      "meanScoreDrop": 1.51
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "chord_tone_to_non_chord_tone@3",
+      "claimed": false,
+      "n": 17,
+      "detected": 7,
+      "rate": 0.4118,
+      "ci95": [
+        0.1844,
+        0.6708
+      ],
+      "meanScoreDrop": 4.78
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "octave_displacement@3",
+      "claimed": false,
+      "n": 17,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.1951
+      ],
+      "meanScoreDrop": -0.21
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "leap_injection@3",
+      "claimed": false,
+      "n": 14,
+      "detected": 1,
+      "rate": 0.0714,
+      "ci95": [
+        0.0018,
+        0.3387
+      ],
+      "meanScoreDrop": 0.64
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "parallel_doubling@3",
+      "claimed": false,
+      "n": 14,
+      "detected": 7,
+      "rate": 0.5,
+      "ci95": [
+        0.2304,
+        0.7696
+      ],
+      "meanScoreDrop": 4.52
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "onset_jitter@3",
+      "claimed": false,
+      "n": 24,
+      "detected": 8,
+      "rate": 0.3333,
+      "ci95": [
+        0.1563,
+        0.5532
+      ],
+      "meanScoreDrop": 5.18
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "quantisation_coarsening@3",
+      "claimed": false,
+      "n": 21,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.1611
+      ],
+      "meanScoreDrop": -3.01
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "syncopation_removal@3",
+      "claimed": false,
+      "n": 23,
+      "detected": 5,
+      "rate": 0.2174,
+      "ci95": [
+        0.0746,
+        0.437
+      ],
+      "meanScoreDrop": 1.37
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "density_thinning@3",
+      "claimed": false,
+      "n": 24,
+      "detected": 3,
+      "rate": 0.125,
+      "ci95": [
+        0.0266,
+        0.3236
+      ],
+      "meanScoreDrop": -1.28
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "density_doubling@3",
+      "claimed": false,
+      "n": 24,
+      "detected": 1,
+      "rate": 0.0417,
+      "ci95": [
+        0.0011,
+        0.2112
+      ],
+      "meanScoreDrop": -3.67
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "bar_copy_repetition@3",
+      "claimed": false,
+      "n": 21,
+      "detected": 5,
+      "rate": 0.2381,
+      "ci95": [
+        0.0822,
+        0.4717
+      ],
+      "meanScoreDrop": 1.18
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "phrase_shift@3",
+      "claimed": false,
+      "n": 24,
+      "detected": 2,
+      "rate": 0.0833,
+      "ci95": [
+        0.0103,
+        0.27
+      ],
+      "meanScoreDrop": -0.35
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "motif_destruction@3",
+      "claimed": true,
+      "n": 15,
+      "detected": 7,
+      "rate": 0.4667,
+      "ci95": [
+        0.2127,
+        0.7341
+      ],
+      "meanScoreDrop": 5.41
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
       "control": "cross_part_clash@3",
       "claimed": false,
-      "n": 19,
+      "n": 17,
       "detected": 5,
-      "rate": 0.2632,
+      "rate": 0.2941,
       "ci95": [
-        0.0915,
-        0.512
+        0.1031,
+        0.5596
       ],
-      "meanScoreDrop": 2.98
+      "meanScoreDrop": 3.38
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "role_inversion@3",
       "claimed": false,
-      "n": 7,
+      "n": 5,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.4096
+        0.5218
       ],
       "meanScoreDrop": 0
     },
@@ -2883,25 +2883,25 @@
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "section_swap@3",
       "claimed": false,
-      "n": 27,
-      "detected": 5,
-      "rate": 0.1852,
+      "n": 24,
+      "detected": 6,
+      "rate": 0.25,
       "ci95": [
-        0.063,
-        0.3808
+        0.0977,
+        0.4671
       ],
-      "meanScoreDrop": 0.68
+      "meanScoreDrop": 1.11
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "dynamics_flattening@3",
       "claimed": false,
-      "n": 27,
+      "n": 24,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.1277
+        0.1425
       ],
       "meanScoreDrop": 0
     },
@@ -2909,12 +2909,12 @@
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "duration_overhang@3",
       "claimed": false,
-      "n": 19,
+      "n": 17,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.1765
+        0.1951
       ],
       "meanScoreDrop": 0
     },
@@ -3000,12 +3000,12 @@
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "displace_backbeat",
       "claimed": false,
-      "n": 7,
+      "n": 6,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.4096
+        0.4593
       ],
       "meanScoreDrop": 0
     },
@@ -3023,14 +3023,14 @@
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "erase_boundary_events",
       "claimed": false,
-      "n": 8,
+      "n": 7,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.3694
+        0.4096
       ],
-      "meanScoreDrop": -0.97
+      "meanScoreDrop": -2.26
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
@@ -3049,25 +3049,25 @@
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "erase_pickups",
       "claimed": false,
-      "n": 8,
+      "n": 7,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.3694
+        0.4096
       ],
-      "meanScoreDrop": -0.97
+      "meanScoreDrop": -2.26
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "flatten_arc",
       "claimed": false,
-      "n": 8,
+      "n": 7,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.3694
+        0.4096
       ],
       "meanScoreDrop": 0
     },
@@ -3075,31 +3075,70 @@
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "homorhythm",
       "claimed": true,
-      "n": 8,
+      "n": 7,
       "detected": 1,
-      "rate": 0.125,
+      "rate": 0.1429,
       "ci95": [
-        0.0032,
-        0.5265
+        0.0036,
+        0.5787
       ],
-      "meanScoreDrop": -8.2
+      "meanScoreDrop": -10.44
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "parallel_perfect_motion",
       "claimed": false,
-      "n": 8,
+      "n": 7,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.3694
+        0.4096
       ],
-      "meanScoreDrop": -0.39
+      "meanScoreDrop": -0.45
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "piano_one_note_per_bar",
+      "claimed": false,
+      "n": 5,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.5218
+      ],
+      "meanScoreDrop": -2.9
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "piano_wide_voicing",
+      "claimed": false,
+      "n": 6,
+      "detected": 0,
+      "rate": 0,
+      "ci95": [
+        0,
+        0.4593
+      ],
+      "meanScoreDrop": -0.6
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "random_pitch",
+      "claimed": true,
+      "n": 7,
+      "detected": 4,
+      "rate": 0.5714,
+      "ci95": [
+        0.1841,
+        0.901
+      ],
+      "meanScoreDrop": 11.6
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "control": "silence_planned_family",
       "claimed": false,
       "n": 6,
       "detected": 0,
@@ -3112,53 +3151,14 @@
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
-      "control": "piano_wide_voicing",
-      "claimed": false,
-      "n": 7,
-      "detected": 0,
-      "rate": 0,
-      "ci95": [
-        0,
-        0.4096
-      ],
-      "meanScoreDrop": -0.51
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "random_pitch",
-      "claimed": true,
-      "n": 8,
-      "detected": 4,
-      "rate": 0.5,
-      "ci95": [
-        0.157,
-        0.843
-      ],
-      "meanScoreDrop": 10.15
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
-      "control": "silence_planned_family",
-      "claimed": false,
-      "n": 7,
-      "detected": 0,
-      "rate": 0,
-      "ci95": [
-        0,
-        0.4096
-      ],
-      "meanScoreDrop": -2.07
-    },
-    {
-      "dimension": "motifRecurrenceAndDevelopment",
       "control": "strings_up_two_octaves",
       "claimed": false,
-      "n": 8,
+      "n": 7,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.3694
+        0.4096
       ],
       "meanScoreDrop": 0
     },
@@ -3166,12 +3166,12 @@
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "strip_bed_to_top_voice",
       "claimed": false,
-      "n": 8,
+      "n": 7,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.3694
+        0.4096
       ],
       "meanScoreDrop": 0
     },
@@ -3192,25 +3192,25 @@
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "swap_climax_with_quietest",
       "claimed": false,
-      "n": 8,
+      "n": 7,
       "detected": 2,
-      "rate": 0.25,
+      "rate": 0.2857,
       "ci95": [
-        0.0319,
-        0.6509
+        0.0367,
+        0.7096
       ],
-      "meanScoreDrop": 0.95
+      "meanScoreDrop": 1.09
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "top_line_erratic",
       "claimed": false,
-      "n": 8,
+      "n": 7,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.3694
+        0.4096
       ],
       "meanScoreDrop": 0
     },
@@ -3218,51 +3218,51 @@
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "top_line_into_vocal_register",
       "claimed": false,
-      "n": 8,
+      "n": 7,
       "detected": 1,
-      "rate": 0.125,
+      "rate": 0.1429,
       "ci95": [
-        0.0032,
-        0.5265
+        0.0036,
+        0.5787
       ],
-      "meanScoreDrop": 0.02
+      "meanScoreDrop": 0.03
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "tutti_everywhere",
       "claimed": false,
-      "n": 8,
-      "detected": 5,
-      "rate": 0.625,
+      "n": 7,
+      "detected": 4,
+      "rate": 0.5714,
       "ci95": [
-        0.2449,
-        0.9148
+        0.1841,
+        0.901
       ],
-      "meanScoreDrop": 6.23
+      "meanScoreDrop": 5.84
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "unlock_bass_from_kick",
       "claimed": false,
-      "n": 8,
+      "n": 7,
       "detected": 1,
-      "rate": 0.125,
+      "rate": 0.1429,
       "ci95": [
-        0.0032,
-        0.5265
+        0.0036,
+        0.5787
       ],
-      "meanScoreDrop": -1.62
+      "meanScoreDrop": -1.85
     },
     {
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "velocity_flatten_all",
       "claimed": false,
-      "n": 8,
+      "n": 7,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.3694
+        0.4096
       ],
       "meanScoreDrop": 0
     },
@@ -3283,14 +3283,14 @@
       "dimension": "motifRecurrenceAndDevelopment",
       "control": "erase_boundary_events+realise_boundaries",
       "claimed": false,
-      "n": 8,
+      "n": 7,
       "detected": 0,
       "rate": 0,
       "ci95": [
         0,
-        0.3694
+        0.4096
       ],
-      "meanScoreDrop": -2.1
+      "meanScoreDrop": -2.26
     },
     {
       "dimension": "groove",
@@ -3362,13 +3362,13 @@
       "control": "parallel_doubling@3",
       "claimed": false,
       "n": 22,
-      "detected": 2,
-      "rate": 0.0909,
+      "detected": 3,
+      "rate": 0.1364,
       "ci95": [
-        0.0112,
-        0.2916
+        0.0291,
+        0.3491
       ],
-      "meanScoreDrop": -1.73
+      "meanScoreDrop": -1.59
     },
     {
       "dimension": "groove",
@@ -3381,7 +3381,7 @@
         0.8911,
         1
       ],
-      "meanScoreDrop": 26.93
+      "meanScoreDrop": 27.68
     },
     {
       "dimension": "groove",
@@ -3394,7 +3394,7 @@
         0.0721,
         0.3644
       ],
-      "meanScoreDrop": 0.15
+      "meanScoreDrop": 0.25
     },
     {
       "dimension": "groove",
@@ -3407,7 +3407,7 @@
         0.0266,
         0.3236
       ],
-      "meanScoreDrop": -1.64
+      "meanScoreDrop": -1.5
     },
     {
       "dimension": "groove",
@@ -3420,20 +3420,20 @@
         0.1146,
         0.434
       ],
-      "meanScoreDrop": 0.62
+      "meanScoreDrop": 0.82
     },
     {
       "dimension": "groove",
       "control": "density_doubling@3",
       "claimed": false,
       "n": 31,
-      "detected": 25,
-      "rate": 0.8065,
+      "detected": 24,
+      "rate": 0.7742,
       "ci95": [
-        0.6253,
-        0.9255
+        0.589,
+        0.9041
       ],
-      "meanScoreDrop": 16.07
+      "meanScoreDrop": 15.79
     },
     {
       "dimension": "groove",
@@ -3446,7 +3446,7 @@
         0.0077,
         0.2081
       ],
-      "meanScoreDrop": -3.72
+      "meanScoreDrop": -3.62
     },
     {
       "dimension": "groove",
@@ -3511,7 +3511,7 @@
         0.0928,
         0.3997
       ],
-      "meanScoreDrop": 0.86
+      "meanScoreDrop": 0.77
     },
     {
       "dimension": "groove",
@@ -3589,7 +3589,7 @@
         0.0051,
         0.7164
       ],
-      "meanScoreDrop": -1.9
+      "meanScoreDrop": -1.26
     },
     {
       "dimension": "groove",
@@ -3641,7 +3641,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -7.94
+      "meanScoreDrop": -7.58
     },
     {
       "dimension": "groove",
@@ -3693,7 +3693,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -7.32
+      "meanScoreDrop": -6.97
     },
     {
       "dimension": "groove",
@@ -3706,20 +3706,20 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -7.19
+      "meanScoreDrop": -6.84
     },
     {
       "dimension": "groove",
       "control": "parallel_perfect_motion",
       "claimed": false,
       "n": 9,
-      "detected": 2,
-      "rate": 0.2222,
+      "detected": 3,
+      "rate": 0.3333,
       "ci95": [
-        0.0281,
-        0.6001
+        0.0749,
+        0.7007
       ],
-      "meanScoreDrop": 1.67
+      "meanScoreDrop": 1.86
     },
     {
       "dimension": "groove",
@@ -3732,7 +3732,7 @@
         0,
         0.3694
       ],
-      "meanScoreDrop": -2.41
+      "meanScoreDrop": -2.01
     },
     {
       "dimension": "groove",
@@ -3758,7 +3758,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -0.36
+      "meanScoreDrop": 0
     },
     {
       "dimension": "groove",
@@ -3771,7 +3771,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -2.14
+      "meanScoreDrop": -1.78
     },
     {
       "dimension": "groove",
@@ -3797,7 +3797,7 @@
         0.0028,
         0.4825
       ],
-      "meanScoreDrop": -2.75
+      "meanScoreDrop": -2.4
     },
     {
       "dimension": "groove",
@@ -3810,7 +3810,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -0.36
+      "meanScoreDrop": 0
     },
     {
       "dimension": "groove",
@@ -3823,7 +3823,7 @@
         0.0028,
         0.4825
       ],
-      "meanScoreDrop": -2.14
+      "meanScoreDrop": -2.1
     },
     {
       "dimension": "groove",
@@ -3856,13 +3856,13 @@
       "control": "tutti_everywhere",
       "claimed": false,
       "n": 9,
-      "detected": 5,
-      "rate": 0.5556,
+      "detected": 4,
+      "rate": 0.4444,
       "ci95": [
-        0.212,
-        0.863
+        0.137,
+        0.788
       ],
-      "meanScoreDrop": 5.38
+      "meanScoreDrop": 4.35
     },
     {
       "dimension": "groove",
@@ -3901,7 +3901,7 @@
         0.0051,
         0.7164
       ],
-      "meanScoreDrop": -1.9
+      "meanScoreDrop": -1.26
     },
     {
       "dimension": "groove",
@@ -4330,7 +4330,7 @@
         0.3999,
         0.9719
       ],
-      "meanScoreDrop": 16.32
+      "meanScoreDrop": 16.01
     },
     {
       "dimension": "rhythmicInteraction",
@@ -5377,13 +5377,13 @@
       "control": "section_swap@3",
       "claimed": false,
       "n": 32,
-      "detected": 1,
-      "rate": 0.0313,
+      "detected": 2,
+      "rate": 0.0625,
       "ci95": [
-        0.0008,
-        0.1622
+        0.0077,
+        0.2081
       ],
-      "meanScoreDrop": 0.19
+      "meanScoreDrop": 0.38
     },
     {
       "dimension": "idiomaticity",
@@ -5793,13 +5793,13 @@
       "control": "pitch_shift_in_key@3",
       "claimed": false,
       "n": 22,
-      "detected": 2,
-      "rate": 0.0909,
+      "detected": 1,
+      "rate": 0.0455,
       "ci95": [
-        0.0112,
-        0.2916
+        0.0012,
+        0.2284
       ],
-      "meanScoreDrop": -0.48
+      "meanScoreDrop": -0.97
     },
     {
       "dimension": "register",
@@ -5819,13 +5819,13 @@
       "control": "chord_tone_to_non_chord_tone@3",
       "claimed": false,
       "n": 22,
-      "detected": 2,
-      "rate": 0.0909,
+      "detected": 0,
+      "rate": 0,
       "ci95": [
-        0.0112,
-        0.2916
+        0,
+        0.1544
       ],
-      "meanScoreDrop": -0.55
+      "meanScoreDrop": -1.15
     },
     {
       "dimension": "register",
@@ -5838,7 +5838,7 @@
         0.3635,
         0.7929
       ],
-      "meanScoreDrop": 11.3
+      "meanScoreDrop": 11.15
     },
     {
       "dimension": "register",
@@ -5877,7 +5877,7 @@
         0.0351,
         0.2899
       ],
-      "meanScoreDrop": -0.54
+      "meanScoreDrop": -0.8
     },
     {
       "dimension": "register",
@@ -5890,7 +5890,7 @@
         0.1612,
         0.5001
       ],
-      "meanScoreDrop": 2.91
+      "meanScoreDrop": 2.76
     },
     {
       "dimension": "register",
@@ -5903,7 +5903,7 @@
         0.1563,
         0.5532
       ],
-      "meanScoreDrop": 5.01
+      "meanScoreDrop": 4.46
     },
     {
       "dimension": "register",
@@ -5916,7 +5916,7 @@
         0,
         0.1089
       ],
-      "meanScoreDrop": -5.86
+      "meanScoreDrop": -6.13
     },
     {
       "dimension": "register",
@@ -5936,13 +5936,13 @@
       "control": "bar_copy_repetition@3",
       "claimed": false,
       "n": 32,
-      "detected": 5,
-      "rate": 0.1563,
+      "detected": 4,
+      "rate": 0.125,
       "ci95": [
-        0.0528,
-        0.3279
+        0.0351,
+        0.2899
       ],
-      "meanScoreDrop": -1.16
+      "meanScoreDrop": -2.07
     },
     {
       "dimension": "register",
@@ -5955,7 +5955,7 @@
         0.0928,
         0.3997
       ],
-      "meanScoreDrop": 2.51
+      "meanScoreDrop": 2.17
     },
     {
       "dimension": "register",
@@ -5968,20 +5968,20 @@
         0,
         0.1765
       ],
-      "meanScoreDrop": -3.53
+      "meanScoreDrop": -3.35
     },
     {
       "dimension": "register",
       "control": "cross_part_clash@3",
       "claimed": false,
       "n": 22,
-      "detected": 2,
-      "rate": 0.0909,
+      "detected": 1,
+      "rate": 0.0455,
       "ci95": [
-        0.0112,
-        0.2916
+        0.0012,
+        0.2284
       ],
-      "meanScoreDrop": -0.8
+      "meanScoreDrop": -0.65
     },
     {
       "dimension": "register",
@@ -5994,7 +5994,7 @@
         0.6306,
         1
       ],
-      "meanScoreDrop": 51.06
+      "meanScoreDrop": 49.78
     },
     {
       "dimension": "register",
@@ -6007,7 +6007,7 @@
         0.0928,
         0.3997
       ],
-      "meanScoreDrop": 2.21
+      "meanScoreDrop": 2.11
     },
     {
       "dimension": "register",
@@ -6033,7 +6033,7 @@
         0.3221,
         0.7561
       ],
-      "meanScoreDrop": 8.66
+      "meanScoreDrop": 8.13
     },
     {
       "dimension": "register",
@@ -6046,7 +6046,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -17.58
+      "meanScoreDrop": -18.38
     },
     {
       "dimension": "register",
@@ -6072,7 +6072,7 @@
         0,
         0.8419
       ],
-      "meanScoreDrop": -1.8
+      "meanScoreDrop": -2.7
     },
     {
       "dimension": "register",
@@ -6098,7 +6098,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -15.32
+      "meanScoreDrop": -16.52
     },
     {
       "dimension": "register",
@@ -6147,7 +6147,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -1.77
+      "meanScoreDrop": -3.32
     },
     {
       "dimension": "register",
@@ -6173,7 +6173,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -1.77
+      "meanScoreDrop": -3.32
     },
     {
       "dimension": "register",
@@ -6186,20 +6186,20 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -4.28
+      "meanScoreDrop": -4.88
     },
     {
       "dimension": "register",
       "control": "homorhythm",
       "claimed": false,
       "n": 9,
-      "detected": 8,
-      "rate": 0.8889,
+      "detected": 7,
+      "rate": 0.7778,
       "ci95": [
-        0.5175,
-        0.9972
+        0.3999,
+        0.9719
       ],
-      "meanScoreDrop": 16.31
+      "meanScoreDrop": 16.08
     },
     {
       "dimension": "register",
@@ -6238,20 +6238,20 @@
         0.3491,
         0.9681
       ],
-      "meanScoreDrop": 14.03
+      "meanScoreDrop": 14.48
     },
     {
       "dimension": "register",
       "control": "random_pitch",
       "claimed": false,
       "n": 9,
-      "detected": 2,
-      "rate": 0.2222,
+      "detected": 1,
+      "rate": 0.1111,
       "ci95": [
-        0.0281,
-        0.6001
+        0.0028,
+        0.4825
       ],
-      "meanScoreDrop": -11.55
+      "meanScoreDrop": -12.67
     },
     {
       "dimension": "register",
@@ -6264,7 +6264,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -16.8
+      "meanScoreDrop": -17.4
     },
     {
       "dimension": "register",
@@ -6297,52 +6297,52 @@
       "control": "strip_cc_and_quantise",
       "claimed": false,
       "n": 9,
-      "detected": 5,
-      "rate": 0.5556,
+      "detected": 4,
+      "rate": 0.4444,
       "ci95": [
-        0.212,
-        0.863
+        0.137,
+        0.788
       ],
-      "meanScoreDrop": 5.94
+      "meanScoreDrop": 4.81
     },
     {
       "dimension": "register",
       "control": "swap_climax_with_quietest",
       "claimed": false,
       "n": 9,
-      "detected": 1,
-      "rate": 0.1111,
+      "detected": 2,
+      "rate": 0.2222,
       "ci95": [
-        0.0028,
-        0.4825
+        0.0281,
+        0.6001
       ],
-      "meanScoreDrop": -2.13
+      "meanScoreDrop": -2.44
     },
     {
       "dimension": "register",
       "control": "top_line_erratic",
       "claimed": false,
       "n": 9,
-      "detected": 7,
-      "rate": 0.7778,
+      "detected": 6,
+      "rate": 0.6667,
       "ci95": [
-        0.3999,
-        0.9719
+        0.2993,
+        0.9251
       ],
-      "meanScoreDrop": 2.37
+      "meanScoreDrop": 1.24
     },
     {
       "dimension": "register",
       "control": "top_line_into_vocal_register",
       "claimed": true,
       "n": 9,
-      "detected": 1,
-      "rate": 0.1111,
+      "detected": 0,
+      "rate": 0,
       "ci95": [
-        0.0028,
-        0.4825
+        0,
+        0.3363
       ],
-      "meanScoreDrop": -6.26
+      "meanScoreDrop": -8.89
     },
     {
       "dimension": "register",
@@ -6355,7 +6355,7 @@
         0.137,
         0.788
       ],
-      "meanScoreDrop": 12.59
+      "meanScoreDrop": 12.99
     },
     {
       "dimension": "register",
@@ -6407,7 +6407,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -1.77
+      "meanScoreDrop": -3.32
     },
     {
       "dimension": "density",
@@ -6518,13 +6518,13 @@
       "control": "syncopation_removal@3",
       "claimed": false,
       "n": 24,
-      "detected": 1,
-      "rate": 0.0417,
+      "detected": 2,
+      "rate": 0.0833,
       "ci95": [
-        0.0011,
-        0.2112
+        0.0103,
+        0.27
       ],
-      "meanScoreDrop": -0.14
+      "meanScoreDrop": 0.18
     },
     {
       "dimension": "density",
@@ -6628,7 +6628,7 @@
         0.2909,
         0.6526
       ],
-      "meanScoreDrop": 6.46
+      "meanScoreDrop": 6.21
     },
     {
       "dimension": "density",
@@ -7109,7 +7109,7 @@
         0.0291,
         0.3491
       ],
-      "meanScoreDrop": -0.71
+      "meanScoreDrop": -0.83
     },
     {
       "dimension": "transitions",
@@ -7135,7 +7135,7 @@
         0.1612,
         0.5001
       ],
-      "meanScoreDrop": 1.11
+      "meanScoreDrop": 1.02
     },
     {
       "dimension": "transitions",
@@ -7161,7 +7161,7 @@
         0.3189,
         0.6811
       ],
-      "meanScoreDrop": 2.23
+      "meanScoreDrop": 2.14
     },
     {
       "dimension": "transitions",
@@ -7187,7 +7187,7 @@
         0.3189,
         0.6811
       ],
-      "meanScoreDrop": 2.26
+      "meanScoreDrop": 2.18
     },
     {
       "dimension": "transitions",
@@ -7558,13 +7558,13 @@
       "control": "swap_climax_with_quietest",
       "claimed": false,
       "n": 9,
-      "detected": 7,
-      "rate": 0.7778,
+      "detected": 6,
+      "rate": 0.6667,
       "ci95": [
-        0.3999,
-        0.9719
+        0.2993,
+        0.9251
       ],
-      "meanScoreDrop": 4.04
+      "meanScoreDrop": 3.75
     },
     {
       "dimension": "transitions",
@@ -7603,7 +7603,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -2.98
+      "meanScoreDrop": -3.3
     },
     {
       "dimension": "transitions",
@@ -7811,7 +7811,7 @@
         0.3474,
         0.7091
       ],
-      "meanScoreDrop": 5.65
+      "meanScoreDrop": 5.87
     },
     {
       "dimension": "repetitionVsVariation",
@@ -8286,39 +8286,39 @@
       "control": "pitch_shift_in_key@3",
       "claimed": false,
       "n": 16,
-      "detected": 2,
-      "rate": 0.125,
+      "detected": 3,
+      "rate": 0.1875,
       "ci95": [
-        0.0155,
-        0.3835
+        0.0405,
+        0.4565
       ],
-      "meanScoreDrop": 0.4
+      "meanScoreDrop": 0.6
     },
     {
       "dimension": "sectionDevelopment",
       "control": "pitch_shift_out_of_key@3",
       "claimed": false,
       "n": 16,
-      "detected": 2,
-      "rate": 0.125,
+      "detected": 3,
+      "rate": 0.1875,
       "ci95": [
-        0.0155,
-        0.3835
+        0.0405,
+        0.4565
       ],
-      "meanScoreDrop": 0.4
+      "meanScoreDrop": 0.6
     },
     {
       "dimension": "sectionDevelopment",
       "control": "chord_tone_to_non_chord_tone@3",
       "claimed": false,
       "n": 16,
-      "detected": 2,
-      "rate": 0.125,
+      "detected": 3,
+      "rate": 0.1875,
       "ci95": [
-        0.0155,
-        0.3835
+        0.0405,
+        0.4565
       ],
-      "meanScoreDrop": 0.4
+      "meanScoreDrop": 0.6
     },
     {
       "dimension": "sectionDevelopment",
@@ -8338,39 +8338,39 @@
       "control": "leap_injection@3",
       "claimed": false,
       "n": 12,
-      "detected": 1,
-      "rate": 0.0833,
+      "detected": 2,
+      "rate": 0.1667,
       "ci95": [
-        0.0021,
-        0.3848
+        0.0209,
+        0.4841
       ],
-      "meanScoreDrop": 0.27
+      "meanScoreDrop": 0.54
     },
     {
       "dimension": "sectionDevelopment",
       "control": "parallel_doubling@3",
       "claimed": false,
       "n": 16,
-      "detected": 2,
-      "rate": 0.125,
+      "detected": 3,
+      "rate": 0.1875,
       "ci95": [
-        0.0155,
-        0.3835
+        0.0405,
+        0.4565
       ],
-      "meanScoreDrop": -0.02
+      "meanScoreDrop": 0.57
     },
     {
       "dimension": "sectionDevelopment",
       "control": "onset_jitter@3",
       "claimed": false,
       "n": 23,
-      "detected": 5,
-      "rate": 0.2174,
+      "detected": 7,
+      "rate": 0.3043,
       "ci95": [
-        0.0746,
-        0.437
+        0.1321,
+        0.5292
       ],
-      "meanScoreDrop": 0.7
+      "meanScoreDrop": 0.97
     },
     {
       "dimension": "sectionDevelopment",
@@ -8383,33 +8383,33 @@
         0,
         0.1482
       ],
-      "meanScoreDrop": -0.61
+      "meanScoreDrop": -0.47
     },
     {
       "dimension": "sectionDevelopment",
       "control": "syncopation_removal@3",
       "claimed": false,
       "n": 20,
-      "detected": 3,
-      "rate": 0.15,
+      "detected": 2,
+      "rate": 0.1,
       "ci95": [
-        0.0321,
-        0.3789
+        0.0123,
+        0.317
       ],
-      "meanScoreDrop": 0.33
+      "meanScoreDrop": 0.32
     },
     {
       "dimension": "sectionDevelopment",
       "control": "density_thinning@3",
       "claimed": false,
       "n": 23,
-      "detected": 4,
-      "rate": 0.1739,
+      "detected": 6,
+      "rate": 0.2609,
       "ci95": [
-        0.0495,
-        0.3878
+        0.1023,
+        0.4841
       ],
-      "meanScoreDrop": 0.43
+      "meanScoreDrop": 0.83
     },
     {
       "dimension": "sectionDevelopment",
@@ -8435,7 +8435,7 @@
         0.0278,
         0.3359
       ],
-      "meanScoreDrop": -0.2
+      "meanScoreDrop": 0.34
     },
     {
       "dimension": "sectionDevelopment",
@@ -8455,26 +8455,26 @@
       "control": "motif_destruction@3",
       "claimed": false,
       "n": 15,
-      "detected": 2,
-      "rate": 0.1333,
+      "detected": 3,
+      "rate": 0.2,
       "ci95": [
-        0.0166,
-        0.4046
+        0.0433,
+        0.4809
       ],
-      "meanScoreDrop": 0.43
+      "meanScoreDrop": 0.64
     },
     {
       "dimension": "sectionDevelopment",
       "control": "cross_part_clash@3",
       "claimed": false,
       "n": 16,
-      "detected": 1,
-      "rate": 0.0625,
+      "detected": 2,
+      "rate": 0.125,
       "ci95": [
-        0.0016,
-        0.3023
+        0.0155,
+        0.3835
       ],
-      "meanScoreDrop": 0
+      "meanScoreDrop": 0.39
     },
     {
       "dimension": "sectionDevelopment",
@@ -8494,13 +8494,13 @@
       "control": "section_swap@3",
       "claimed": true,
       "n": 23,
-      "detected": 2,
-      "rate": 0.087,
+      "detected": 4,
+      "rate": 0.1739,
       "ci95": [
-        0.0107,
-        0.2804
+        0.0495,
+        0.3878
       ],
-      "meanScoreDrop": 0.01
+      "meanScoreDrop": 0.55
     },
     {
       "dimension": "sectionDevelopment",
@@ -8513,7 +8513,7 @@
         0,
         0.1482
       ],
-      "meanScoreDrop": -0.14
+      "meanScoreDrop": 0
     },
     {
       "dimension": "sectionDevelopment",
@@ -8539,7 +8539,7 @@
         0,
         0.4096
       ],
-      "meanScoreDrop": -0.45
+      "meanScoreDrop": 0
     },
     {
       "dimension": "sectionDevelopment",
@@ -8552,7 +8552,7 @@
         0.0036,
         0.5787
       ],
-      "meanScoreDrop": -0.36
+      "meanScoreDrop": 0.09
     },
     {
       "dimension": "sectionDevelopment",
@@ -8575,7 +8575,7 @@
         0.4782,
         1
       ],
-      "meanScoreDrop": 7.46
+      "meanScoreDrop": 8.08
     },
     {
       "dimension": "sectionDevelopment",
@@ -8588,7 +8588,7 @@
         0,
         0.4096
       ],
-      "meanScoreDrop": -0.45
+      "meanScoreDrop": 0
     },
     {
       "dimension": "sectionDevelopment",
@@ -8679,20 +8679,20 @@
         0.0036,
         0.5787
       ],
-      "meanScoreDrop": 0.03
+      "meanScoreDrop": 0.47
     },
     {
       "dimension": "sectionDevelopment",
       "control": "homorhythm",
       "claimed": false,
       "n": 7,
-      "detected": 1,
-      "rate": 0.1429,
+      "detected": 0,
+      "rate": 0,
       "ci95": [
-        0.0036,
-        0.5787
+        0,
+        0.4096
       ],
-      "meanScoreDrop": -0.3
+      "meanScoreDrop": -1.03
     },
     {
       "dimension": "sectionDevelopment",
@@ -8705,7 +8705,7 @@
         0,
         0.4096
       ],
-      "meanScoreDrop": -0.96
+      "meanScoreDrop": -0.51
     },
     {
       "dimension": "sectionDevelopment",
@@ -8718,7 +8718,7 @@
         0.0036,
         0.5787
       ],
-      "meanScoreDrop": -0.49
+      "meanScoreDrop": -0.04
     },
     {
       "dimension": "sectionDevelopment",
@@ -8738,13 +8738,13 @@
       "control": "random_pitch",
       "claimed": false,
       "n": 7,
-      "detected": 2,
-      "rate": 0.2857,
+      "detected": 3,
+      "rate": 0.4286,
       "ci95": [
-        0.0367,
-        0.7096
+        0.099,
+        0.8159
       ],
-      "meanScoreDrop": 0.92
+      "meanScoreDrop": 1.36
     },
     {
       "dimension": "sectionDevelopment",
@@ -8757,7 +8757,7 @@
         0,
         0.4096
       ],
-      "meanScoreDrop": 0.92
+      "meanScoreDrop": 1.36
     },
     {
       "dimension": "sectionDevelopment",
@@ -8783,7 +8783,7 @@
         0,
         0.4096
       ],
-      "meanScoreDrop": -0.96
+      "meanScoreDrop": -0.51
     },
     {
       "dimension": "sectionDevelopment",
@@ -8803,13 +8803,13 @@
       "control": "swap_climax_with_quietest",
       "claimed": false,
       "n": 7,
-      "detected": 2,
-      "rate": 0.2857,
+      "detected": 3,
+      "rate": 0.4286,
       "ci95": [
-        0.0367,
-        0.7096
+        0.099,
+        0.8159
       ],
-      "meanScoreDrop": 1.32
+      "meanScoreDrop": 1.77
     },
     {
       "dimension": "sectionDevelopment",
@@ -8874,7 +8874,7 @@
         0,
         0.4096
       ],
-      "meanScoreDrop": -0.45
+      "meanScoreDrop": 0
     },
     {
       "dimension": "sectionDevelopment",
@@ -8907,13 +8907,13 @@
       "control": "pitch_shift_in_key@3",
       "claimed": false,
       "n": 22,
-      "detected": 8,
-      "rate": 0.3636,
+      "detected": 7,
+      "rate": 0.3182,
       "ci95": [
-        0.172,
-        0.5934
+        0.1386,
+        0.5487
       ],
-      "meanScoreDrop": 7.84
+      "meanScoreDrop": 7.6
     },
     {
       "dimension": "playability",
@@ -8933,13 +8933,13 @@
       "control": "chord_tone_to_non_chord_tone@3",
       "claimed": false,
       "n": 22,
-      "detected": 6,
-      "rate": 0.2727,
+      "detected": 5,
+      "rate": 0.2273,
       "ci95": [
-        0.1073,
-        0.5022
+        0.0782,
+        0.4537
       ],
-      "meanScoreDrop": 3.02
+      "meanScoreDrop": 2.84
     },
     {
       "dimension": "playability",
@@ -8952,7 +8952,7 @@
         0.7084,
         0.9888
       ],
-      "meanScoreDrop": 59.05
+      "meanScoreDrop": 59.46
     },
     {
       "dimension": "playability",
@@ -8965,7 +8965,7 @@
         0.4762,
         0.9273
       ],
-      "meanScoreDrop": 25.46
+      "meanScoreDrop": 25.48
     },
     {
       "dimension": "playability",
@@ -8978,33 +8978,33 @@
         0.3221,
         0.7561
       ],
-      "meanScoreDrop": 42
+      "meanScoreDrop": 41.98
     },
     {
       "dimension": "playability",
       "control": "onset_jitter@3",
       "claimed": false,
       "n": 32,
-      "detected": 12,
-      "rate": 0.375,
+      "detected": 14,
+      "rate": 0.4375,
       "ci95": [
-        0.211,
-        0.5631
+        0.2636,
+        0.6234
       ],
-      "meanScoreDrop": 23.54
+      "meanScoreDrop": 23.95
     },
     {
       "dimension": "playability",
       "control": "quantisation_coarsening@3",
       "claimed": false,
       "n": 32,
-      "detected": 17,
-      "rate": 0.5313,
+      "detected": 19,
+      "rate": 0.5938,
       "ci95": [
-        0.3474,
-        0.7091
+        0.4064,
+        0.763
       ],
-      "meanScoreDrop": 21.98
+      "meanScoreDrop": 22.27
     },
     {
       "dimension": "playability",
@@ -9017,7 +9017,7 @@
         0.2912,
         0.7088
       ],
-      "meanScoreDrop": 34.87
+      "meanScoreDrop": 34.32
     },
     {
       "dimension": "playability",
@@ -9043,7 +9043,7 @@
         0.0363,
         0.2983
       ],
-      "meanScoreDrop": 0.96
+      "meanScoreDrop": 0.97
     },
     {
       "dimension": "playability",
@@ -9056,7 +9056,7 @@
         0.0721,
         0.3644
       ],
-      "meanScoreDrop": 16.67
+      "meanScoreDrop": 16.68
     },
     {
       "dimension": "playability",
@@ -9082,20 +9082,20 @@
         0.335,
         0.7975
       ],
-      "meanScoreDrop": 11.86
+      "meanScoreDrop": 13.68
     },
     {
       "dimension": "playability",
       "control": "cross_part_clash@3",
       "claimed": false,
       "n": 22,
-      "detected": 10,
-      "rate": 0.4545,
+      "detected": 9,
+      "rate": 0.4091,
       "ci95": [
-        0.2439,
-        0.6779
+        0.2071,
+        0.6365
       ],
-      "meanScoreDrop": 5.41
+      "meanScoreDrop": 5.4
     },
     {
       "dimension": "playability",
@@ -9108,20 +9108,20 @@
         0.6306,
         1
       ],
-      "meanScoreDrop": 98.04
+      "meanScoreDrop": 98.05
     },
     {
       "dimension": "playability",
       "control": "section_swap@3",
       "claimed": false,
       "n": 32,
-      "detected": 15,
-      "rate": 0.4688,
+      "detected": 13,
+      "rate": 0.4063,
       "ci95": [
-        0.2909,
-        0.6526
+        0.237,
+        0.5936
       ],
-      "meanScoreDrop": 21.51
+      "meanScoreDrop": 22.05
     },
     {
       "dimension": "playability",
@@ -9147,7 +9147,7 @@
         0.7716,
         0.9988
       ],
-      "meanScoreDrop": 82.57
+      "meanScoreDrop": 83
     },
     {
       "dimension": "playability",
@@ -9173,7 +9173,7 @@
         0.6637,
         1
       ],
-      "meanScoreDrop": 84.76
+      "meanScoreDrop": 84.77
     },
     {
       "dimension": "playability",
@@ -9251,7 +9251,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -4.85
+      "meanScoreDrop": -4.84
     },
     {
       "dimension": "playability",
@@ -9316,7 +9316,7 @@
         0.0281,
         0.6001
       ],
-      "meanScoreDrop": 17.95
+      "meanScoreDrop": 13.55
     },
     {
       "dimension": "playability",
@@ -9355,7 +9355,7 @@
         0.6306,
         1
       ],
-      "meanScoreDrop": 94.55
+      "meanScoreDrop": 94.56
     },
     {
       "dimension": "playability",
@@ -9368,7 +9368,7 @@
         0.0281,
         0.6001
       ],
-      "meanScoreDrop": -2.83
+      "meanScoreDrop": -2.82
     },
     {
       "dimension": "playability",
@@ -9394,7 +9394,7 @@
         0.6637,
         1
       ],
-      "meanScoreDrop": 88.83
+      "meanScoreDrop": 88.84
     },
     {
       "dimension": "playability",
@@ -9420,7 +9420,7 @@
         0.137,
         0.788
       ],
-      "meanScoreDrop": 16.24
+      "meanScoreDrop": 19.28
     },
     {
       "dimension": "playability",
@@ -9446,20 +9446,20 @@
         0.3999,
         0.9719
       ],
-      "meanScoreDrop": 27.56
+      "meanScoreDrop": 26.8
     },
     {
       "dimension": "playability",
       "control": "top_line_into_vocal_register",
       "claimed": false,
       "n": 9,
-      "detected": 4,
-      "rate": 0.4444,
+      "detected": 5,
+      "rate": 0.5556,
       "ci95": [
-        0.137,
-        0.788
+        0.212,
+        0.863
       ],
-      "meanScoreDrop": 31.09
+      "meanScoreDrop": 31.8
     },
     {
       "dimension": "playability",
@@ -9472,7 +9472,7 @@
         0.2993,
         0.9251
       ],
-      "meanScoreDrop": 34.56
+      "meanScoreDrop": 34.53
     },
     {
       "dimension": "playability",
@@ -9485,7 +9485,7 @@
         0.2993,
         0.9251
       ],
-      "meanScoreDrop": 59.79
+      "meanScoreDrop": 59.8
     },
     {
       "dimension": "playability",
@@ -9511,7 +9511,7 @@
         0,
         0.5218
       ],
-      "meanScoreDrop": -29.66
+      "meanScoreDrop": -30.18
     },
     {
       "dimension": "playability",
@@ -9524,7 +9524,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -27.38
+      "meanScoreDrop": -27.39
     },
     {
       "dimension": "performanceRealisation",
@@ -9622,13 +9622,13 @@
       "control": "quantisation_coarsening@3",
       "claimed": false,
       "n": 32,
-      "detected": 15,
-      "rate": 0.4688,
+      "detected": 13,
+      "rate": 0.4063,
       "ci95": [
-        0.2909,
-        0.6526
+        0.237,
+        0.5936
       ],
-      "meanScoreDrop": 2.72
+      "meanScoreDrop": 2.34
     },
     {
       "dimension": "performanceRealisation",
@@ -9654,20 +9654,20 @@
         0,
         0.1089
       ],
-      "meanScoreDrop": -0.3
+      "meanScoreDrop": -0.2
     },
     {
       "dimension": "performanceRealisation",
       "control": "density_doubling@3",
       "claimed": false,
       "n": 31,
-      "detected": 1,
-      "rate": 0.0323,
+      "detected": 0,
+      "rate": 0,
       "ci95": [
-        0.0008,
-        0.167
+        0,
+        0.1122
       ],
-      "meanScoreDrop": 0.11
+      "meanScoreDrop": 0
     },
     {
       "dimension": "performanceRealisation",
@@ -9680,7 +9680,7 @@
         0.1146,
         0.434
       ],
-      "meanScoreDrop": 11.61
+      "meanScoreDrop": 13.67
     },
     {
       "dimension": "performanceRealisation",
@@ -9693,7 +9693,7 @@
         0.0008,
         0.1622
       ],
-      "meanScoreDrop": -0.08
+      "meanScoreDrop": 0.02
     },
     {
       "dimension": "performanceRealisation",
@@ -9739,13 +9739,13 @@
       "control": "section_swap@3",
       "claimed": false,
       "n": 32,
-      "detected": 1,
-      "rate": 0.0313,
+      "detected": 0,
+      "rate": 0,
       "ci95": [
-        0.0008,
-        0.1622
+        0,
+        0.1089
       ],
-      "meanScoreDrop": 0.09
+      "meanScoreDrop": 0
     },
     {
       "dimension": "performanceRealisation",
@@ -9784,7 +9784,7 @@
         0.0028,
         0.4825
       ],
-      "meanScoreDrop": 0.03
+      "meanScoreDrop": 0.4
     },
     {
       "dimension": "performanceRealisation",
@@ -9836,7 +9836,7 @@
         0,
         0.3363
       ],
-      "meanScoreDrop": -0.37
+      "meanScoreDrop": 0
     },
     {
       "dimension": "performanceRealisation",
@@ -9927,7 +9927,7 @@
         0.6637,
         1
       ],
-      "meanScoreDrop": 93.34
+      "meanScoreDrop": 93.71
     },
     {
       "dimension": "performanceRealisation",
@@ -9940,7 +9940,7 @@
         0.6637,
         1
       ],
-      "meanScoreDrop": 17.45
+      "meanScoreDrop": 18.55
     },
     {
       "dimension": "performanceRealisation",
@@ -9966,7 +9966,7 @@
         0,
         0.3694
       ],
-      "meanScoreDrop": -0.41
+      "meanScoreDrop": 0
     },
     {
       "dimension": "performanceRealisation",
@@ -9986,13 +9986,13 @@
       "control": "random_pitch",
       "claimed": false,
       "n": 9,
-      "detected": 1,
-      "rate": 0.1111,
+      "detected": 0,
+      "rate": 0,
       "ci95": [
-        0.0028,
-        0.4825
+        0,
+        0.3363
       ],
-      "meanScoreDrop": 0.33
+      "meanScoreDrop": 0
     },
     {
       "dimension": "performanceRealisation",
@@ -10025,13 +10025,13 @@
       "control": "strip_bed_to_top_voice",
       "claimed": false,
       "n": 9,
-      "detected": 0,
-      "rate": 0,
+      "detected": 1,
+      "rate": 0.1111,
       "ci95": [
-        0,
-        0.3363
+        0.0028,
+        0.4825
       ],
-      "meanScoreDrop": -0.33
+      "meanScoreDrop": 0.03
     },
     {
       "dimension": "performanceRealisation",
@@ -10090,13 +10090,13 @@
       "control": "tutti_everywhere",
       "claimed": false,
       "n": 9,
-      "detected": 2,
-      "rate": 0.2222,
+      "detected": 1,
+      "rate": 0.1111,
       "ci95": [
-        0.0281,
-        0.6001
+        0.0028,
+        0.4825
       ],
-      "meanScoreDrop": 6.03
+      "meanScoreDrop": 3.27
     },
     {
       "dimension": "performanceRealisation",
@@ -10122,7 +10122,7 @@
         0.6637,
         1
       ],
-      "meanScoreDrop": 97.96
+      "meanScoreDrop": 98.32
     },
     {
       "dimension": "performanceRealisation",
@@ -10200,7 +10200,7 @@
         0,
         0.1544
       ],
-      "meanScoreDrop": -0.46
+      "meanScoreDrop": -0.31
     },
     {
       "dimension": "emotionalArcAndTension",
@@ -10226,7 +10226,7 @@
         0.0012,
         0.2284
       ],
-      "meanScoreDrop": -0.77
+      "meanScoreDrop": -0.91
     },
     {
       "dimension": "emotionalArcAndTension",
@@ -11133,11 +11133,11 @@
     {
       "anchorId": "rock-full",
       "dimension": "harmony",
-      "score": 81.2,
+      "score": 84.4,
       "applicable": true,
       "blocking": 0,
       "major": 0,
-      "minor": 6,
+      "minor": 5,
       "kinds": [
         "bass_rarely_states_root",
         "clash_share"
@@ -11146,7 +11146,7 @@
     {
       "anchorId": "rock-full",
       "dimension": "voiceLeading",
-      "score": 93.75,
+      "score": 93.5,
       "applicable": true,
       "blocking": 0,
       "major": 1,
@@ -11180,14 +11180,13 @@
     {
       "anchorId": "rock-full",
       "dimension": "groove",
-      "score": 61.9,
+      "score": 65.1,
       "applicable": true,
       "blocking": 0,
       "major": 2,
-      "minor": 8,
+      "minor": 7,
       "kinds": [
         "anticipation_mismatch",
-        "off_grid",
         "planned_fill_missing",
         "subdivision_inconsistent"
       ]
@@ -11331,7 +11330,7 @@
     {
       "anchorId": "dance-full",
       "dimension": "voiceLeading",
-      "score": 93.78,
+      "score": 93.55,
       "applicable": true,
       "blocking": 0,
       "major": 1,
@@ -11461,14 +11460,12 @@
     {
       "anchorId": "dance-full",
       "dimension": "sectionDevelopment",
-      "score": 96.88,
+      "score": 100,
       "applicable": true,
       "blocking": 0,
       "major": 0,
-      "minor": 1,
-      "kinds": [
-        "repeat_without_identity"
-      ]
+      "minor": 0,
+      "kinds": []
     },
     {
       "anchorId": "dance-full",
@@ -11698,11 +11695,11 @@
     {
       "anchorId": "orchestral-midi",
       "dimension": "voiceLeading",
-      "score": 90.3,
+      "score": 93.9,
       "applicable": true,
       "blocking": 0,
       "major": 0,
-      "minor": 3,
+      "minor": 2,
       "kinds": [
         "no_common_tone_retention",
         "voice_crossing_between_parts"
@@ -11711,12 +11708,13 @@
     {
       "anchorId": "orchestral-midi",
       "dimension": "melodyAndCounterline",
-      "score": 81.4,
+      "score": 86.8,
       "applicable": true,
       "blocking": 0,
-      "major": 1,
-      "minor": 3,
+      "major": 0,
+      "minor": 4,
       "kinds": [
+        "line_in_vocal_register",
         "line_masks_vocal"
       ]
     },
@@ -11776,11 +11774,11 @@
     {
       "anchorId": "orchestral-midi",
       "dimension": "register",
-      "score": 63.1,
+      "score": 52.9,
       "applicable": true,
       "blocking": 0,
-      "major": 2,
-      "minor": 6,
+      "major": 4,
+      "minor": 4,
       "kinds": [
         "vocal_masking"
       ]
@@ -11900,8 +11898,8 @@
     {
       "anchorId": "ethnic-vocal",
       "dimension": "motifRecurrenceAndDevelopment",
-      "score": 100,
-      "applicable": true,
+      "score": null,
+      "applicable": false,
       "blocking": 0,
       "major": 0,
       "minor": 0,
@@ -12195,7 +12193,7 @@
     {
       "anchorId": "jazz-full",
       "dimension": "playability",
-      "score": 97.45,
+      "score": 97.53,
       "applicable": true,
       "blocking": 0,
       "major": 0,
@@ -12388,11 +12386,11 @@
     {
       "anchorId": "cinematic-midi",
       "dimension": "performanceRealisation",
-      "score": 93.4,
+      "score": 96.7,
       "applicable": true,
       "blocking": 0,
       "major": 0,
-      "minor": 2,
+      "minor": 1,
       "kinds": [
         "dynamic_range_flat_per_section"
       ]
@@ -12535,7 +12533,7 @@
         "results": {
           "harmony": {
             "detected": true,
-            "before": 81.2,
+            "before": 84.4,
             "after": 0,
             "kinds": [
               "clash_share",
@@ -12544,8 +12542,8 @@
           },
           "voiceLeading": {
             "detected": false,
-            "before": 93.75,
-            "after": 93.75,
+            "before": 93.5,
+            "after": 93.5,
             "kinds": []
           },
           "melodyAndCounterline": {
@@ -12562,8 +12560,8 @@
           },
           "groove": {
             "detected": false,
-            "before": 61.9,
-            "after": 61.9,
+            "before": 65.1,
+            "after": 65.1,
             "kinds": []
           },
           "rhythmicInteraction": {
@@ -12651,14 +12649,14 @@
           },
           "voiceLeading": {
             "detected": false,
-            "before": 90.3,
-            "after": 90.3,
+            "before": 93.9,
+            "after": 93.9,
             "kinds": []
           },
           "melodyAndCounterline": {
             "detected": false,
-            "before": 81.4,
-            "after": 81.4,
+            "before": 86.8,
+            "after": 86.8,
             "kinds": []
           },
           "motifRecurrenceAndDevelopment": {
@@ -12693,8 +12691,8 @@
           },
           "register": {
             "detected": false,
-            "before": 63.1,
-            "after": 63.1,
+            "before": 52.9,
+            "after": 52.9,
             "kinds": []
           },
           "density": {
@@ -12830,7 +12828,7 @@
           },
           "playability": {
             "detected": true,
-            "before": 97.45,
+            "before": 97.53,
             "after": 0,
             "kinds": [
               "outside_comfortable_range"
@@ -12863,12 +12861,11 @@
           },
           "voiceLeading": {
             "detected": true,
-            "before": 93.78,
+            "before": 93.55,
             "after": 79.93,
             "kinds": [
               "no_common_tone_retention",
-              "part_doubles_another",
-              "voice_crossing_between_parts"
+              "part_doubles_another"
             ]
           },
           "melodyAndCounterline": {
@@ -12942,7 +12939,7 @@
           },
           "sectionDevelopment": {
             "detected": false,
-            "before": 96.88,
+            "before": 100,
             "after": 100,
             "kinds": []
           },
@@ -13093,8 +13090,8 @@
           },
           "voiceLeading": {
             "detected": false,
-            "before": 93.78,
-            "after": 93.78,
+            "before": 93.55,
+            "after": 93.55,
             "kinds": []
           },
           "melodyAndCounterline": {
@@ -13166,8 +13163,8 @@
           },
           "sectionDevelopment": {
             "detected": false,
-            "before": 96.88,
-            "after": 96.88,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "playability": {
@@ -13199,18 +13196,18 @@
       {
         "control": "syncopation_removal@3",
         "anchorId": "rock-full",
-        "detail": "syncopation_removal@3 on drums-groove: 89 notes changed",
+        "detail": "syncopation_removal@3 on drums-groove: 91 notes changed",
         "results": {
           "harmony": {
             "detected": false,
-            "before": 81.2,
-            "after": 81.2,
+            "before": 84.4,
+            "after": 84.4,
             "kinds": []
           },
           "voiceLeading": {
             "detected": false,
-            "before": 93.75,
-            "after": 93.75,
+            "before": 93.5,
+            "after": 93.5,
             "kinds": []
           },
           "melodyAndCounterline": {
@@ -13227,8 +13224,8 @@
           },
           "groove": {
             "detected": false,
-            "before": 61.9,
-            "after": 61.9,
+            "before": 65.1,
+            "after": 65.1,
             "kinds": []
           },
           "rhythmicInteraction": {
@@ -13282,7 +13279,7 @@
           "playability": {
             "detected": true,
             "before": 87.2,
-            "after": 22.2,
+            "after": 24.7,
             "kinds": [
               "impossible_limb_count"
             ]
@@ -13314,8 +13311,8 @@
           },
           "voiceLeading": {
             "detected": false,
-            "before": 93.78,
-            "after": 93.78,
+            "before": 93.55,
+            "after": 93.55,
             "kinds": []
           },
           "melodyAndCounterline": {
@@ -13385,10 +13382,12 @@
             "kinds": []
           },
           "sectionDevelopment": {
-            "detected": false,
-            "before": 96.88,
+            "detected": true,
+            "before": 100,
             "after": 96.88,
-            "kinds": []
+            "kinds": [
+              "repeat_without_identity"
+            ]
           },
           "playability": {
             "detected": false,
@@ -13417,14 +13416,14 @@
         "results": {
           "harmony": {
             "detected": false,
-            "before": 81.2,
+            "before": 84.4,
             "after": 94,
             "kinds": []
           },
           "voiceLeading": {
             "detected": false,
-            "before": 93.75,
-            "after": 93.75,
+            "before": 93.5,
+            "after": 93.5,
             "kinds": []
           },
           "melodyAndCounterline": {
@@ -13441,8 +13440,8 @@
           },
           "groove": {
             "detected": true,
-            "before": 61.9,
-            "after": 57.1,
+            "before": 65.1,
+            "after": 60.3,
             "kinds": [
               "off_grid"
             ]
@@ -13724,8 +13723,8 @@
           },
           "performanceRealisation": {
             "detected": false,
-            "before": 93.4,
-            "after": 93.4,
+            "before": 96.7,
+            "after": 96.7,
             "kinds": []
           },
           "emotionalArcAndTension": {
@@ -13831,8 +13830,8 @@
           },
           "performanceRealisation": {
             "detected": false,
-            "before": 93.4,
-            "after": 93.4,
+            "before": 96.7,
+            "after": 96.7,
             "kinds": []
           },
           "emotionalArcAndTension": {
@@ -13846,21 +13845,22 @@
       {
         "control": "cross_part_clash@3",
         "anchorId": "rock-full",
-        "detail": "cross_part_clash@3 on bass-bass: 21 notes changed",
+        "detail": "cross_part_clash@3 on bass-bass: 26 notes changed",
         "results": {
           "harmony": {
             "detected": true,
-            "before": 81.2,
-            "after": 62,
+            "before": 84.4,
+            "after": 40,
             "kinds": [
               "bass_leaves_chord",
-              "clash_share"
+              "clash_share",
+              "out_of_key_share"
             ]
           },
           "voiceLeading": {
             "detected": true,
-            "before": 93.75,
-            "after": 90.55,
+            "before": 93.5,
+            "after": 90.3,
             "kinds": [
               "bass_leaps"
             ]
@@ -13881,8 +13881,8 @@
           },
           "groove": {
             "detected": false,
-            "before": 61.9,
-            "after": 61.9,
+            "before": 65.1,
+            "after": 65.1,
             "kinds": []
           },
           "rhythmicInteraction": {
@@ -13965,7 +13965,7 @@
           "harmony": {
             "detected": true,
             "before": 81.28,
-            "after": 39.38,
+            "after": 49.78,
             "kinds": [
               "clash_share"
             ]
@@ -14036,7 +14036,7 @@
           "transitions": {
             "detected": false,
             "before": 76.24,
-            "after": 76.24,
+            "after": 78.82,
             "kinds": []
           },
           "repetitionVsVariation": {
@@ -14166,11 +14166,9 @@
           },
           "performanceRealisation": {
             "detected": false,
-            "before": 93.4,
-            "after": 93.4,
-            "kinds": [
-              "dynamic_range_flat_per_section"
-            ]
+            "before": 96.7,
+            "after": 96.7,
+            "kinds": []
           },
           "emotionalArcAndTension": {
             "detected": false,
@@ -14265,8 +14263,8 @@
           },
           "playability": {
             "detected": false,
-            "before": 97.45,
-            "after": 97.45,
+            "before": 97.53,
+            "after": 97.53,
             "kinds": []
           },
           "performanceRealisation": {
@@ -14413,7 +14411,7 @@
           },
           "voiceLeading": {
             "detected": false,
-            "before": 93.78,
+            "before": 93.55,
             "after": 93.78,
             "kinds": [
               "voice_crossing_between_parts"
@@ -14485,7 +14483,7 @@
           },
           "sectionDevelopment": {
             "detected": false,
-            "before": 96.88,
+            "before": 100,
             "after": 100,
             "kinds": []
           },
@@ -14522,8 +14520,8 @@
           },
           "voiceLeading": {
             "detected": false,
-            "before": 93.78,
-            "after": 93.78,
+            "before": 93.55,
+            "after": 93.55,
             "kinds": []
           },
           "melodyAndCounterline": {
@@ -14590,8 +14588,8 @@
           },
           "sectionDevelopment": {
             "detected": false,
-            "before": 96.88,
-            "after": 96.88,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "playability": {
@@ -14627,8 +14625,8 @@
           },
           "voiceLeading": {
             "detected": true,
-            "before": 93.78,
-            "after": 92.42,
+            "before": 93.55,
+            "after": 92.2,
             "kinds": [
               "voice_crossing_between_parts"
             ]
@@ -14709,7 +14707,7 @@
           },
           "sectionDevelopment": {
             "detected": false,
-            "before": 96.88,
+            "before": 100,
             "after": 100,
             "kinds": []
           },
@@ -14762,8 +14760,8 @@
           },
           "motifRecurrenceAndDevelopment": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": null,
+            "after": null,
             "kinds": []
           },
           "groove": {
@@ -14940,8 +14938,8 @@
           },
           "playability": {
             "detected": true,
-            "before": 97.45,
-            "after": 17.13,
+            "before": 97.53,
+            "after": 17.2,
             "kinds": [
               "outside_comfortable_range"
             ]
@@ -15064,11 +15062,9 @@
           },
           "performanceRealisation": {
             "detected": false,
-            "before": 93.4,
-            "after": 93.4,
-            "kinds": [
-              "dynamic_range_flat_per_section"
-            ]
+            "before": 96.7,
+            "after": 96.7,
+            "kinds": []
           },
           "emotionalArcAndTension": {
             "detected": true,
@@ -15089,7 +15085,7 @@
           "harmony": {
             "detected": false,
             "before": 81.28,
-            "after": 81.28,
+            "after": 84.4,
             "kinds": [
               "clash_share"
             ]
