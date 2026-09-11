@@ -168,7 +168,13 @@ test("re-pointed (B-26): an arrival thinned below *its setup's* onsets per bar i
   // 1.79, so the *voices* ratio rises and only one of the three respects falls.
   // That is the same B-21 effect the previous test measures, seen from the
   // other end.
-  const expectArrival = new Set(["ballad-piano-vocal", "rock-full", "acoustic-demo", "ethnic-vocal", "jazz-full", "cinematic-midi"]);
+  // jazz-full left this set at the B-20 merge: the anchors no longer run the
+  // repair stage, so what the control damages is the composer's own material
+  // and jazz-full's chorus is no longer thin enough relative to its setup to
+  // raise the finding. The control still fires on five of nine anchors and on
+  // no clean one, which is what gives it its sensitivity; the table above is
+  // the pre-B-20 measurement and is kept as the record of what changed.
+  const expectArrival = new Set(["ballad-piano-vocal", "rock-full", "acoustic-demo", "ethnic-vocal", "cinematic-midi"]);
   const expectLouder = new Set(["pop-full", "ballad-piano-vocal", "rock-full", "dance-full", "acoustic-demo", "orchestral-midi", "ethnic-vocal", "jazz-full"]);
   let detected = 0;
   const rows: string[] = [];

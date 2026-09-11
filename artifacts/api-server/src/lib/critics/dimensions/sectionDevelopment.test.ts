@@ -74,7 +74,12 @@ test("re-anchored (B-05c): at the planned climax the composer develops but does 
   const expected: Record<string, { identityKept: boolean; developed: string[] }> = {
     "pop-full": { identityKept: false, developed: ["dynamics", "rhythm"] },
     "rock-full": { identityKept: false, developed: ["instrumentation", "dynamics", "rhythm"] },
-    "dance-full": { identityKept: false, developed: ["register", "dynamics"] },
+    // Re-measured at the B-20 merge (the anchors no longer run the repair
+    // stage): dance-full develops in dynamics and rhythm where it developed in
+    // register and dynamics before. The repair pass had been changing the
+    // register of that chorus, and the anchor was recording the repair's work
+    // as the composer's.
+    "dance-full": { identityKept: false, developed: ["dynamics", "rhythm"] },
     "acoustic-demo": { identityKept: false, developed: ["register", "dynamics"] },
   };
   /** The anchors whose climax the dimension reports as a repeat without identity, measured. */
