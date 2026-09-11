@@ -87,12 +87,20 @@ test("the owner's song is an anchor: it builds, it is still not in the clean set
 
   // Not "close to the tolerance and lucky": the parts are an order of
   // magnitude inside it. `off_grid`'s tolerance is max(30 ms, 5 % of a beat)
-  // and every part's *median* deviation is 3-13 ms, with an off-grid share of
-  // exactly zero. (B-05c's shares were 0.55-0.73 of each part's onsets.)
+  // and every part's *median* deviation is 3-13 ms. (B-05c's shares were
+  // 0.55-0.73 of each part's onsets.)
+  //
+  // The share was exactly zero when B-25 measured it and is 0.0142 on
+  // `strings-pad` after the Wave 3 merge, because B-24 reseeded the
+  // performance jitter from the music instead of from note ids. One onset in
+  // seventy sitting outside a 30 ms window is still an order of magnitude
+  // inside the tolerance, which is the claim; the median assertion below is
+  // what carries it, and it is unchanged.
   const measured = groove.observations.filter((o) => o.kind === "measured");
   assert.equal(measured.length, 5, "one `measured` row per part");
   for (const o of measured) {
-    assert.equal(o.evidence.offGridShare, 0, `${o.location.trackIds[0]}: off-grid share`);
+    assert.ok((o.evidence.offGridShare as number) <= 0.02,
+      `${o.location.trackIds[0]}: off-grid share ${o.evidence.offGridShare}`);
     assert.ok((o.evidence.medianAbsDeviationMs as number) < 15,
       `${o.location.trackIds[0]}: median ${o.evidence.medianAbsDeviationMs} ms inside a ${toleranceSeconds(context.bars[0].beatSeconds) * 1000} ms tolerance`);
   }

@@ -153,12 +153,17 @@ test("the reference beds sit on the singer's pitches: vocal masking is a real fi
   // cannot move. What this test asserts is the measurement and the attribution;
   // the count is not relaxed and no threshold moved.
   const measured: Record<string, number> = {
-    "pop-full": 5, "ballad-piano-vocal": 1, "rock-full": 2, "dance-full": 0, "acoustic-demo": 0,
+    // pop-full is 4, not the 5 B-26 measured on its own branch: the Wave 3
+    // merge (B-19's selection, B-22's melody evidence, B-24's jitter reseed)
+    // moved its notes and the Chorus bed came off the voice. Corpus total
+    // 17 -> 16. Re-measured at the merge, which B-26's tracker entry said
+    // these exact-count assertions would need.
+    "pop-full": 4, "ballad-piano-vocal": 1, "rock-full": 2, "dance-full": 0, "acoustic-demo": 0,
     "orchestral-midi": 7, "ethnic-vocal": 0, "jazz-full": 0, "cinematic-midi": 2,
   };
   /** How the arbitration resolves each anchor's findings, measured. */
   const resolutions: Record<string, Record<string, number>> = {
-    "pop-full": { no_room: 5 },
+    "pop-full": { no_room: 4 },
     "ballad-piano-vocal": { clear_below: 1 },
     "rock-full": { clear_below: 2 },
     "orchestral-midi": { clear_below: 4, clear_above: 1, no_room: 2 },
@@ -196,8 +201,8 @@ test("the reference beds sit on the singer's pitches: vocal masking is a real fi
     if (masking.length) assert.deepEqual(counts, resolutions[anchor.id], `${anchor.id}: ${JSON.stringify(counts)}`);
     total += masking.length;
   }
-  assert.equal(total, 17, `vocal masking is still a real finding across the anchors: ${total} sections (B-13 measured 18)`);
-  assert.equal(noRoom, 9, `findings with no placement that satisfies both the role register and the voice: ${noRoom}`);
+  assert.equal(total, 16, `vocal masking is still a real finding across the anchors: ${total} sections (B-13 measured 18)`);
+  assert.equal(noRoom, 8, `findings with no placement that satisfies both the role register and the voice: ${noRoom}`);
 });
 
 test("B-26: where there is no melody the dimension says the masking check did not run, instead of scoring as if there were room", () => {
@@ -225,9 +230,13 @@ test("B-26: where there is no melody the dimension says the masking check did no
   assert.ok(String(stated[0].evidence.reason).includes("no melody"));
   assert.equal(report.observations.filter((o) => o.kind === "vocal_masking").length, 0,
     "and there is indeed nothing to measure");
-  // The five findings that were there are gone with the melody — which is
-  // exactly the silence the statement exists to label.
-  assert.equal(measuredReport.observations.filter((o) => o.kind === "vocal_masking").length, 5);
+  // The findings that were there are gone with the melody — which is exactly
+  // the silence the statement exists to label. Four, not the five B-26
+  // measured on its own branch: the Wave 3 merge (B-19's selection, B-22's
+  // melody evidence, B-24's jitter reseed) moved pop-full's notes, and the
+  // Chorus bed came off the voice. Re-pinned at the merge, as B-26's tracker
+  // entry said these exact-count assertions would have to be.
+  assert.equal(measuredReport.observations.filter((o) => o.kind === "vocal_masking").length, 4);
 });
 
 test("B-26: the arbitration answers with room, not with taste — and the role decides which side counts", () => {

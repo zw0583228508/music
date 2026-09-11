@@ -190,7 +190,10 @@ test("null control: no blocking harmony observation on any clean anchor, and eve
   const measured: Record<string, { minScore: number; kinds: Record<string, number>; majors: number }> = {
     "pop-full": { minScore: 81, kinds: { bass_rarely_states_root: 4, approach_tone_wrong_mode: 2 }, majors: 0 },
     "ballad-piano-vocal": { minScore: 100, kinds: {}, majors: 0 },
-    "rock-full": { minScore: 94, kinds: { bass_rarely_states_root: 1, clash_share: 1 }, majors: 0 },
+    // Re-measured at the Wave 3 merge: rock-full's `bass_rarely_states_root`
+    // is gone (1 -> 0) and the score rises 94 -> 97.2. An improvement, not a
+    // pin that drifted — the bass states its root there now.
+    "rock-full": { minScore: 97, kinds: { clash_share: 1 }, majors: 0 },
     "dance-full": { minScore: 100, kinds: {}, majors: 0 },
     "acoustic-demo": { minScore: 93, kinds: { bass_rarely_states_root: 1, clash_share: 1 }, majors: 0 },
     "orchestral-midi": { minScore: 96, kinds: { clash_share: 1 }, majors: 0 },
@@ -234,5 +237,5 @@ test("null control: no blocking harmony observation on any clean anchor, and eve
   // onsets from chord starts, so the bass is present at the change and states
   // its root there. The number is still asserted exactly, because it is the
   // one this suite exists to watch.
-  assert.equal(rootRarely, 9, `bass_rarely_states_root across the clean anchors: ${rootRarely} (B-05c measured 1; B-13 alone 20; B-13+B-18 19)`);
+  assert.equal(rootRarely, 8, `bass_rarely_states_root across the clean anchors: ${rootRarely} (B-05c measured 1; B-13 alone 20; B-13+B-18 19; the Wave 3 merge 8)`);
 });
