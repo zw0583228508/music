@@ -103,7 +103,18 @@ test("on the owner's fixture the trace answers entries, voicings (with 'not reco
   for (const voicing of trace.voicings) {
     assert.ok(voicing.ranges.length > 0, `${voicing.trackId} has provenance ranges`);
     assert.ok(voicing.ranges.every((r) => r.decisions.length > 0), "every range resolves its decision ids");
-    assert.deepEqual(voicing.notRecorded.map((n) => n.layer), ["harmony", "register"]);
+    // Which two layers go unanswered swapped at the Wave 3 integration, and the
+    // count did not change. `register` became answerable because the
+    // orchestrator now forwards the writers' `DecisionRegistry` to the default
+    // composer (B-21 left that one line for the integration and named it), and
+    // B-21's harmony writer records against it. `groove` became unanswerable
+    // because only `composer/harmonyParts.ts` imports `recordWriterDecision` —
+    // `composer/rhythmParts.ts` imports `accentWeight` and records nothing, so
+    // no decision of that layer is cited for this track and the rhythm cell of
+    // each bar still cannot be explained. Recorded as a finding, not fixed
+    // here: inventing a provenance string for a decision no writer actually
+    // registers would be worse than saying it is missing.
+    assert.deepEqual(voicing.notRecorded.map((n) => n.layer), ["harmony", "groove"]);
     assert.match(voicing.notRecorded[0].reason, /^not recorded by harmony: REFERENCE_PART_COMPOSER_V1 .*B-02/);
   }
   assert.ok(trace.notRecorded.some((n) => n.question === "why this voicing" && n.layer === "harmony"));

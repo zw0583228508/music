@@ -493,7 +493,15 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
   const compose = input.composeParts ??
     ((request: PartGenerationRequest, context?: PartComposerContext) =>
       composeReferencePart(request, {
+        // B-21 left this line for the integration and named it: the
+        // orchestrator builds a `DecisionRegistry` per candidate and hands it
+        // to `compose(request, { decisions, ... })`, but this default lambda
+        // forwarded only `siblings` and `texture`, so every writer decision
+        // was dropped on the floor and `decisionTrace` answered "not recorded"
+        // for groove. The registry is what makes "why is this note here"
+        // answerable.
         tempoBpm, meter, siblings: context?.siblings, texture: context?.texture,
+        decisions: context?.decisions,
       }));
   const composerName = input.composerName ??
     (input.composeParts ? "INJECTED_COMPOSER" : REFERENCE_PART_COMPOSER);
